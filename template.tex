@@ -25,15 +25,15 @@
 %%      - joaomlourenco
 %%
 %% CONTRIBUTORS @github:
-%%      - bcandeias, flaviomartins, tmonteiro2344, jsaramago, 
+%%      - bcandeias, flaviomartins, tmonteiro2344, jsaramago,
 %%        microlina, riclas, pedrovieira
 %%
 %% DONATIONS:
 %%     If you think this template really helped you while writing your thesis,
 %%     think about making a small donation. Just access the website
 %%     https://paypal.me/novathesis
-%%     and click in the “Donation” link.  We will keep a list thanking to all 
-%%     the identified donors that identify themselves in the “Add special 
+%%     and click in the “Donation” link.  We will keep a list thanking to all
+%%     the identified donors that identify themselves in the “Add special
 %%     instructions to the seller:” box.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -57,32 +57,32 @@
 %                               %     [ phd, phdplan, phdprop, msc, mscplan, bsc ]
 
 % \ntsetup{school=nova/ims}    % The school id
-%                               %     [ nova/fct, nova/fcsh, nova/ims, nova/ensp, 
+%                               %     [ nova/fct, nova/fcsh, nova/ims, nova/ensp,
 %                               %       ul/ist, ul/fc, ipl/isel, ips/ests, esep ]
 
 % \ntsetup{lang=pt}             % The main language for the document text
 %                               %     [ en, pt, fr, it ]
 
-% \ntsetup{linkscolor=SteelBlue}% The color for the hyperlinks (URLs, 
+% \ntsetup{linkscolor=SteelBlue}% The color for the hyperlinks (URLs,
 %                               %     cross references, citations)
-%                               %     for valid color names, look at "svgname" 
+%                               %     for valid color names, look at "svgname"
 %                               %     in the "xcolor" package documentation
 
 % \ntsetup{media=paper}         % The target media for the PDF
 %                               %     [ screen, paper ]
-%                               %     SCREEN ==> left and right margins are 
+%                               %     SCREEN ==> left and right margins are
 %                               %                equal, colored links
-%                               %     PAPER  ==> left and right margins are 
+%                               %     PAPER  ==> left and right margins are
 %                               %                 different, black links
 
 % \ntsetup{printcommittee=true}% Should the committee be printed??
 %                               %     should be 'false' for document versins still
-%                               %     under work/evaluation.   Only final versions 
+%                               %     under work/evaluation.   Only final versions
 %                               %     should have the list of committee memebers.
 
 % \ntsetup{secondcover=true}    % Should a second cover page be printed?
-%                               %     if the contents for the second page are not 
-%                               %     defined, the second cover will be a replica 
+%                               %     if the contents for the second page are not
+%                               %     defined, the second cover will be a replica
 %                               %     of the first cover.
 
 % \ntsetup{urlstyle=same}       % Use the same (main) font in URLs
@@ -92,8 +92,8 @@
 %% THE LESS IMPORTANT/POPULAR OPTIONS
 %%------------------------------------------------------------
 % \ntsetup{fontstyle=erewhon}   % The font set to be used in the docuemnt
-%                               %     [ kpfonts bookman libertine, scholax 
-%                               %       calibri(*), kieranhealy(*) ] 
+%                               %     [ kpfonts bookman libertine, scholax
+%                               %       calibri(*), kieranhealy(*) ]
 %                               %     (*) only for xelatex/lualatex)
 
 % \ntsetup{chapstyle=default}   % The chapter style to be used
@@ -101,14 +101,14 @@
 %                               %       lyhne madsen pedersen section southall veelo
 %                               %       vz34 vz43 ]
 
-% \ntsetup{coverlang=en}        % The language for the cover (and second cover) page 
+% \ntsetup{coverlang=en}        % The language for the cover (and second cover) page
 %                               %     defaults to main document language
 
 % \ntsetup{copyrightlang=en}    % The language for the copuyright message
 %                               %     defaults to main document language
 
 % \ntsetup{aftercover=true}     % Does the document have after cover pages??
-%                               %     after cover pages are printed immediately 
+%                               %     after cover pages are printed immediately
 %                               %     after the cover pages
 
 % \ntsetup{spine=true}          % Print a “book spine” at the end of the document
@@ -166,7 +166,7 @@
 
 %%------------------------------------------------------------
 %% To enable customizble enumerates.  See the documentation.
-\usepackage{paralist}    
+\usepackage{paralist}
 
 %%------------------------------------------------------------
 %% Leave TODOs and NOTEs duting text writing
@@ -204,7 +204,7 @@
 % \ntdegreename[pt]{Programa de Doutoramento em Informática} %% For MSc comment here and uncomment above
 % \ntdegreename[en]{PhD Program in Computer Science}         %% For MSc comment here and uncomment above
 
-%%% SEE ABOVE for MSc and PhD in Computer Science @ FCT-NOVA 
+%%% SEE ABOVE for MSc and PhD in Computer Science @ FCT-NOVA
 \ntmajorfield[pt]{\embrace{Área de Científica}}
 \ntmajorfield[en]{\embrace{Scientific Field of Study}}
 \ntdegreename[pt]{\embrace{Nome do Curso}}
@@ -275,13 +275,13 @@
 %=============================================================================
 
 %%------------------------------------------------------------
-%% Except for the bibliography, all the other FILE names below  
-%%     inside braces must correspond to a file with extension 
+%% Except for the bibliography, all the other FILE names below
+%%     inside braces must correspond to a file with extension
 %%     ".tex" and located in the "Chapters" folder
 %%------------------------------------------------------------
 
 %%------------------------------------------------------------
-% BibTeX bibiography files and customization. May be used multiple 
+% BibTeX bibiography files and customization. May be used multiple
 % times with a single file nae each time.
 % syntax:  \ntaddfile{bib}{filename.bib}
 \ntaddfile{bib}{bibliography.bib}
@@ -294,31 +294,30 @@
 % Dedicatory text. Will only be considered for final documents,
 % i.e., "bsc", "msc" and "phd", otherwise, it will be silently ignored
 % syntax:  \ntaddfile{dedicatory}{filename}
-\ntaddfile{dedicatory}{dedicatory}
+\ntaddfile{dedicatory}{Misc/dedicatory}
 
 %%------------------------------------------------------------
 % Acknowledgments text. Will only be considered for final documents,
 % i.e., "bsc", "msc" and "phd", otherwise, it will be silently ignored
 % syntax:  \ntaddfile{acknowledgements}{filename}
-\ntaddfile{acknowledgements}{acknowledgements}
+\ntaddfile{acknowledgements}{Misc/acknowledgements}
 
 %%------------------------------------------------------------
 % The file with the quote
 % syntax:  \ntaddfile{quote}{filename}
-\ntaddfile{quote}{quote}
+\ntaddfile{quote}{Misc/quote}
 
 %%------------------------------------------------------------
 % Abstract files in multiple languages
 % syntax:  \ntaddfile{abstract}[language]{filename}
-\ntaddfile{abstract}[pt]{abstract-pt}  % Abstract in Portuguese
-\ntaddfile{abstract}[en]{abstract-en}  % Abstract in English
-\ntaddfile{abstract}[fr]{abstract-fr}  % Abstract in French
+\ntaddfile{abstract}[pt]{Abstract/abstract-pt}  % Abstract in Portuguese
+\ntaddfile{abstract}[en]{Abstract/abstract-en}  % Abstract in English
 
 % Lists of Glossary, Acronyms and Symbols
 % syntax:  \ntaddfile{glossaries}[list-type]{filename}
-\ntaddfile{glossaries}[glossary]{glossary}
-\ntaddfile{glossaries}[acronyms]{acronyms}
-\ntaddfile{glossaries}[symbols]{symbols}
+\ntaddfile{glossaries}[glossary]{Misc/glossary}
+\ntaddfile{glossaries}[acronyms]{Misc/acronyms}
+\ntaddfile{glossaries}[symbols]{Misc/symbols}
 
 %%------------------------------------------------------------
 % Text chapters
@@ -334,9 +333,9 @@
 % sintax: \ntaddfile{appendix}{filename}
 %         \ntaddfile{annex}{filename}
 % Comment if not needed
-\ntaddfile{appendix}{appendix1}
-\ntaddfile{appendix}{appendix2}
-\ntaddfile{annex}{annex1}
+\ntaddfile{appendix}{Appendixes/appendix1}
+\ntaddfile{appendix}{Appendixes/appendix2}
+\ntaddfile{annex}{Annexes/annex1}
 
 %%------------------------------------------------------------
 % Definition of the aftercover page, to be printed before the copyright
@@ -413,7 +412,7 @@
 \ntprintdedicatory      % (*) Print the dedicatory
 \ntprintacknowledgements% (*) Print the acknowledgments
 \ntprintquote           % (*) Print the quote
-\ntprintabstracts       % Print abstracts in multiple languges. 
+\ntprintabstracts       % Print abstracts in multiple languges.
                         % Changing the language will change the order of the abstracts
 \ntprintallindexes      % Print all the indexes defined above TOC, LOF, LOT, …)
 
