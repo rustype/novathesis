@@ -1,15 +1,13 @@
 ![NOVAthesis logo](NOVAthesisFiles/Images/novathesis_cover_image.jpg)
 
 # NOVAthesis LaTeX template
-%% Version 2020-12-22 [5.1.10]
+%% Version 2021-01-03 [5.1.12]
 
 --------
 
 <img src="NOVAthesisFiles/Images/cover-phd-nova-fct.jpg" width="100"/> <img src="NOVAthesisFiles/Images/cover-phd-nova-ims.jpg" width="100"/> <img src="NOVAthesisFiles/Images/cover-phd-nova-ensp.jpg" width="100"/> <img src="NOVAthesisFiles/Images/cover-phd-nova-fcsh.jpg" width="100"/> <img src="NOVAthesisFiles/Images/cover-phd-ul-ist.jpg" width="100"/> <img src="NOVAthesisFiles/Images/cover-phd-ul-fc.jpg" width="100"/> <img src="NOVAthesisFiles/Images/cover-phd-ipl-isel.jpg" width="100"/> <img src="NOVAthesisFiles/Images/cover-phd-ips-ests.jpg" width="100"/> <img src="NOVAthesisFiles/Images/cover-phd-esep.jpg" width="100"/>
 
 --------
-
-## About
 
 The NOVAthesis LaTeX class is a thesis template initially designed for the PhD and MSc thesis at [FCT-NOVA — NOVA School of Science and Technology](http://www.fct.unl.pt), Portugal, but currently it supports more schools, namely:
 * NOVA University Lisbon

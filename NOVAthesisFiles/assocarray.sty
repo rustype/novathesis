@@ -100,11 +100,11 @@
   \ifcsdef{@aa@#1@#2}%
 }
 \newcommand*{\assocarray}[1]{%
-  \csdef{#1}(##1){\@ifnextchar:{\@aa@def@ii\expanded{#1}(\expanded{##1})}{\@aa@use@ii\expanded{#1}(\expanded{##1})}}%
+  \csdef{#1}(##1){\@ifnextchar:{\expandafter\@aa@def@ii#1\expandafter(##1)}{\expandafter\@aa@use@ii#1\expandafter(##1)}}%
   \newcounter{@aa@#1@cnt}%
   \setcounter{@aa@#1@cnt}{0}%
   % %% The following command is only for backward compatibility
-  \csdef{the#1}(##1){\@aa@use@ii#1(\expanded{##1})}%
+  \csdef{the#1}(##1){\expandafter\@aa@use@ii#1\expandafter(##1)}%
   % \csdef{the#1}(##1){\csuse{@aa@#1@##1}}%
 }
 

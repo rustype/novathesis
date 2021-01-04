@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%% texplate.tex
+%% template.tex
 %% NOVA thesis document template
 %%
 %% This work is licensed under the
@@ -7,7 +7,7 @@
 %% To view a copy of this license, visit
 %% https://www.latex-project.org/lppl/lppl-1-3c/
 %%
-%% Version 2020-12-22 [5.1.10]
+%% Version 2021-01-03 [5.1.12]
 %% Departamento de Informática (www.di.fct.unl.pt)
 %% Faculdade de Ciências e Tecnologia (www.fct.unl.pt)
 %% Universidade NOVA de Lisboa (www.unl.pt)
@@ -25,16 +25,31 @@
 %%      - joaomlourenco
 %%
 %% CONTRIBUTORS @github:
-%%      - bcandeias, flaviomartins, tmonteiro2344, jsaramago,
+%%      - bcandeias, flaviomartins, tmonteiro2344, jsaramago, 
 %%        microlina, riclas, pedrovieira
 %%
 %% DONATIONS:
 %%     If you think this template really helped you while writing your thesis,
 %%     think about making a small donation. Just access the website
 %%     https://paypal.me/novathesis
-%%     and click in the “Donation” link.  We will keep a list thanking to all
-%%     the identified donors that identify themselves in the “Add special
+%%     and click in the “Donation” link.  We will keep a list thanking to all 
+%%     the identified donors that identify themselves in the “Add special 
 %%     instructions to the seller:” box.
+%%
+%% CITATION:
+%%     If you use this template, please be kind and cite it in your bibliography:
+%%           “João M. Lourenço, \emph{The NOVAthesis \LaTeX\ Template User’s Manual},
+%%            NOVA School of Science and Technology, NOVA University Lisbon, 2021,
+%%            \url{https://github.com/joaomlourenco/novathesis/raw/master/template.pdf}.”
+%%    The BibTeX entry is:
+%%           @ Manual{novathesis-manual,
+%%            title        = {{The NOVAthesis Template User's Manual}},
+%%            author       = {João M. Lourenço},
+%%            organization = {NOVA University Lisbon},
+%%            year         = {2021},
+%%            url          = {https://github.com/joaomlourenco/novathesis/raw/master/template.pdf},
+%%           }
+%% 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%------------------------------------------------------------
@@ -53,36 +68,40 @@
 %%------------------------------------------------------------
 %% THE MOST IMPORTANT/POPULAR OPTIONS
 %%------------------------------------------------------------
-\ntsetup{docdegree=mscplan}       % The type od document
+% \ntsetup{docdegree=msc}       % The type od document
 %                               %     [ phd, phdplan, phdprop, msc, mscplan, bsc ]
 
-\ntsetup{school=nova/fct}    % The school id
-%                               %     [ nova/fct, nova/fcsh, nova/ims, nova/ensp,
-%                               %       ul/ist, ul/fc, ipl/isel, ips/ests, esep ]
+% \ntsetup{school=iscte-iul/ista}     % The school id
+%                               %     [ nova/fct, nova/fcsh, nova/ims, nova/ensp, 
+%                               %       ul/ist, ul/fc, ipl/isel, ips/ests, esep,
+%                               %       iscte-iul/ista ]
 
-\ntsetup{lang=en}             % The main language for the document text
+% \ntsetup{docstatus=working}   % The status of the document
+%                               %     [ final, provisional, draft, working ]
+
+% \ntsetup{lang=pt}             % The main language for the document text
 %                               %     [ en, pt, fr, it ]
 
-% \ntsetup{linkscolor=SteelBlue}% The color for the hyperlinks (URLs,
+% \ntsetup{linkscolor=SteelBlue}% The color for the hyperlinks (URLs, 
 %                               %     cross references, citations)
-%                               %     for valid color names, look at "svgname"
+%                               %     for valid color names, look at "svgname" 
 %                               %     in the "xcolor" package documentation
 
 % \ntsetup{media=paper}         % The target media for the PDF
 %                               %     [ screen, paper ]
-%                               %     SCREEN ==> left and right margins are
+%                               %     SCREEN ==> left and right margins are 
 %                               %                equal, colored links
-%                               %     PAPER  ==> left and right margins are
+%                               %     PAPER  ==> left and right margins are 
 %                               %                 different, black links
 
 % \ntsetup{printcommittee=true}% Should the committee be printed??
 %                               %     should be 'false' for document versins still
-%                               %     under work/evaluation.   Only final versions
+%                               %     under work/evaluation.   Only final versions 
 %                               %     should have the list of committee memebers.
 
 % \ntsetup{secondcover=true}    % Should a second cover page be printed?
-%                               %     if the contents for the second page are not
-%                               %     defined, the second cover will be a replica
+%                               %     if the contents for the second page are not 
+%                               %     defined, the second cover will be a replica 
 %                               %     of the first cover.
 
 % \ntsetup{urlstyle=same}       % Use the same (main) font in URLs
@@ -92,8 +111,8 @@
 %% THE LESS IMPORTANT/POPULAR OPTIONS
 %%------------------------------------------------------------
 % \ntsetup{fontstyle=erewhon}   % The font set to be used in the docuemnt
-%                               %     [ kpfonts bookman libertine, scholax
-%                               %       calibri(*), kieranhealy(*) ]
+%                               %     [ kpfonts bookman libertine, scholax 
+%                               %       calibri(*), kieranhealy(*) ] 
 %                               %     (*) only for xelatex/lualatex)
 
 % \ntsetup{chapstyle=default}   % The chapter style to be used
@@ -101,14 +120,14 @@
 %                               %       lyhne madsen pedersen section southall veelo
 %                               %       vz34 vz43 ]
 
-% \ntsetup{coverlang=en}        % The language for the cover (and second cover) page
+% \ntsetup{coverlang=en}        % The language for the cover (and second cover) page 
 %                               %     defaults to main document language
 
 % \ntsetup{copyrightlang=en}    % The language for the copuyright message
 %                               %     defaults to main document language
 
 % \ntsetup{aftercover=true}     % Does the document have after cover pages??
-%                               %     after cover pages are printed immediately
+%                               %     after cover pages are printed immediately 
 %                               %     after the cover pages
 
 % \ntsetup{spine=true}          % Print a “book spine” at the end of the document
@@ -156,28 +175,29 @@
 %%  END OF TEMPLATE COSTUMIZATION
 %%============================================================
 
+
+
+
+
 %%============================================================
 %%  LOADING AND CONFIGURATION OF ADDITIONAL PACKAGES
 %%============================================================
+
 %%------------------------------------------------------------
 %% To enable customizble enumerates.  See the documentation.
-\usepackage{paralist}
+\usepackage{paralist}    
 
 %%------------------------------------------------------------
 %% Leave TODOs and NOTEs duting text writing
-\usepackage[
-    textsize=footnotesize,
-    color=green!20
-]{todonotes}  % To register TODO notes in the text
+\usepackage[textsize=footnotesize]{todonotes}  % To register TODO notes in the text
 
 %%------------------------------------------------------------
-\usepackage[full]{textcomp}
-\usepackage{minted}
-\usepackage{minted}
-\setminted{
-    linenos,
-    frame=single
-}
+%% FOR DEMO PURPOSES ONLY --- PLEASE REMOVE
+\usepackage{wrapfig}
+\usepackage{metalogo}
+\usepackage{lipsum}
+
+
 
 %%============================================================
 %%  DOCUMENT ATTRIBUTES
@@ -191,35 +211,46 @@
 %%------------------------------------------------------------
 % Degree costumization
 
-%%% For MSc in Computer Science @ FCT-NOVA
-\ntmajorfield[pt]{Engenharia Informática}                                 %% For PhD comment here and uncomment above
-\ntmajorfield[en]{Computer Science and Engineering}                       %% For PhD comment here and uncomment above
-\ntdegreename[pt]{Mestrado Integrado em Engenharia Informática}           %% For PhD comment here and uncomment above
-\ntdegreename[en]{Integrated Master in Computer Science and Engineering}  %% For PhD comment here and uncomment above
+%% See below for the degrees in Computer Science @ FCT-NOVA
+\ntmajorfield(pt){\embrace{Área Científica}}
+\ntmajorfield(en){\embrace{Scientific Field}}
+\ntdegreename(pt){\embrace{Designação do Curso}}
+\ntdegreename(en){\embrace{Study Program Name}}
 
-%%% For PhD in Computer Science @ FCT-NOVA
-% \ntmajorfield[pt]{Informática}                             %% For MSc comment here and uncomment above
-% \ntmajorfield[en]{Computer Science}                        %% For MSc comment here and uncomment above
-% \ntdegreename[pt]{Programa de Doutoramento em Informática} %% For MSc comment here and uncomment above
-% \ntdegreename[en]{PhD Program in Computer Science}         %% For MSc comment here and uncomment above
-
-%%% SEE ABOVE for MSc and PhD in Computer Science @ FCT-NOVA
-% \ntmajorfield[pt]{\embrace{Área de Científica}}
-% \ntmajorfield[en]{\embrace{Scientific Field of Study}}
-% \ntdegreename[pt]{\embrace{Nome do Curso}}
-% \ntdegreename[en]{\embrace{Degree's Name}}
+%%% Uncomment for MSc and PhD in Computer Science @ FCT-NOVA 
+% \ifphddoc{%
+%   % It is a PhD Degree in Computer Science
+%   \ntmajorfield(pt){Informática}
+%   \ntmajorfield(en){Computer Science}
+%   \ntdegreename(pt){Programa de Doutoramento em Informática}
+%   \ntdegreename(en){PhD Program in Computer Science}
+% }{}
+% \ifmscdoc{%
+%   % It is a MSc degree in Computer Science
+%   \ntmajorfield(pt){Engenharia Informática}
+%   \ntmajorfield(en){Computer Science and Engineering}
+%   \ntdegreename(pt){Mestrado Integrado em Engenharia Informática}
+%   \ntdegreename(en){Integrated Master in Computer Science and Engineering}
+% }{}
+% \ifbscdoc{%
+%   % It is a MSc degree in Computer Science
+%   \ntmajorfield(pt){Engenharia Informática}
+%   \ntmajorfield(en){Computer Science and Engineering}
+%   \ntdegreename(pt){Licenciatura em Ciência e Engenharia Informática}
+%   \ntdegreename(en){Bachelor in Computer Science and Engineering}
+% }{}
 
 
 %%------------------------------------------------------------
 % Degree costumization
 % If the degree includes a specialization
-% \ntspecialization[pt]{\embrace{Nome da Especialização}}
-% \ntspecialization[en]{\embrace{Specialization's Name}}
+\ntspecialization(pt){\embrace{Designação da Especialidade}}
+\ntspecialization(en){\embrace{Speciality Name}}
 
 %%------------------------------------------------------------
 % Autor
 % use [f] for female and [m] for male
-\ntauthorname[m]{José Miguel Gonçalves Duarte}{José Duarte}
+\ntauthorname[m]{John Longname Doe}{John Doe}
 \ntauthordegree{Master of Science}
 
 %%------------------------------------------------------------
@@ -233,7 +264,7 @@
 % Advisers
 % use [f] for female and [m] for male
 % use "\\" if necessary to break the lines in the apprpriate place
-\ntaddperson{adviser}[f]{{António Ravara, Full Professor, NOVA University of Lisbon}}
+\ntaddperson{adviser}[f]{{Mary Doe Adviser Name, Full Professor, NOVA University of Lisbon}}
 % \ntaddperson{adviser}[f]{{Mary Doe other Adviser Name, Full Professor, NOVA University of Lisbon}}
 % \ntaddperson{adviser}[f]{{Mary Doe yet another Adviser Name, Full Professor, NOVA University of Lisbon}}
 
@@ -241,8 +272,8 @@
 % Co-Advisers
 % use [f] for female and [m] for male
 % use "\\" if necessary to break the lines in the apprpriate place
-% \ntaddperson{coadviser}[f]{John Doe Co-Adviser Name, Associate Professor, NOVA University of Lisbon}
-% \ntaddperson{coadviser}[f]{John Doe other Co-Adviser Name, Full Professor, NOVA University of Lisbon}
+\ntaddperson{coadviser}[f]{John Doe Co-Adviser Name, Associate Professor, NOVA University of Lisbon}
+\ntaddperson{coadviser}[f]{John Doe other Co-Adviser Name, Full Professor, NOVA University of Lisbon}
 
 %%------------------------------------------------------------
 % Committee
@@ -253,16 +284,16 @@
 %                [m] for remaining members
 %                [g] for guests
 % Chair of tntcommitteehe committee
-% \ntaddperson{committee}[c,m]{Name of the committee chairperson, Full Professor, FCT-NOVA}
+\ntaddperson{committee}[c,m]{Name of the committee chairperson, Full Professor, FCT-NOVA}
 % Main raporteurs
-% \ntaddperson{committee}[r,m]{Name of a raporteur, Position, University}
-% \ntaddperson{committee}[r,m]{Name of another raporteur, Position, University}
+\ntaddperson{committee}[r,m]{Name of a raporteur, Position, University}
+\ntaddperson{committee}[r,m]{Name of another raporteur, Position, University}
 % Advisers — FOR FCT-NOVA ADD ADVISERS AS "OTHER MEMBERS [m]"
 % \ntcommittee[a,f]{Name of an adviser, Position, University}
 % \ntcommittee[a,f]{Name of another adviser, Position, University}
 % Other members of the committee
-% \ntaddperson{committee}[m,m]{Another member of the committee, Position, University}
-% \ntaddperson{committee}[m,f]{Yet another member of the committee, Position, University}
+\ntaddperson{committee}[m,m]{Another member of the committee, Position, University}
+\ntaddperson{committee}[m,f]{Yet another member of the committee, Position, University}
 % Guest members
 % \ntcommittee[g,m]{Guest member of the committee, Position, University}
 % \ntcommittee[g,f]{Yet another guest member of the committee, Position, University}
@@ -274,13 +305,13 @@
 %=============================================================================
 
 %%------------------------------------------------------------
-%% Except for the bibliography, all the other FILE names below
-%%     inside braces must correspond to a file with extension
+%% Except for the bibliography, all the other FILE names below  
+%%     inside braces must correspond to a file with extension 
 %%     ".tex" and located in the "Chapters" folder
 %%------------------------------------------------------------
 
 %%------------------------------------------------------------
-% BibTeX bibiography files and customization. May be used multiple
+% BibTeX bibiography files and customization. May be used multiple 
 % times with a single file nae each time.
 % syntax:  \ntaddfile{bib}{filename.bib}
 \ntaddfile{bib}{bibliography.bib}
@@ -293,30 +324,31 @@
 % Dedicatory text. Will only be considered for final documents,
 % i.e., "bsc", "msc" and "phd", otherwise, it will be silently ignored
 % syntax:  \ntaddfile{dedicatory}{filename}
-\ntaddfile{dedicatory}{Misc/dedicatory}
+\ntaddfile{dedicatory}{dedicatory}
 
 %%------------------------------------------------------------
 % Acknowledgments text. Will only be considered for final documents,
 % i.e., "bsc", "msc" and "phd", otherwise, it will be silently ignored
 % syntax:  \ntaddfile{acknowledgements}{filename}
-\ntaddfile{acknowledgements}{Misc/acknowledgements}
+\ntaddfile{acknowledgements}{acknowledgements}
 
 %%------------------------------------------------------------
 % The file with the quote
 % syntax:  \ntaddfile{quote}{filename}
-\ntaddfile{quote}{Misc/quote}
+\ntaddfile{quote}{quote}
 
 %%------------------------------------------------------------
 % Abstract files in multiple languages
 % syntax:  \ntaddfile{abstract}[language]{filename}
-\ntaddfile{abstract}[pt]{Abstract/abstract-pt}  % Abstract in Portuguese
-\ntaddfile{abstract}[en]{Abstract/abstract-en}  % Abstract in English
+\ntaddfile{abstract}[pt]{abstract-pt}  % Abstract in Portuguese
+\ntaddfile{abstract}[en]{abstract-en}  % Abstract in English
+\ntaddfile{abstract}[fr]{abstract-fr}  % Abstract in French
 
 % Lists of Glossary, Acronyms and Symbols
 % syntax:  \ntaddfile{glossaries}[list-type]{filename}
-\ntaddfile{glossaries}[glossary]{Misc/glossary}
-\ntaddfile{glossaries}[acronyms]{Misc/acronyms}
-\ntaddfile{glossaries}[symbols]{Misc/symbols}
+\ntaddfile{glossaries}[glossary]{glossary}
+\ntaddfile{glossaries}[acronyms]{acronyms}
+\ntaddfile{glossaries}[symbols]{symbols}
 
 %%------------------------------------------------------------
 % Text chapters
@@ -332,9 +364,9 @@
 % sintax: \ntaddfile{appendix}{filename}
 %         \ntaddfile{annex}{filename}
 % Comment if not needed
-% \ntaddfile{appendix}{Appendixes/appendix1}
-% \ntaddfile{appendix}{Appendixes/appendix2}
-% \ntaddfile{annex}{Annexes/annex1}
+\ntaddfile{appendix}{appendix1}
+\ntaddfile{appendix}{appendix2}
+\ntaddfile{annex}{annex1}
 
 %%------------------------------------------------------------
 % Definition of the aftercover page, to be printed before the copyright
@@ -411,8 +443,8 @@
 \ntprintdedicatory      % (*) Print the dedicatory
 \ntprintacknowledgements% (*) Print the acknowledgments
 \ntprintquote           % (*) Print the quote
-\ntprintabstracts       % Print abstracts in multiple languges.
-% Changing the language will change the order of the abstracts
+\ntprintabstracts       % Print abstracts in multiple languges. 
+                        % Changing the language will change the order of the abstracts
 \ntprintallindexes      % Print all the indexes defined above TOC, LOF, LOT, …)
 
 %%------------------------------------------------------------

@@ -11,6 +11,7 @@
 \ifxetexorluatex
   % xelatex or lualatex
   \RequirePackage{fontspec}%
+  \defaultfontfeatures{Ligatures=TeX}
 \else% pdflatex
   %%%%% Configure font encoding
   \RequirePackage[T1]{fontenc}		% Use new T1 fonts
@@ -22,10 +23,6 @@
 %%%%% Configure multilingual language support
 \RequirePackage{csquotes}
 \RequirePackage{babel}			% Support for bilingual documents
-
-%%%%% Command multido
-\RequirePackage{multido}
-\newcommand{\Repeat}{\multido{\i=1+1}}
 
 % \RequirePackage{appendix}
 
@@ -72,7 +69,7 @@
 
 
 %%%%% Configure Graphics
-\RequirePackage[final]{graphicx}
+\RequirePackage[nobeamer]{graphbox}
 \graphicspath{{Chapters/Figures/}}
 \DeclareGraphicsExtensions{.pdf, .png, .jpg, .tif}
 \newcommand\appendtographicspath[1]{%
@@ -127,24 +124,33 @@
 % Flexible definition of new environments
 \RequirePackage{environ}
 
+% Fixing autoref in yperref
+\RequirePackage{fix-hyperref}
+
 \AtEndPreamble{%
   \RequirePackage[%
     , breaklinks%
     , colorlinks=true%
     , pdfdisplaydoctitle%
+    , unicode
   ]{hyperref}%
+  \@nt@fixhyperref%
+  \pdfstringdefDisableCommands{%
+    \def\\{}%
+    \def\texttt#1{#1}%
+  }%
   \RequirePackage{memhfixc}%   Must be used on memoir document class after hyperref
-  \RequirePackage[all]{hypcap}
+  \RequirePackage[all]{hypcap}%
   % To handle subfigures
-  \newsubfloat{figure}
+  \newsubfloat{figure}%
   % Manage glossaries
   \RequirePackage[
     % , nonumberlist
-    , toc
-    , translate=babel
-    , acronym % add acronyms listing
-    , symbols % add symbols listing
-    % , sanitizesort=false % allow \gls inside descriptions
+    , toc%
+    , translate=babel%
+    , acronym% add acronyms listing
+    , symbols% add symbols listing
+    % , sanitizesort=false% allow \gls inside descriptions
     % , automake
   ]{glossaries-extra}% To create glossaries
   \RequirePackage{glossary-xltabular}

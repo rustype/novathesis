@@ -8,7 +8,7 @@
 %% To view a copy of this license, visit
 %% https://www.latex-project.org/lppl/lppl-1-3c/
 %%
-%% Version 2020-12-22 [5.1.10]
+%% Version 2021-01-03 [5.1.12]
 %% Departamento de Informática (www.di.fct.unl.pt)
 %% Faculdade de Ciências e Tecnologia (www.fct.unl.pt)
 %% Universidade NOVA de Lisboa (www.unl.pt)
@@ -36,6 +36,20 @@
 %%     and click in the “Donation” link.  We will keep a list thanking to all 
 %%     the identified donors that identify themselves in the “Add special 
 %%     instructions to the seller:” box.
+%%
+%% CITATION:
+%%     If you use this template, please be kind and cite it in your bibliography:
+%%           “João M. Lourenço, \emph{The NOVAthesis \LaTeX\ Template User’s Manual},
+%%            NOVA School of Science and Technology, NOVA University Lisbon, 2021,
+%%            \url{https://github.com/joaomlourenco/novathesis/raw/master/template.pdf}.”
+%%    The BibTeX entry is:
+%%           @ Manual{novathesis-manual,
+%%            title        = {{The NOVAthesis Template User's Manual}},
+%%            author       = {João M. Lourenço},
+%%            organization = {NOVA University Lisbon},
+%%            year         = {2021},
+%%            url          = {https://github.com/joaomlourenco/novathesis/raw/master/template.pdf},
+%%           }
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,9 +78,9 @@
 \RequirePackage{options-nt}
 \RequirePackage{xifthen}
 \RequirePackage{xstring}
-
-% Do some magic defining associative arrays :)
+\RequirePackage{repeat-nt}
 \RequirePackage{assocarray}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% CHECK IF USING LUALATEX OR XELATEX
@@ -108,15 +122,24 @@
 }
 
 % --------------------------------------------------------
-% Alias for consistency in template.tex
-\def\ntmajorfield[#1]#2{\majorfield(#1):={#2}}
-\def\ntdegreename[#1]#2{\degreename(#1):={#2}}
-\def\ntspecialization[#1]#2{\specialization(#1):={#2}}
-
+% Print string between <...>
+\newcommand{\embrace}[1]{\texorpdfstring{$\langle$}{<}#1\texorpdfstring{$\rangle$}{>}}
 
 % --------------------------------------------------------
-% Print string between <...>
-\newcommand{\embrace}[1]{$<$#1$>$}
+% Split a string by a character
+\newcommand*{\ntgetkeyval}[4][=]{%
+  % #1 = character to look for
+  % #2 = string to split
+  % #3 = macro to receive the left part
+  % #4 = macro to receive the right part
+  \StrCut{#2}{#1}#3#4%
+}
+
+% --------------------------------------------------------
+% Alias for consistency in template.tex
+\def\ntmajorfield(#1)#2{\majorfield(#1):={#2}}
+\def\ntdegreename(#1)#2{\degreename(#1):={#2}}
+\def\ntspecialization(#1)#2{\specialization(#1):={#2}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,6 +165,11 @@
 \newcommand{\ifphddoc}[1][\option{/novathesis/docdegree}]{\@ifdocclass@ii{#1}{phd}}
 \newcommand{\ifmscdoc}[1][\option{/novathesis/docdegree}]{\@ifdocclass@ii{#1}{msc}}
 \newcommand{\ifbscdoc}[1][\option{/novathesis/docdegree}]{\@ifdocclass@ii{#1}{bsc}}
+
+\newcommand{\ifdocfinal}{\ifoptionequal{/novathesis/docstatus}{final}}
+\newcommand{\ifdocprovisional}{\ifoptionequal{/novathesis/docstatus}{provisional}}
+\newcommand{\ifdocdraft}{\ifoptionequal{/novathesis/docstatus}{draft}}
+\newcommand{\ifdocworking}{\ifoptionequal{/novathesis/docstatus}{working}}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -169,11 +197,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \def\ntaddperson#1[#2]#3{%
   % See "\@ntaddperson@iv" below
-  \if\instring{,}{#2}%
-    \@ntaddperson@iv{#1}[#2]{#3}%
-  \else%
-    \@ntaddperson@iv{#1}[,#2]{#3}%
-  \fi%
+  \IfSubStr{#2}{,}%
+    {\@ntaddperson@iv{#1}[#2]{#3}}%
+    {\@ntaddperson@iv{#1}[,#2]{#3}}%
 }
 
 \def\@ntaddperson@iv#1[#2,#3]#4{%
@@ -327,14 +353,21 @@
 
 \newcommand*{\ntcoverposthook}[1]{}
 
+\def\thecovernumber{}
+\newcommand{\casecovernumber}{%
+  \expandafter\if\thecovernumber1\relax\expandafter\@firstoftwo\else\expandafter\@secondoftwo\fi%
+}
+
 \newcommand*{\@nt@printthecover}[1]{%
   % #1 = cover number {1, 2}    (1 is the default)
+  \def\thecovernumber{#1}%
   \iftoggle{/novathesis/debugcover}%
     {%
-      \edef\@nt@tmpleft{\margin(\option{/novathesis/docdegree},left)}%
-      \edef\@nt@tmpright{\margin(\option{/novathesis/docdegree},right)}%
-      \edef\@nt@tmptop{\margin(\option{/novathesis/docdegree},top)}%
-      \edef\@nt@tmpbottom{\margin(\option{/novathesis/docdegree},bottom)}%
+      \color{blue}%
+      \edef\@nt@tmpleft{\themargin(\option{/novathesis/docdegree},left)}%
+      \edef\@nt@tmpright{\themargin(\option{/novathesis/docdegree},right)}%
+      \edef\@nt@tmptop{\themargin(\option{/novathesis/docdegree},top)}%
+      \edef\@nt@tmpbottom{\themargin(\option{/novathesis/docdegree},bottom)}%
       \fgrulerthickcm{}{}{1pt}
       % \setfgruler{numsep=-17pt}
       \fgruler[cm]{upperleft}{\@nt@tmpleft}{\@nt@tmptop}
@@ -342,8 +375,8 @@
       % \fgruler[cm]{upperleft}{\themargin(\option{/novathesis/docdegree},left)}{\themargin(\option{/novathesis/docdegree},top)}
       % \fgruler[cm]{lowerright}{\themargin(\option{/novathesis/docdegree},right)}{\themargin(\option{/novathesis/docdegree},bottom)}
     }%
-    {}
-   \thispagestyle{empty}
+    {}%
+  \thispagestyle{empty}%
   \setlength{\mpwidth}{\dimexpr%
     \paperwidth%
       -\themargin(\option{/novathesis/docdegree},left)%
@@ -385,9 +418,9 @@
   % #4 = the code
   % #5 = curernt cover number {1, 2, {1,2}}
   % \typeout{NT novathesis@printcoveritem [#1] [#2]}
-  \if\instring{#5}{#1}%
+  \IfSubStr{#1}{#5}{%
     \IfInteger{#3}{%IS INTEGER
-      \Repeat{#3}{\vfill}
+      \ntrepeat\to{#3}\do{\vfill}
     }{%IS NOT INTEGER
       \vspace*{#3}%
     }%
@@ -411,22 +444,21 @@
       \end{minipage}%
     }%
     \par%
-  \fi%
+  }{}%
 }
 
 \csdef{@thecover1backpage}{%
   \newpage%
   \thispagestyle{empty}%
   \null\vfill%
-  {\scriptsize%
-      \begin{Spacing}{1}%
-        \ifxeorlua{\setmainfont[Ligatures=TeX]{Helvetica}}{\fontfamily{phv}}%
-        \fontsize{6.3}{6.3}\selectfont% 
-        \noindent%
-        \hypersetup{allcolors=white}\textcolor{white}%
-                   {\theacknowledgmentsstr(\option{/novathesis/coverlang})}%
-      \end{Spacing}%
-  }%  
+  \begin{Spacing}{1}%
+    \scriptsize%
+    \ifxeorlua{\setmainfont[Ligatures=TeX]{Helvetica}}{\fontfamily{phv}}%
+    \fontsize{6.3}{6.3}\selectfont% 
+    \noindent%
+    \hypersetup{allcolors=white}\textcolor{white}%
+               {\theacknowledgmentsstr(\option{/novathesis/coverlang})}%
+  \end{Spacing}%
 }
 
 \newcommand{\ntprintbackcoverpage}{%
@@ -436,7 +468,7 @@
     ~%
     \clearpage%
     \thispagestyle{empty}%
-    \ntcoverbackground[\thethesiscover(\option{/novathesis/docdegree},back)]%
+    \ntcoverbackground(\@nameuse{thesiscover\option{/novathesis/docdegree},back})%
     ~% This space is important here so that the cover page is not empty anymore!
     \clearforchapter%
     \@nt@select@lang{\option{/novathesis/mainlang}}%
@@ -445,7 +477,7 @@
 
 % \newcommand{\ntcoverbackground}[1][\@nameuse{thesiscover\option{/novathesis/docdegree},front}]{%
 \newcommand{\ntcoverbackground}[1][\thethesiscover(\option{/novathesis/docdegree},front)]{%
-  \ifthenelse{\equal{#1}{}}{}{%
+  \IfEq{#1}{}{}{%ELSE
     \AddToShipoutPictureBG*{%
       \includegraphics[width=\paperwidth,height=\paperheight]{#1}%
     }%
@@ -496,8 +528,11 @@
 \assocarray{acknowledgmentsstr}
 
 \optionlistdo{/@nt/langsshort}{%
-  \committeetitlestrfont(#1):={}%
+  \adviserstrfont(#1):={}%
+  \coadviserstrfont(#1):={}%
   \committeememberstrfont(#1):={}%
+  \committeetitlestrfont(#1):={}%
+  \degreestrfont(#1):={}%
   \dissertationstrfont(#1):={}%
 }
 
@@ -581,7 +616,7 @@
   % \typeout{NT thecovertitle [#1]}
   \ifstrempty{#1}%
     {\thedoccovertitle(\option{/novathesis/coverlang})}%
-    {\thedoccovertitlecaps(\option{/novathesis/coverlang})}
+    {\thedoccovertitlecaps[\option{/novathesis/coverlang}]}
 }
 
 \newcommand{\thetitle}[1][\option{/novathesis/coverlang}]{%
@@ -593,6 +628,7 @@
 \assocarray{doctitle}
 
 \def\@thetitle{}
+
 \newcommand{\nttitle}[2][\option{/novathesis/coverlang}]{%
   % \typeout{NT nttitle [#1] [#2]}
     \doccovertitle(#1):={#2}%
@@ -636,6 +672,24 @@
 %   \fi
 % }
 
+%%%% Alternative hand-made implementation
+% \newcommand{\@nt@printoptionlist}[3]{%
+  % #1 = options list
+  % #2 = separator (e.g, ",")
+  % #3 = last separator (e.g., "and")
+%   \@nt@newcounter[1]{@ntprintoptionlist@cnt}
+%   \def\@nt@comma{}%
+%   \optionlistdo{#1}{%
+%     \StrCut{##1}{,}\@nt@name\@nt@rest%
+%     \@nt@comma\@nt@name%
+%     \stepcounter{@ntprintoptionlist@cnt}%
+%     \ifnum\value{\option{#1/@size}}=\value{@ntprintoptionlist@cnt}%
+%       \def\@nt@comma{#3}%
+%     \else%
+%       \def\@nt@comma{#2}%
+%     \fi%
+%   }%
+% }
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Print advisers
@@ -678,23 +732,26 @@
 
 \newcommand{\@nt@printadvisergroup}[1]{%
   % #1={adviser,coadviser}
-  \ifoptiondefined{/@nt/#1//name}{%
-    \@nt@reducegender{/@nt/#1//gender}{\mygender}%
-    \@nt@reducenumber{/@nt/#1//name}{\mynumber}%
-    \smallskip%
-    \csname the#1str\endcsname(\mynumber,\mygender,\option{/novathesis/coverlang}): & %
-    \begin{minipage}[t]{\linewidth}\raggedright%
-    \optionlistdo{/@nt/#1//name}{##1\\[1pt]}%
-    \end{minipage}\\%
-  }%
-  {\ClassWarning{novathesis}{option[/@nt/#1//name] undefined}}%
+    \ifoptiondefined{/@nt/#1//name}{%
+      \@nt@reducegender{/@nt/#1//gender}{\mygender}%
+      \@nt@reducenumber{/@nt/#1//name}{\mynumber}%
+      \smallskip%
+      \csuse{the#1strfont}(\option{/novathesis/coverlang})%
+      \csuse{the#1str}(\mynumber,\mygender,\option{/novathesis/coverlang}): & %
+      \begin{minipage}[t]{\linewidth}\raggedright%
+      \optionlistdo{/@nt/#1//name}{##1\\[1pt]}%
+      \end{minipage}\\%
+    }%
+    {\ClassWarning{novathesis}{option[/@nt/#1//name] undefined}}%
 }
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Print committee
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\ntprintcommittee}[1][0.75]{%
+\newcommand{\ntprintcommittee}[1][0.75]{\ifmaindoc{\@nt@printcommittee@i{#1}}{}}
+
+\newcommand{\@nt@printcommittee@i}[1]{%
   \iftoggle{/novathesis/printcommittee}{% TRUE
     \begin{minipage}{#1\textwidth}%
     % #1 = Percentage of \textwidth used by the committee list
@@ -725,7 +782,9 @@
   \ifoptiondefined{/@nt/committee/#1/name}{%
     \@nt@reducegender{/@nt/committee/#1/gender}{\mygender}%
     \@nt@reducenumber{/@nt/committee/#1/name}{\mynumber}%
-    \smallskip\thecommitteememberstr(#1,\mynumber,\mygender,\option{/novathesis/coverlang}): & %
+    \smallskip%
+    \thecommitteememberstrfont(\option{/novathesis/coverlang})%
+    \thecommitteememberstr(#1,\mynumber,\mygender,\option{/novathesis/coverlang}): & %
     \begin{minipage}[t]{\linewidth}\raggedright%
     \optionlistdo{/@nt/committee/#1/name}{##1\\[1pt]}%
     \end{minipage}\\%
@@ -764,7 +823,7 @@
 %% PAGE LAYOUT
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\AtBeginDocument{\ntsetlayout}
+\AtEndPreamble{\ntsetlayout}
 
 \newcommand{\ntsetlayout}{%
   \synctex=1% Use synctex
@@ -848,7 +907,7 @@
   % #1 = file class
   % #2 = KEY=value
   % \typeout{NT @ntprintnext@ii [#1] [#2]}%
-  \StrCut{#2}{=}\option@listmatch@key\option@listmatch@value%
+  \ntgetkeyval{#2}{\option@listmatch@key}{\option@listmatch@value}%
   % \typeout{NT @ntprintnext@ii TRYING TO LOAD \option@listmatch@value}%
   \InputIfFileExists{\option@listmatch@value}{}{}%
 }
@@ -875,7 +934,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\ntprintabstracts}{%
   \xdef\@nt@tmp{\theabstractorder(\option{/novathesis/mainlang})}%
-  \expandnext{\forcsvlist\@ntprintabstract}{\@nt@tmp}%
+  \expandnext{\forcsvlist{\@ntprintabstract}}{\@nt@tmp}%
 }
 
 \newcommand{\@ntprintabstract}[1]{%
@@ -987,7 +1046,7 @@
 
 \newcommand{\@loadglossaryfile}[1]{%
   % #1 = {glossary, acronyms, symbols}={filename}
-  \StrCut{#1}{=}\@nt@key\@nt@value
+  \ntgetkeyval{#1}{\@nt@key}{\@nt@value}
   % \typeout{NT @loadglossaryfile [\@nt@key][\@nt@value]}
   \IfFileExists{\@nt@value}%
     {\loadglsentries{\@nt@value}}%
