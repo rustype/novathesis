@@ -53,14 +53,14 @@
 %%------------------------------------------------------------
 %% THE MOST IMPORTANT/POPULAR OPTIONS
 %%------------------------------------------------------------
-% \ntsetup{docdegree=msc}       % The type od document
+\ntsetup{docdegree=mscplan}       % The type od document
 %                               %     [ phd, phdplan, phdprop, msc, mscplan, bsc ]
 
-% \ntsetup{school=nova/ims}    % The school id
+\ntsetup{school=nova/fct}    % The school id
 %                               %     [ nova/fct, nova/fcsh, nova/ims, nova/ensp,
 %                               %       ul/ist, ul/fc, ipl/isel, ips/ests, esep ]
 
-% \ntsetup{lang=pt}             % The main language for the document text
+\ntsetup{lang=en}             % The main language for the document text
 %                               %     [ en, pt, fr, it ]
 
 % \ntsetup{linkscolor=SteelBlue}% The color for the hyperlinks (URLs,
@@ -156,25 +156,28 @@
 %%  END OF TEMPLATE COSTUMIZATION
 %%============================================================
 
-
-
-
-
 %%============================================================
 %%  LOADING AND CONFIGURATION OF ADDITIONAL PACKAGES
 %%============================================================
-
 %%------------------------------------------------------------
 %% To enable customizble enumerates.  See the documentation.
 \usepackage{paralist}
 
 %%------------------------------------------------------------
 %% Leave TODOs and NOTEs duting text writing
-\usepackage[textsize=footnotesize]{todonotes}  % To register TODO notes in the text
+\usepackage[
+    textsize=footnotesize,
+    color=green!20
+]{todonotes}  % To register TODO notes in the text
 
 %%------------------------------------------------------------
 \usepackage[full]{textcomp}
 \usepackage{minted}
+\usepackage{minted}
+\setminted{
+    linenos,
+    frame=single
+}
 
 %%============================================================
 %%  DOCUMENT ATTRIBUTES
@@ -189,10 +192,10 @@
 % Degree costumization
 
 %%% For MSc in Computer Science @ FCT-NOVA
-% \ntmajorfield[pt]{Engenharia Informática}                                 %% For PhD comment here and uncomment above
-% \ntmajorfield[en]{Computer Science and Engineering}                       %% For PhD comment here and uncomment above
-% \ntdegreename[pt]{Mestrado Integrado em Engenharia Informática}           %% For PhD comment here and uncomment above
-% \ntdegreename[en]{Integrated Master in Computer Science and Engineering}  %% For PhD comment here and uncomment above
+\ntmajorfield[pt]{Engenharia Informática}                                 %% For PhD comment here and uncomment above
+\ntmajorfield[en]{Computer Science and Engineering}                       %% For PhD comment here and uncomment above
+\ntdegreename[pt]{Mestrado Integrado em Engenharia Informática}           %% For PhD comment here and uncomment above
+\ntdegreename[en]{Integrated Master in Computer Science and Engineering}  %% For PhD comment here and uncomment above
 
 %%% For PhD in Computer Science @ FCT-NOVA
 % \ntmajorfield[pt]{Informática}                             %% For MSc comment here and uncomment above
@@ -201,22 +204,22 @@
 % \ntdegreename[en]{PhD Program in Computer Science}         %% For MSc comment here and uncomment above
 
 %%% SEE ABOVE for MSc and PhD in Computer Science @ FCT-NOVA
-\ntmajorfield[pt]{\embrace{Área de Científica}}
-\ntmajorfield[en]{\embrace{Scientific Field of Study}}
-\ntdegreename[pt]{\embrace{Nome do Curso}}
-\ntdegreename[en]{\embrace{Degree's Name}}
+% \ntmajorfield[pt]{\embrace{Área de Científica}}
+% \ntmajorfield[en]{\embrace{Scientific Field of Study}}
+% \ntdegreename[pt]{\embrace{Nome do Curso}}
+% \ntdegreename[en]{\embrace{Degree's Name}}
 
 
 %%------------------------------------------------------------
 % Degree costumization
 % If the degree includes a specialization
-\ntspecialization[pt]{\embrace{Nome da Especialização}}
-\ntspecialization[en]{\embrace{Specialization's Name}}
+% \ntspecialization[pt]{\embrace{Nome da Especialização}}
+% \ntspecialization[en]{\embrace{Specialization's Name}}
 
 %%------------------------------------------------------------
 % Autor
 % use [f] for female and [m] for male
-\ntauthorname[m]{John Longname Doe}{John Doe}
+\ntauthorname[m]{José Miguel Gonçalves Duarte}{José Duarte}
 \ntauthordegree{Master of Science}
 
 %%------------------------------------------------------------
@@ -230,16 +233,16 @@
 % Advisers
 % use [f] for female and [m] for male
 % use "\\" if necessary to break the lines in the apprpriate place
-\ntaddperson{adviser}[f]{{Mary Doe Adviser Name, Full Professor, NOVA University of Lisbon}}
-\ntaddperson{adviser}[f]{{Mary Doe other Adviser Name, Full Professor, NOVA University of Lisbon}}
+\ntaddperson{adviser}[f]{{António Ravara, Full Professor, NOVA University of Lisbon}}
+% \ntaddperson{adviser}[f]{{Mary Doe other Adviser Name, Full Professor, NOVA University of Lisbon}}
 % \ntaddperson{adviser}[f]{{Mary Doe yet another Adviser Name, Full Professor, NOVA University of Lisbon}}
 
 %%------------------------------------------------------------
 % Co-Advisers
 % use [f] for female and [m] for male
 % use "\\" if necessary to break the lines in the apprpriate place
-\ntaddperson{coadviser}[f]{John Doe Co-Adviser Name, Associate Professor, NOVA University of Lisbon}
-\ntaddperson{coadviser}[f]{John Doe other Co-Adviser Name, Full Professor, NOVA University of Lisbon}
+% \ntaddperson{coadviser}[f]{John Doe Co-Adviser Name, Associate Professor, NOVA University of Lisbon}
+% \ntaddperson{coadviser}[f]{John Doe other Co-Adviser Name, Full Professor, NOVA University of Lisbon}
 
 %%------------------------------------------------------------
 % Committee
@@ -250,16 +253,16 @@
 %                [m] for remaining members
 %                [g] for guests
 % Chair of tntcommitteehe committee
-\ntaddperson{committee}[c,m]{Name of the committee chairperson, Full Professor, FCT-NOVA}
+% \ntaddperson{committee}[c,m]{Name of the committee chairperson, Full Professor, FCT-NOVA}
 % Main raporteurs
-\ntaddperson{committee}[r,m]{Name of a raporteur, Position, University}
-\ntaddperson{committee}[r,m]{Name of another raporteur, Position, University}
+% \ntaddperson{committee}[r,m]{Name of a raporteur, Position, University}
+% \ntaddperson{committee}[r,m]{Name of another raporteur, Position, University}
 % Advisers — FOR FCT-NOVA ADD ADVISERS AS "OTHER MEMBERS [m]"
 % \ntcommittee[a,f]{Name of an adviser, Position, University}
 % \ntcommittee[a,f]{Name of another adviser, Position, University}
 % Other members of the committee
-\ntaddperson{committee}[m,m]{Another member of the committee, Position, University}
-\ntaddperson{committee}[m,f]{Yet another member of the committee, Position, University}
+% \ntaddperson{committee}[m,m]{Another member of the committee, Position, University}
+% \ntaddperson{committee}[m,f]{Yet another member of the committee, Position, University}
 % Guest members
 % \ntcommittee[g,m]{Guest member of the committee, Position, University}
 % \ntcommittee[g,f]{Yet another guest member of the committee, Position, University}
@@ -409,7 +412,7 @@
 \ntprintacknowledgements% (*) Print the acknowledgments
 \ntprintquote           % (*) Print the quote
 \ntprintabstracts       % Print abstracts in multiple languges.
-                        % Changing the language will change the order of the abstracts
+% Changing the language will change the order of the abstracts
 \ntprintallindexes      % Print all the indexes defined above TOC, LOF, LOT, …)
 
 %%------------------------------------------------------------
