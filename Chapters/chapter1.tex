@@ -1,121 +1,186 @@
 %!TEX root = ../template.tex
 \chapter{Introduction}\label{cha:introduction}
 
-\section{Typestates}\label{sec:typestates}
+\section{Context}\label{sec:context}
 
-Typestates are a subset of behavioral types, the core concept behind them is the elevation of state to the type system.
-\todo{Add references to NLL, Hermes and Plaid} They were first introduced by [NLL/Hermes],
-recently typestates have been further studied by [Aldrich].
+% [11/01/2021]
+% TODO - Review if links should go in the bibliography
+% TODO - Review last paragraph and overall all "cohesiveness" of the text
 
-We now present a shallow review over their usefulness,
-possible approaches to typestates and challenges faced when adding typestates to a language.
+Users face bugs on a daily basis, whether in their instant messaging application or a game,
+bugs currently permeate our lives, they are mostly harmless as such applications are not critical,
+resulting in some unsent messages or texture glitches.
 
-% \subsection{What are Typestates?}\label{sec:typestates:what-are-typestates}
+However, in areas as systems programming, one of the most demanding domains in computer science,
+bugs and their respective consequences come at a high cost to both service providers and consumers.
+There are reports from several industries where bugs lead to huge monetary losses and even death.
 
-\subsection{Why are Typestates useful?}\label{sec:typestates:why-are-typestates-useful}
+In 2014, the Heartbleed\footnote{\url{https://heartbleed.com/}} bug, caused due to a missing bound check,
+compromised the security of any OpenSSL user, enabling the theft of critical information (e.g. cryptographic keys).
+In 2018, a bug in Coinbase (a popular cryptocurrency exchange)
+allowed for account balance manipulation\footnote{\url{https://hackerone.com/reports/300748}}.
+In 2019 and 2020, after several crashes\footnote{\url{https://www.theverge.com/2019/5/2/18518176/boeing-737-max-crash-problems-human-error-mcas-faa}},
+the Boeing 737 Max was grounded to fix existing problems, while grounded,
+more software-related issues were
+found\footnote{\url{https://www.theverge.com/2019/6/27/18761434/737-max-new-flaw-cancellation-extended-southwest-united-airlines-faa}}\textsuperscript{,}\footnote{\url{https://www.theverge.com/2020/2/6/21126364/boeing-737-max-software-glitch-flaw-problem}},
+delaying its re-certification.
+In 2020, as the number of COVID-19 grew,
+contact tracing apps were deployed as a mitigation strategy.
+The UK's National Health Service app failed to ask users to self-isolate due to a
+bug\footnote{\url{https://www.healthcareitnews.com/news/emea/nhs-covid-19-contact-tracing-app-fails-ask-users-self-isolate}}.
 
-Typestates allow the developer to provide more expressive APIs, as well as securer ones.
-Currently, in \emph{typestateless} programming,
-programmers are required to track object state in their heads, with the help of comments,
-the code itself and possibly the debugger, running the code and checking their assumptions by hand.
+The previous examples are not isolated incidents, the language and nature of the bugs is different for each case,
+to put it simply, there is no silver bullet and the next best alternative is to do our best to mitigate them by
+building tools and abstractions which allow developers to increase their code's safety.
 
-As a simple example, consider the Java application in \autoref{fig:java-mult} which simply takes two numbers and multiples them together.
-The application will throw an exception on line 6,
-since the programmer closed the \texttt{Scanner} in line 5.
-In this example, the error is simple to catch,
-the program is short and the \texttt{Scanner} can either be open or closed,
-however, real-world applications are not that simple.
+Languages like C/C++ have dominated the systems programming landscape for years and
+one of the main problems with both is the lack of memory management.
+Leaving such responsibility to the developer has proven to be \emph{a less than ideal}
+solution, with $70\%$ of bugs in projects like Chromium\footnote{\url{https://www.chromium.org/Home/chromium-security/memory-safety}}
+and Microsoft products\footnote{\url{https://git.io/JLdDc}} being due to memory management.
 
-\begin{figure}
-    \centering
-    \begin{minted}{java}
-public class Mult {
-    public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
-        int lhs = Integer.parseInt(s.nextLine());
-        s.close();
-        int rhs = Integer.parseInt(s.nextLine());
-        System.out.println(lhs * rhs);
-    }
-}
-    \end{minted}
-    \label{fig:java-mult}
-    \caption{The \texttt{Mult} program, which reads two integer and multiplies them together.}
-\end{figure}
+To address such problem, several tools and languages have been and continue to be developed,
+so far, Rust has been the only one to achieve \emph{mainstream} status.
+% Rust aims to provide memory safety without affecting performance or productivity,
+% to achieve such ambitious goal, Rust validates code with the borrow checker, which then enforces memory safety rules,
+% targeting the problem at its root.
 
-In the case of \emph{typestated} programming,
-the type system will provide the programmer with better tools to express state,
-furthermore, the compiler will then catch errors regarding state,
-such as the previous \emph{use-after-close}.
+\section{The Rust Language}\label{sec:rust-lang}
 
-\autoref{fig:java-mult-typestate} shows the \texttt{Mult} program written in a typestated fashion,
-notice that the \texttt{Scanner} type is now augmented with its state.
-% This extra information allows the compiler to
+Rust is a fairly recent systems programming language,
+its main focus revolves around memory safety,
+effectively removing classes of such bugs (e.g. \emph{use-after-free} and \emph{double-free}).
+Another one of Rust's focus, is on productivity,
+aiming to provide the safety mechanisms necessary to remove the previous class of bugs,
+while trying to provide a pleasant and productive development experience.
 
-\begin{figure}
-    \centering
-    \begin{minted}{java}
-public class Mult {
-    public static void main(String[] args) {
-        Scanner[Open] s = new Scanner(System.in);
-        int lhs = Integer.parseInt(s.nextLine());
-        Scanner[Closed] s = s.close();
-        int rhs = Integer.parseInt(s.nextLine());
-        System.out.println(lhs * rhs);
-    }
-}
-    \end{minted}
-    \label{fig:java-mult-typestate}
-    \caption{The \texttt{Mult} program, written in a typestated fashion.}
-\end{figure}
+To achieve its goals, Rust makes use of a borrow checker and an ownership system,
+in conjunction, they're responsible for guaranteeing correct memory usage.
+At its core, the borrow checker is a lightweight theorem prover,
+it tries to prove that the code does not break safety rules.
 
-\subsection{Approaches}
+Its rules can be distilled down to the following intuition,
+only one entity can hold a reference to mutable data at a time,
+several entities may hold references to immutable data.
+This also enables Rust to also provide mechanisms which help deal with concurrency,
+allowing for developers to write data-race free
+code\footnote{\url{https://blog.rust-lang.org/2015/04/10/Fearless-Concurrency.html}}.
 
-As previously discussed, simply put, typestates are the elevation of state to the type system.
-Currently, there are three main approaches to typestates,
-some can be retrofitted into existing languages.
+% \section{Typestates}\label{sec:typestates}
 
-\paragraph{State-Based Design}
-This is the most common approach, able to be used in any language,
-essentially, all responsibility is on the developer, which is required to track state at runtime by adding
-state checking barriers (e.g. \texttt{if CurrentState == DesiredState}).
-In such case, state modelling will be done using enumerations or the language equivalent.
+% Typestates are a subset of behavioral types, the core concept behind them is the elevation of state to the type system.
+% \todo{Add references to NLL, Hermes and Plaid} They were first introduced by [NLL/Hermes],
+% recently typestates have been further studied by [Aldrich].
 
-\paragraph{Typestate Checkers}
-Typestate checkers are external tools to the language,
-they may take the form of an independent tool or a compiler plugin.
-Their goal is to run as part of the compilation stage and enforce the desired state transitions in the code.
-The biggest problem with tools like these,
-is the added complexity of extra tools over the build process.
+% We now present a shallow review over their usefulness,
+% possible approaches to typestates and challenges faced when adding typestates to a language.
 
-\paragraph{Language-Based}
-The language-based approach is the most solid approach to the problem.
-At a conceptual level it is also the simplest approach,
-instead of adding features to existing languages just to enable typestate support,
-it prioritizes typestates and makes them a first-class language construct.
-This approach is the one taken by languages such as \todo{Add ref}[Plaid].
+% % \subsection{What are Typestates?}\label{sec:typestates:what-are-typestates}
+
+% \subsection{Why are Typestates useful?}\label{sec:typestates:why-are-typestates-useful}
+
+% Typestates allow the developer to provide more expressive APIs, as well as securer ones.
+% Currently, in \emph{typestateless} programming,
+% programmers are required to track object state in their heads, with the help of comments,
+% the code itself and possibly the debugger, running the code and checking their assumptions by hand.
+
+% As a simple example, consider the Java application in \autoref{fig:java-mult} which simply takes two numbers and multiples them together.
+% The application will throw an exception on line 6,
+% since the programmer closed the \texttt{Scanner} in line 5.
+% In this example, the error is simple to catch,
+% the program is short and the \texttt{Scanner} can either be open or closed,
+% however, real-world applications are not that simple.
+
+% \begin{figure}
+%     \centering
+%     \begin{minted}{java}
+% public class Mult {
+%     public static void main(String[] args) {
+%         Scanner s = new Scanner(System.in);
+%         int lhs = Integer.parseInt(s.nextLine());
+%         s.close();
+%         int rhs = Integer.parseInt(s.nextLine());
+%         System.out.println(lhs * rhs);
+%     }
+% }
+%     \end{minted}
+%     \label{fig:java-mult}
+%     \caption{The \texttt{Mult} program, which reads two integer and multiplies them together.}
+% \end{figure}
+
+% In the case of \emph{typestated} programming,
+% the type system will provide the programmer with better tools to express state,
+% furthermore, the compiler will then catch errors regarding state,
+% such as the previous \emph{use-after-close}.
+
+% \autoref{fig:java-mult-typestate} shows the \texttt{Mult} program written in a typestated fashion,
+% notice that the \texttt{Scanner} type is now augmented with its state.
+% % This extra information allows the compiler to
+
+% \begin{figure}
+%     \centering
+%     \begin{minted}{java}
+% public class Mult {
+%     public static void main(String[] args) {
+%         Scanner[Open] s = new Scanner(System.in);
+%         int lhs = Integer.parseInt(s.nextLine());
+%         Scanner[Closed] s = s.close();
+%         int rhs = Integer.parseInt(s.nextLine());
+%         System.out.println(lhs * rhs);
+%     }
+% }
+%     \end{minted}
+%     \label{fig:java-mult-typestate}
+%     \caption{The \texttt{Mult} program, written in a typestated fashion.}
+% \end{figure}
+
+% \subsection{Approaches}
+
+% As previously discussed, simply put, typestates are the elevation of state to the type system.
+% Currently, there are three main approaches to typestates,
+% some can be retrofitted into existing languages.
+
+% \paragraph{State-Based Design}
+% This is the most common approach, able to be used in any language,
+% essentially, all responsibility is on the developer, which is required to track state at runtime by adding
+% state checking barriers (e.g. \texttt{if CurrentState == DesiredState}).
+% In such case, state modelling will be done using enumerations or the language equivalent.
+
+% \paragraph{Typestate Checkers}
+% Typestate checkers are external tools to the language,
+% they may take the form of an independent tool or a compiler plugin.
+% Their goal is to run as part of the compilation stage and enforce the desired state transitions in the code.
+% The biggest problem with tools like these,
+% is the added complexity of extra tools over the build process.
+
+% \paragraph{Language-Based}
+% The language-based approach is the most solid approach to the problem.
+% At a conceptual level it is also the simplest approach,
+% instead of adding features to existing languages just to enable typestate support,
+% it prioritizes typestates and makes them a first-class language construct.
+% This approach is the one taken by languages such as \todo{Add ref}[Plaid].
 
 
-\subsection{Challenges}
+% \subsection{Challenges}
 
-Typestates are not without their challenges,
-attentive readers might notice that if objects are mutably aliased,
-typestate guarantees cannot hold since the object can be mutated,
-changing state while a client depends on the previous one.
+% Typestates are not without their challenges,
+% attentive readers might notice that if objects are mutably aliased,
+% typestate guarantees cannot hold since the object can be mutated,
+% changing state while a client depends on the previous one.
 
-\missingfigure{Picture which exemplifies the mutable alias problem.}
+% \missingfigure{Picture which exemplifies the mutable alias problem.}
 
-Solving this problem requires objects to be owned by a single client,
-this is due to the fact that even if an immutable alias exists,
-its type may be mutated by the original owner.
+% Solving this problem requires objects to be owned by a single client,
+% this is due to the fact that even if an immutable alias exists,
+% its type may be mutated by the original owner.
 
-\todo{Verify this with the advisor}Such solution requires the type system to be at least affine,
-being able to enforce a \emph{use at most once} policy over the language objects.
+% \todo{Verify this with the advisor}Such solution requires the type system to be at least affine,
+% being able to enforce a \emph{use at most once} policy over the language objects.
 
-% \section{State Machines}\label{sec:state-machines}
+% % \section{State Machines}\label{sec:state-machines}
 
-% \section{What is the relation between them?}\label{sec:ts-fsm-relation}
+% % \section{What is the relation between them?}\label{sec:ts-fsm-relation}
 
-\section{The Rust Language}\label{sec:rust}
+% \section{The Rust Language}\label{sec:rust}
 
-\subsection{Why Rust?}\label{sec:rust:why}
+% \subsection{Why Rust?}\label{sec:rust:why}
