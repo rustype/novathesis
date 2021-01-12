@@ -93,9 +93,12 @@ Being essential to our work, better tools enable developers to be more productiv
 The remaining question is “\emph{why do we not create better languages?}”.
 Even when considering languages to be cheap to develop,
 the amount of work between a \emph{working} language to be \emph{production ready} is not cheap.
+Furthermore, while adopting a new language for a hobby project is easy,
+the same does not apply for enterprise level projects,
+requiring several developers to know the ins and outs of the language.
 
-
-\paragraph{Static typed languages} The current trend is to move from dynamically typed languages,
+\paragraph{Static typed languages}
+The current trend is to move from dynamically typed languages,
 to statically typed ones, or at the very least, add typing support to existing dynamic languages.
 Typescript\footnote{\url{https://www.typescriptlang.org/}},
 Reason\footnote{\url{https://reasonml.github.io/}} and
@@ -105,6 +108,20 @@ Python and Ruby, two popular dynamic languages, have also pushed for type adopti
 with the addition of type hint support in recent
 releases\footnote{\url{https://docs.python.org/3/library/typing.html}}\textsuperscript{,}\footnote{\url{https://github.com/ruby/rbs}}.
 
+\paragraph{Where do typestates fit?}
+Typestates are a complex subject, able to be adopted at several levels,
+just like type hints, they can be partially used in some languages,
+through tools such as Mungo\autocite{Voinea2020},
+by contract-style assertions as in Ada2012, Eiffel or pre-0.4 Rust,
+or finally by leveraging the existing type system to write typestate enabled code as it is possible in
+Rust\footnote{\url{https://rustype.github.io/notes/notes/rust-typestate-series/rust-typestate-index}}.
+
+\paragraph{Why use typestates?}
+By leveraging the state to the typesystem, the compiler is able to aid the programmer during development,
+a given set of transitions will be impossible by default, since the types do not implement them. % TODO maybe add an example
+By reducing the need for developers to check for a certain set of conditions through the use of typestates,
+it becomes possible to reduce the number of runtime assertions and
+completely eliminate the need for illegal state exceptions since illegal transitions are checked at compile time.
 
 
 % We now present a shallow review over their usefulness,
