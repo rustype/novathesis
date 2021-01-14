@@ -15,19 +15,19 @@ However, in areas as systems programming, one of the most demanding domains in c
 bugs and their respective consequences come at a high cost to both service providers and consumers.
 There are reports from several industries where bugs lead to huge monetary losses and even death.
 
-In 2014, the Heartbleed\footnote{\url{https://heartbleed.com/}} bug, caused due to a missing bound check,
+In 2014, the Heartbleed~\autocite{Heartbleed} bug, caused due to a missing bound check,
 compromised the security of any OpenSSL user, enabling the theft of critical information (e.g. cryptographic keys).
 In 2018, a bug in Coinbase (a popular cryptocurrency exchange)
-allowed for account balance manipulation\footnote{\url{https://hackerone.com/reports/300748}}.
-In 2019 and 2020, after several crashes\footnote{\url{https://www.theverge.com/2019/5/2/18518176/boeing-737-max-crash-problems-human-error-mcas-faa}},
+allowed for account balance manipulation~\autocite{Vicompany2018}.
+In 2019 and 2020, after several crashes~\autocite{Campbell2019},
 the Boeing 737 Max was grounded to fix existing problems, while grounded,
 more software-related issues were
-found\footnote{\url{https://www.theverge.com/2019/6/27/18761434/737-max-new-flaw-cancellation-extended-southwest-united-airlines-faa}}\textsuperscript{,}\footnote{\url{https://www.theverge.com/2020/2/6/21126364/boeing-737-max-software-glitch-flaw-problem}},
+found~\autocite{Okane2019,Okane2020},
 delaying its re-certification.
 In 2020, as the number of COVID-19 grew,
 contact tracing apps were deployed as a mitigation strategy.
 The UK's National Health Service app failed to ask users to self-isolate due to a
-bug\footnote{\url{https://www.healthcareitnews.com/news/emea/nhs-covid-19-contact-tracing-app-fails-ask-users-self-isolate}}.
+bug~\autocite{Mageit2020}.
 
 The previous examples are not isolated incidents, the language and nature of the bugs is different for each case,
 to put it simply, there is no silver bullet and the next best alternative is to do our best to mitigate them by
@@ -36,8 +36,8 @@ building tools and abstractions which allow developers to increase their code's 
 Languages like C/C++ have dominated the systems programming landscape for years and
 one of the main problems with both is the lack of memory management.
 Leaving such responsibility to the developer has proven to be \emph{a less than ideal}
-solution, with $70\%$ of bugs in projects like Chromium\footnote{\url{https://www.chromium.org/Home/chromium-security/memory-safety}}
-and Microsoft products\footnote{\url{https://git.io/JLdDc}} being due to memory management.
+solution, with $70\%$ of bugs in projects like Chromium~\autocite{chromium}
+and Microsoft products~\autocite{Miller2019} being due to memory management.
 
 To address such problem, several tools and languages have been and continue to be developed,
 so far, Rust has been the only one to achieve \emph{mainstream} status.
@@ -64,18 +64,18 @@ only one entity can hold a reference to mutable data at a time,
 several entities may hold references to immutable data.
 This also enables Rust to also provide mechanisms which help deal with concurrency,
 allowing for developers to write data-race free
-code\footnote{\url{https://blog.rust-lang.org/2015/04/10/Fearless-Concurrency.html}}.
+code~\autocite{Turon2015}.
 
 \section{Typestates}\label{sec:typestates}
 
-Typestates were introduced in \autocite{Strom1983},
+Typestates were introduced in~\autocite{Strom1983},
 they are a subset of behavioral types and
 according to the same article, typestates are a
 \emph{mechanism in which the compiler guarantees that for all execution paths,
 the sequence of operations on each variable obeys a finite state grammar associated with that variable's type}.
 
-The first language to make use of typestates was NIL \autocite{Strom1983},
-afterwards languages like Hermes \autocite{Strom1990} and Plaid \autocite{Aldrich2009}
+The first language to make use of typestates was NIL~\autocite{Strom1983},
+afterwards languages like Hermes~\autocite{Strom1990} and Plaid~\autocite{Aldrich2009}
 extended the concept with new techniques.
 
 \subsection{The case for typestates}
@@ -100,21 +100,21 @@ requiring several developers to know the ins and outs of the language.
 \paragraph{Static typed languages}
 The current trend is to move from dynamically typed languages,
 to statically typed ones, or at the very least, add typing support to existing dynamic languages.
-Typescript\footnote{\url{https://www.typescriptlang.org/}},
-Reason\footnote{\url{https://reasonml.github.io/}} and
-PureScript\footnote{\url{https://www.purescript.org/}}
+Typescript~\autocite{typescript},
+Reason~\autocite{reason} and
+PureScript~\autocite{purescript}
 are all examples of languages built to bridge the gap between static type systems and JavaScript.
 Python and Ruby, two popular dynamic languages, have also pushed for type adoption
 with the addition of type hint support in recent
-releases\footnote{\url{https://docs.python.org/3/library/typing.html}}\textsuperscript{,}\footnote{\url{https://github.com/ruby/rbs}}.
+releases~\autocite{PythonTyping, RubyRBS}.
 
 \paragraph{Where do typestates fit?}
 Typestates are a complex subject, able to be adopted at several levels,
 just like type hints, they can be partially used in some languages,
-through tools such as Mungo\autocite{Voinea2020},
+through tools such as Mungo~\autocite{Voinea2020},
 by contract-style assertions as in Ada2012, Eiffel or pre-0.4 Rust,
 or finally by leveraging the existing type system to write typestate enabled code as it is possible in
-Rust\footnote{\url{https://rustype.github.io/notes/notes/rust-typestate-series/rust-typestate-index}}.
+Rust~\autocite{Duarte2020}.
 
 \paragraph{Why use typestates?}
 By leveraging the state to the typesystem, the compiler is able to aid the programmer during development,
