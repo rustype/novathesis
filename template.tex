@@ -57,10 +57,6 @@
 %% See “memoir” manual for more options.
 \documentclass[a4paper, 11pt]{novathesis}
 
-
-
-
-
 %%============================================================
 %%  BEGINING OF TEMPLATE COSTUMIZATION
 %%============================================================
@@ -317,7 +313,8 @@
 % BibTeX bibiography files and customization. May be used multiple
 % times with a single file nae each time.
 % syntax:  \ntaddfile{bib}{filename.bib}
-\ntaddfile{bib}{bibliography.bib}
+\ntaddfile{bib}{articles.bib}
+\ntaddfile{bib}{links.bib}
 % \DeclareLanguageMapping{portuguese}{portuguese-apa6}%
 % \DeclareLanguageMapping{english}{english-apa6}%
 % \DeclareLanguageMapping{french}{french-apa6}%
@@ -454,7 +451,7 @@
 \ntthesismainmatter     % The main text — Arabic page numbering
 %%------------------------------------------------------------
 \ntprintchapters        % Print document chapters
-\ntprintbib             % Print the bibliography
+\ntprintbib[References] % Print the bibliography
 \ntprintappendixes      % Print appendixes, if any!
 \ntprintannexes         % Print appendixes, if any!
 \ntprintbackcoverpage   % The back cover
