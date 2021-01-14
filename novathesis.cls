@@ -26,15 +26,15 @@
 %%      - joaomlourenco
 %%
 %% CONTRIBUTORS @github:
-%%      - bcandeias, flaviomartins, tmonteiro2344, jsaramago, 
+%%      - bcandeias, flaviomartins, tmonteiro2344, jsaramago,
 %%        microlina, riclas, pedrovieira
 %%
 %% DONATIONS:
 %%     If you think this template really helped you while writing your thesis,
 %%     think about making a small donation. Just access the website
 %%     https://paypal.me/novathesis
-%%     and click in the “Donation” link.  We will keep a list thanking to all 
-%%     the identified donors that identify themselves in the “Add special 
+%%     and click in the “Donation” link.  We will keep a list thanking to all
+%%     the identified donors that identify themselves in the “Add special
 %%     instructions to the seller:” box.
 %%
 %% CITATION:
@@ -101,7 +101,7 @@
 \newcommand{\@AtEndClass}[2][app]{\csuse{#1to}\nt@AtEnfClass@hook{#2}}
 
 
- 
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% GENERAL PURPOSE MACROS
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -155,7 +155,7 @@
 
 \newcommand{\@ifdocclass@ii}[2]{%
   % #1 = document tyoe
-  % %2 = possible document calss 
+  % %2 = possible document calss
   \ifoptioncontains{/@nt/document/class/#2}{#1}
 }
 
@@ -387,7 +387,7 @@
       -\themargin(\option{/novathesis/docdegree},bottom)}%
   \sbox{\@nt@coverbox}{%
     \begin{minipage}[t][\mpheight][t]{\mpwidth}%
-      \@nt@printcovergroup{#1}%      
+      \@nt@printcovergroup{#1}%
     \end{minipage}%
   }%
   \AddToShipoutPictureFG*{%
@@ -454,7 +454,7 @@
   \begin{Spacing}{1}%
     \scriptsize%
     \ifxeorlua{\setmainfont[Ligatures=TeX]{Helvetica}}{\fontfamily{phv}}%
-    \fontsize{6.3}{6.3}\selectfont% 
+    \fontsize{6.3}{6.3}\selectfont%
     \noindent%
     \hypersetup{allcolors=white}\textcolor{white}%
                {\theacknowledgmentsstr(\option{/novathesis/coverlang})}%
@@ -610,7 +610,7 @@
   \renewcommand{\theauthordegree}{#1}%
 }
 
- 
+
 %% Work identification
 \newcommand{\thecovertitle}[1][]{%
   % \typeout{NT thecovertitle [#1]}
@@ -918,7 +918,7 @@
     \@ntloadfisrt@ii{#1}%
 	}{% ELSE
     % It is a plan or proposal type document
-	}%  
+	}%
 }
 
 \newcommand{\ntprintdedicatory}{\@nt@printifmaindoc@i{dedicatory}\clearforchapter}
@@ -1070,10 +1070,11 @@
   \addbibresource{#2}%
 }
 
-\newcommand{\ntprintbib}{%
-  \printbibliography%
+\newcommand{\ntprintbib}[1][]{%
+  \ifthenelse{\isempty{#1}}%
+  {\printbibliography}%
+  {\printbibliography[title=#1]}%
 }
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1161,7 +1162,7 @@
     {\hypersetup{pdfkeywords = {\BODY}}}
   \par\vskip\baselineskip\noindent{\bfseries\@nt@keywordsstr: }%
   \BODY%
-  \\[2ex]\rule{\textwidth}{0.2mm}  
+  \\[2ex]\rule{\textwidth}{0.2mm}
 }
 
 
