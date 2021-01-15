@@ -18,8 +18,23 @@ and distinguish between thirteen input kinds (e.g. \texttt{ident}, \texttt{stmt}
 
 % TODO insert an example
 % TODO add more text
+% TODO add references to the reference
 
 \subsection{Proc-macros}
+
+Rust also has another macro mechanism, \emph{procedural macros},
+these can take three forms: \emph{function-like macros}, \emph{derive macros} and \emph{attribute macros}.
+In a nutshell, procedural macros allow users to run code at compile time, consuming and producing Rust syntax.
+
+In contrast with \texttt{macro\_rules!}, procedural macros are \emph{unhygienic},
+meaning their output can interfere with the surrounding code and vice-versa,
+like C macros, they act as if the output code was simply written in the original source file.
+This leads developers to be required to add a series of extra measures when outputting code
+such as using absolute paths and function names which are unlikely of clashing with user code.
+
+% TODO add Koriaxet guide here
+
+% TODO add subsubsections/paragraphs on all three kinds of macros
 
 \section{The DSL}
 \subsection{Objectives}
