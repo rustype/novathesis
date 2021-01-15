@@ -126,6 +126,55 @@ completely eliminate the need for illegal state exceptions since illegal transit
 
 \subsection{Typestates in action}
 
+As a simple example, consider the Java application in \autoref{fig:java-mult} which simply takes two numbers and multiples them together.
+The application will throw an exception on line 6,
+since the programmer closed the \texttt{Scanner} in line 5.
+In this example, the error is simple to catch,
+the program is short and the \texttt{Scanner} can either be open or closed,
+however, real-world applications are not that simple.
+
+\begin{listing}
+    \centering
+    \begin{minted}{java}
+public class Mult {
+    public static void main(String[] args) {
+        Scanner s = new Scanner(System.in);
+        s.nextLine();
+        s.close();
+        s.nextLine();
+    }
+}
+    \end{minted}
+    \caption{The \texttt{Mult} program, which reads two integer and multiplies them together.}
+    \label{fig:java-mult}
+\end{listing}
+
+In the case of \emph{typestated} programming,
+the type system will provide the programmer with better tools to express state,
+furthermore, the compiler will then catch errors regarding state,
+such as the previous \emph{use-after-close}.
+
+\autoref{fig:java-mult-typestate} shows the \texttt{Mult} program written in a typestated fashion,
+notice that the \texttt{Scanner} type is now augmented with its state and
+the compiler is able to catch the misuse of the \texttt{Scanner[Closed]} interface.
+
+
+\begin{listing}
+    \centering
+    \begin{minted}{java}
+public class Mult {
+    public static void main(String[] args) {
+        Scanner[Open] s = new Scanner(System.in);
+        s.nextLine();
+        Scanner[Closed] s = s.close();
+        s.nextLine(); // compiler error
+    }
+}
+    \end{minted}
+    \caption{The \texttt{Mult} program, written in a typestated fashion.}
+    \label{fig:java-mult-typestate}
+\end{listing}
+
 \subsubsection*{Plaid}
 
 Plaid is a typestate-oriented programming language \autocite{Aldrich2009},
@@ -180,55 +229,7 @@ users inserted fewer bugs and were able to start developing safer code faster.
 % programmers are required to track object state in their heads, with the help of comments,
 % the code itself and possibly the debugger, running the code and checking their assumptions by hand.
 
-% As a simple example, consider the Java application in \autoref{fig:java-mult} which simply takes two numbers and multiples them together.
-% The application will throw an exception on line 6,
-% since the programmer closed the \texttt{Scanner} in line 5.
-% In this example, the error is simple to catch,
-% the program is short and the \texttt{Scanner} can either be open or closed,
-% however, real-world applications are not that simple.
 
-% \begin{figure}
-%     \centering
-%     \begin{minted}{java}
-% public class Mult {
-%     public static void main(String[] args) {
-%         Scanner s = new Scanner(System.in);
-%         int lhs = Integer.parseInt(s.nextLine());
-%         s.close();
-%         int rhs = Integer.parseInt(s.nextLine());
-%         System.out.println(lhs * rhs);
-%     }
-% }
-%     \end{minted}
-%     \label{fig:java-mult}
-%     \caption{The \texttt{Mult} program, which reads two integer and multiplies them together.}
-% \end{figure}
-
-% In the case of \emph{typestated} programming,
-% the type system will provide the programmer with better tools to express state,
-% furthermore, the compiler will then catch errors regarding state,
-% such as the previous \emph{use-after-close}.
-
-% \autoref{fig:java-mult-typestate} shows the \texttt{Mult} program written in a typestated fashion,
-% notice that the \texttt{Scanner} type is now augmented with its state.
-% % This extra information allows the compiler to
-
-% \begin{figure}
-%     \centering
-%     \begin{minted}{java}
-% public class Mult {
-%     public static void main(String[] args) {
-%         Scanner[Open] s = new Scanner(System.in);
-%         int lhs = Integer.parseInt(s.nextLine());
-%         Scanner[Closed] s = s.close();
-%         int rhs = Integer.parseInt(s.nextLine());
-%         System.out.println(lhs * rhs);
-%     }
-% }
-%     \end{minted}
-%     \label{fig:java-mult-typestate}
-%     \caption{The \texttt{Mult} program, written in a typestated fashion.}
-% \end{figure}
 
 % \subsection{Approaches}
 
