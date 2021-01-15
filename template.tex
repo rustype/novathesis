@@ -55,7 +55,8 @@
 %%------------------------------------------------------------
 %% All class options will be passed to “memoir”.
 %% See “memoir” manual for more options.
-\documentclass[a4paper, 11pt]{novathesis}
+\documentclass[a4paper, 11pt, full]{novathesis}
+\usepackage[full]{textcomp}
 
 %%============================================================
 %%  BEGINING OF TEMPLATE COSTUMIZATION
@@ -106,7 +107,7 @@
 %%------------------------------------------------------------
 %% THE LESS IMPORTANT/POPULAR OPTIONS
 %%------------------------------------------------------------
-% \ntsetup{fontstyle=erewhon}   % The font set to be used in the docuemnt
+\ntsetup{fontstyle=kpfonts}   % The font set to be used in the docuemnt
 %                               %     [ kpfonts bookman libertine, scholax
 %                               %       calibri(*), kieranhealy(*) ]
 %                               %     (*) only for xelatex/lualatex)
@@ -173,12 +174,19 @@
 
 
 
-
+% LaTeX hacker
+\AtBeginDocument{%
+  \addto\extrasenglish{%
+    \renewcommand{\sectionautorefname}{Section}%
+    \renewcommand{\subsectionautorefname}{Section}%
+    \renewcommand{\subsubsectionautorefname}{Section}%
+  }
+}
 
 %%============================================================
 %%  LOADING AND CONFIGURATION OF ADDITIONAL PACKAGES
 %%============================================================
-
+\usepackage{inconsolata}
 %%------------------------------------------------------------
 %% To enable customizble enumerates.  See the documentation.
 \usepackage{paralist}
@@ -191,7 +199,7 @@
 ]{todonotes}
 
 %%------------------------------------------------------------
-\usepackage[full]{textcomp}
+
 \usepackage{minted}
 \setminted{
     linenos,
@@ -355,8 +363,8 @@
 % syntax: \ntaddfile{chapter}{filename}
 \ntaddfile{chapter}{chapter1}
 \ntaddfile{chapter}{chapter2}
-% \ntaddfile{chapter}{chapter3}
-% \ntaddfile{chapter}{chapter4}
+\ntaddfile{chapter}{chapter3}
+\ntaddfile{chapter}{chapter4}
 % \ntaddfile{chapter}{chapter-last}
 
 %%------------------------------------------------------------
@@ -429,7 +437,6 @@
 %%  DON'T TOUCH BELOW THIS POINT!
 %%  IF YOU DO… YOU DESERVE WHATEVER HAPPENS AFTERWARDS!
 %%============================================================
-
 %%------------------------------------------------------------
 \begin{document}        % Begining of document
 
