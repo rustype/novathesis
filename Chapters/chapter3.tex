@@ -1,9 +1,24 @@
 %!TEX root = ../template.tex
 \chapter{Designing a DSL in Rust (10/02/2021)}\label{cha:rust-dsl}
-Chapter about Rust macro system
 
 \section{Rust Macros}
+
+Just like its predecessors, C \& C++, Rust offers macros as part of the language.
+In essence, Rust macros are just like other languages macro's, they generate code before compilation.
+However, Rust provides two kinds of macros, \emph{macros by example} (also known as \texttt{macro\_rules!}),
+and procedural macros (also known as \texttt{proc-macros}).
+
 \subsection{Macros by example}
+
+The name \emph{macros by example} comes from the way they are written, by pattern matching,
+the user writes a pattern that matches a bit on input and the macro will replace it with the defined output.
+The most notable differences between C and Rust macros are their hygiene and “\emph{type}”,
+C macros are unhygienic and do not distinguish inputs, whereas Rust macros are hygienic
+and distinguish between thirteen input kinds (e.g. \texttt{ident}, \texttt{stmt}, \texttt{literal}, etc).
+
+% TODO insert an example
+% TODO add more text
+
 \subsection{Proc-macros}
 
 \section{The DSL}
