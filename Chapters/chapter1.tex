@@ -1,5 +1,5 @@
 %!TEX root = ../template.tex
-\chapter{Introduction}\label{cha:introduction}
+\chapter{Introduction (20/01/2021)}\label{cha:introduction}
 
 \section{Context}\label{sec:context}
 
@@ -123,6 +123,50 @@ By reducing the need for developers to check for a certain set of conditions thr
 it becomes possible to reduce the number of runtime assertions and
 completely eliminate the need for illegal state exceptions since illegal transitions are checked at compile time.
 
+
+\subsection{Typestates in action}
+
+\subsubsection*{Plaid}
+
+Plaid is a typestate-oriented programming language \autocite{Aldrich2009},
+instead of \keyword{class}es users write \keyword{typestate}s.
+Each typestate represents a class in its possible states,
+its methods and behavior change during runtime as state changes,
+in contrast with other languages (e.g. Java) where public methods and fields are always available.
+
+This property allows the typesystem to enforce certain properties at compile time,
+such as certain methods will never be called in a given state since it is not possible by design
+(i.e. they are not available in the interface).
+
+
+\subsubsection*{Rust}
+
+As discussed in \autoref{sec:rust-lang}, Rust takes its commitment with safety with seriousness,
+providing the necessary tools to users.
+While Rust does not support first-class typestates,
+it is possible to emulate them using its type system (as demonstrated in \autocite{Duarte2020}),
+this is discussed in further sections of this document.
+
+\paragraph{Embedded Rust.} As any systems programming language, Rust penetrated the embedded development space.
+Its features are most adequate and the community has put great effort into making Rust a viable language for embedded systems.
+
+\emph{The Embedded Rust Book}'s~\autocite{Rust2021} Chapter 4 is dedicated to static guarantees,
+introducing programmers to the concepts of typestate in Section 4.1, and their usage in embedded systems.
+
+As for real-world usage, typestates are abundantly used in the area (not just discussed in the book),
+under \autocite{Stm32} one finds several repositories (suffixed with \texttt{-hal})
+which implement typestates
+(e.g. \href{https://github.com/stm32-rs/stm32h7xx-hal/blob/master/src/gpio.rs#L51-L128}{\texttt{gpio.rs}}
+from \texttt{stm32h7xx-hal}).
+
+\subsubsection*{Obsidian}
+
+Obsidian is a language targeting Hyperledger Fabric \autocite{Fabric2021},
+among other features it makes use of typestates to reduce the amount of bugs when dealing with assets.
+
+In \autocite{Coblenz2020} an empirical study tested and proved Obsidian claims,
+when compared with Solidity, the leading blockchain language,
+users inserted fewer bugs and were able to start developing safer code faster.
 
 % We now present a shallow review over their usefulness,
 % possible approaches to typestates and challenges faced when adding typestates to a language.
