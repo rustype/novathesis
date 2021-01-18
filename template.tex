@@ -172,18 +172,6 @@
 %%  END OF TEMPLATE COSTUMIZATION
 %%============================================================
 
-
-
-% LaTeX hacker
-\AtBeginDocument{%
-  \addto\extrasenglish{%
-    \renewcommand{\sectionautorefname}{Section}%
-    \renewcommand{\subsectionautorefname}{Section}%
-    \renewcommand{\subsubsectionautorefname}{Section}%
-  }
-  \newcommand{\listingautorefname}{Listing}%
-}
-
 %%============================================================
 %%  LOADING AND CONFIGURATION OF ADDITIONAL PACKAGES
 %%============================================================
@@ -204,16 +192,45 @@
 \usepackage{minted}
 \setminted{
     linenos,
-    frame=single
+    frame=single,
+    style=lovelace
 }
 
+\usepackage[
+  margin=0.5cm,
+  % skip=0cm,
+  position=bottom
+]{caption}
+\usepackage[
+  skip=0cm,
+  position=bottom
+]{subcaption}
+
+
 %%============================================================
-%%  USER COMMANDS
+%%  USER SETTINGS
 %%============================================================
 
 \newcommand{\keyword}[1]{%
 \textcolor{violet}{\texttt{#1}}%
 }
+
+% LaTeX hackery
+\AtBeginDocument{%
+  \addto\extrasenglish{%
+    \renewcommand{\sectionautorefname}{Section}%
+    \renewcommand{\subsectionautorefname}{Section}%
+    \renewcommand{\subsubsectionautorefname}{Section}%
+  }
+  \newcommand{\listingautorefname}{Listing}%
+  % \renewnewcommand{\sublistingautorefname}{Listing}%
+}
+
+% enables sublists
+\DeclareCaptionSubType{listing}
+\newcommand\theHlisting{\arabic{listing}}
+
+\renewcommand{\theFancyVerbLine}{\small{\ttfamily{\arabic{FancyVerbLine}}}}
 
 %%------------------------------------------------------------
 %%============================================================
