@@ -189,7 +189,7 @@
 
 %%------------------------------------------------------------
 
-\usepackage{minted}
+\usepackage[newfloat]{minted}
 \setminted{
     linenos,
     frame=single,
@@ -219,10 +219,10 @@
     \renewcommand{\subsectionautorefname}{Section}%
     \renewcommand{\subsubsectionautorefname}{Section}%
   }
-  \newcommand{\listingautorefname}{Listing}%
+  % \newcommand{\listingautorefname}{Listing}%
 }
 
-% \captionsetup[listing]{skip=-5mm}
+\captionsetup[listing]{skip=0mm}
 
 \renewcommand{\theFancyVerbLine}{\small{\ttfamily{\arabic{FancyVerbLine}}}}
 

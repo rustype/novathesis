@@ -190,7 +190,7 @@ let four = using_a!(a / 10);
     \caption{
         Definition of the \texttt{using\_a} macro and usage.
         The macro simply declares a variable \texttt{a},
-        set to $42$ and then writes an expression which was passed in.
+        set to 42 and then writes an expression which was passed in.
     }
     \label{lst:rust-macro-hygiene:declaration}
 \end{listing}
@@ -220,7 +220,7 @@ error[E0425]: cannot find value `a` in this scope
     \end{minted}
     \caption{
         The expansion in \autoref{lst:rust-macro-hygiene:expansion} will result in an error during compile time
-        since the \texttt{a}s in line 2 and 3 are considered different.
+        since the \texttt{a}s in line 2 and 3 are considered to belong to different contexts.
     }
     \label{lst:rust-macro-hygiene:error}
 \end{listing}

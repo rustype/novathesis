@@ -33,6 +33,8 @@ The previous examples are not isolated incidents, the language and nature of the
 to put it simply, there is no silver bullet and the next best alternative is to do our best to mitigate them by
 building tools and abstractions which allow developers to increase their code's safety.
 
+\section{Problem}
+
 Languages like C/C++ have dominated the systems programming landscape for years and
 one of the main problems with both is the lack of memory management.
 Leaving such responsibility to the developer has proven to be \emph{a less than ideal}
@@ -41,16 +43,58 @@ and Microsoft products~\autocite{Miller2019} being due to memory management.
 
 To address such problem, several tools and languages have been and continue to be developed,
 so far, Rust has been the only one to achieve \emph{mainstream} status.
-% Rust aims to provide memory safety without affecting performance or productivity,
-% to achieve such ambitious goal, Rust validates code with the borrow checker, which then enforces memory safety rules,
-% targeting the problem at its root.
+Rust aims to provide memory safety without affecting performance or productivity,
+to achieve such ambitious goal, Rust validates code with the borrow checker, which then enforces memory safety rules,
+targeting the problem at its root.
 
+Addressing memory safety is not enough though,
+languages which side-step the problem of having manual management
+through the use of a garbage collector (e.g. Java and Go) still suffer from other kinds bugs.
+As discussed in the end of \autoref{sec:context}, we can only mitigate their occurrence, and
+so we are required to reach out to new mechanisms.
 
-\section{Problem}
+Typestates are an approach which aims to tame stateful computations,
+to do so typestates lift the concept of state to the type level,
+this enables the compiler to reason about state and provides the developer
+with information of the expected computation state at runtime.
+
+Consider Java's \keyword{Scanner}, its API allows the developer to write code like \autoref{lst:java-scanner},
+which will compile without issuing any errors or warnings (even with the \texttt{-Xlint:all} flag).
+The example in \autoref{lst:java-scanner} will crash during runtime, since it is not possible to read from a closed source,
+the thrown exception is \texttt{IllegalStateException}.
+Informing the user that the attempted operation is illegal for the current object state,
+ideally we want such illegal states to be detected at compile time.
+
+\begin{listing}
+    \begin{minted}{java}
+Scanner s = new Scanner(System.in);         // open the stream
+s.nextLine();                               // read
+s.close();                                  // close the stream
+s.nextLine();                               // IllegalStateException
+    \end{minted}
+    \caption{Java's \keyword{Scanner} misuse example.}
+    \label{lst:java-scanner}
+\end{listing}
+
+If we consider a typestated language, as in \autoref{lst:java-scanner-typestate},
+the code allows us to trace the state of the object, but even better,
+the compiler is now able to tell us there is an error during compilation.
+
+\begin{listing}
+    \begin{minted}{java}
+Scanner[Open] s = new Scanner(System.in);   // open the stream
+s.nextLine();                               // read
+Scanner[Closed] s = s.close();              // close the stream
+s.nextLine();                               // compile-time error
+    \end{minted}
+    \caption{
+        Typestated \keyword{Scanner} example.
+        Notice how the compiler is able to detect the error.
+    }
+    \label{lst:java-scanner-typestate}
+\end{listing}
 
 \section{State of the Art}
-
-\section{Objectives and expected contributions}
 
 % We now present a shallow review over their usefulness,
 % possible approaches to typestates and challenges faced when adding typestates to a language.
@@ -116,3 +160,6 @@ so far, Rust has been the only one to achieve \emph{mainstream} status.
 % \section{The Rust Language}\label{sec:rust}
 
 % \subsection{Why Rust?}\label{sec:rust:why}
+
+
+\section{Objectives and expected contributions}
