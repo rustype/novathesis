@@ -1,6 +1,65 @@
 %!TEX root = ../template.tex
 \chapter{Designing a DSL in Rust (10/02/2021)}\label{cha:rust-dsl}
 
+
+\section{Language Preprocessors}\label{sec:lang-preprocessors}
+
+Language preprocessors are a mechanism which runs during compilation,
+some languages will apply the preprocessor during different compilation stages while others will only apply the preprocessor in a single stage.
+
+% \subsection{C and C++}\label{sec:lang-preprocessors:c-cpp}
+
+\subsection{OCaml}\label{sec:lang-preprocessors:ocaml}
+
+The OCaml ecosystem currently uses OCaml \gls{PPX},
+however, previous to version 4.02, OCaml made use of \gls{p4}.
+
+We briefly review both \gls{p4} and \gls{PPX}.
+
+\subsubsection*{Camlp4}\label{sec:lang-preprocessors:ocaml:p4}
+
+Camlp4 is a parsing library which provides extensible grammars,
+its main goal is to allow users to extend OCaml syntax,
+Camlp4 is also able to redefine the core syntax,
+OCaml even introduced a revised syntax~\autocite{Rauglaudre2003} to enable Camlp4.
+
+The library has been deprecated due to being confusing to users and tools alike.
+Users were required to learn the revised OCaml syntax which complicates the development process.
+These criticisms are found throughout documents which discuss Camlp4~\autocite{Whitequark2014}.
+
+In a nutshell, the Camlp4 library would allow developers to develop an extension syntax,
+when the compiler would pass the source code as text to the preprocessor,
+which, in turn would generate valid OCaml source code.
+
+\subsubsection*{PPX}\label{sec:lang-preprocessors:ocaml:ppx}
+
+\subsection{Java}\label{sec:lang-preprocessors:java}
+
+As other languages, Java is also capable of source code processing during compile time,
+we review two existing approaches, annotations and the ExtendJ compiler.
+
+\subsubsection*{Java Annotation Processor}\label{sec:lang-preprocessors:java:annotation}
+
+Java annotations were first introduced in Java 5 \autocite{JSR269},
+they are a form of metadata which can be added to Java source code.
+Annotations can be used in conjunction with several components of the Java language,
+such as classes, interfaces, documentation and others.
+These are processed by build-time tools or by run-time libraries to achieve new semantic effects,
+a popular example of such library would be the compile-time dependency injection framework Dagger 2~\autocite{Dagger2}.
+
+% \paragraph{Annotation Syntax} is simple: every annotation starts with an \texttt{@} and is followed by an identifier, optionally, the annotation can take parameters.
+
+% \begin{minted}{java}
+% @Annotation
+% \end{minted}
+
+\subsubsection*{ExtendJ \& JastAdd}\label{sec:lang-preprocessors:java:extendj}
+
+\subsection{Kotlin}\label{sec:lang-preprocessors:kotlin}
+
+\subsubsection*{Kotlin Compiler Plugins}\label{sec:lang-preprocessors:kotlin:annotation}
+
+
 \section{Rust Macros}
 
 Just like its predecessors, C \& C++, Rust offers macros as part of the language.
@@ -13,12 +72,12 @@ In Rust, macros refer to a family of features (see \autoref{fig:rust-macro-famil
     \begin{tikzpicture}
         \tikzset{
             member/.style={
-                rectangle,
-                rounded corners,
-                draw=black,
-                thick,
-                minimum width=3cm,
-            },
+                    rectangle,
+                    rounded corners,
+                    draw=black,
+                    thick,
+                    minimum width=3cm,
+                },
             connection/.style={->, thick},
         }
         % \draw (0, -2) grid (6, 2);
@@ -42,33 +101,35 @@ In Rust, macros refer to a family of features (see \autoref{fig:rust-macro-famil
 
 Declarative macros are also known as \emph{macros-by-example}, they can be declared with \texttt{macro\_rules!}
 and are called with function syntax (see \autoref{lst:rust-macro-rules}).
-% These macros work by pattern matching, supporting several kinds of \emph{metavariables},
-% they also support matching repeating patterns and
-% TODO stolen from https://doc.rust-lang.org/reference/macros-by-example.html
-Each macro by example has a name, and one or more rules. Each rule has two parts:
-a matcher, describing the syntax that it matches, and a transcriber,
-describing the syntax that will replace a successfully matched invocation.
-Both the matcher and the transcriber must be surrounded by delimiters.
-Macros can expand to expressions, statements, items (including traits, impls, and foreign items), types, or patterns.
+% From :
+
+\begin{displayquote}[{\autocite[Section 3.1]{RustRef2021}}]
+    Each macro by example has a name, and one or more rules.
+    Each rule has two parts: a matcher, describing the syntax that it matches, and a transcriber,
+    describing the syntax that will replace a successfully matched invocation.
+    Both the matcher and the transcriber must be surrounded by delimiters.
+    Macros can expand to expressions, statements, items
+    (including traits, impls, and foreign items), types, or patterns.
+\end{displayquote}
 
 \paragraph{Transcribing.}%
-% TODO stolen from https://doc.rust-lang.org/reference/macros-by-example.html#transcribing
-When a macro is invoked, the macro expander looks up macro invocations by name, and tries each macro rule in turn.
-It transcribes the first successful match; if this results in an error,
-then future matches are not tried. When matching, no lookahead is performed;
-if the compiler cannot unambiguously determine how to parse the macro invocation one token at a time, then it is an error.
+
+When a macro is invoked, the macro expander loops through the declared rules, transcribing the first successful match.
+It transcribes the first successful match; if this results in an error, then future matches are not tried.
+An error is thrown if the compiler cannot determine unambiguously how to parse the macro
+\autocite[Section 3.1 - Transcribing]{RustRef2021}.
 
 \paragraph{Metavariables.}%
+
 To specify a macro a user first declares a pattern which will match a given form of syntax.
 \emph{Metavariables} are used to achieve such goal,
 they are declared with “\texttt{\$ \keyword{name} : \keyword{fragment-specifier}}” in the macro matcher and
-can match thirteen different kinds of syntax fragments.
-% TODO add link to https://doc.rust-lang.org/reference/macros-by-example.html#metavariables
+can match thirteen different kinds of syntax fragments \autocite[Section 3.1 - Metavariables]{RustRef2021}.
 In \autoref{lst:rust-macro-rules}, the metavariable \texttt{n} is of kind \texttt{literal}
-which will match literals such as \texttt{'c'}, \texttt{"String"} and \texttt{1337}.
-% TODO add link to https://doc.rust-lang.org/reference/expressions/literal-expr.html
+which will match literals such as \texttt{'E'}, \texttt{"Elite"} and \texttt{420} \autocite[Section 8.2.1]{RustRef2021}.
 
 \paragraph{Repetitions.}%
+
 Repetitions are indicated by placing the tokens to be repeated inside \texttt{\$(...)},
 followed by a repetition operator, optionally with a separator token between.
 This is valid both for the matcher and the transcriber.
@@ -80,11 +141,26 @@ Repetition operators are the same as the regular expression ones:
 \end{compactitem}
 
 \paragraph{Hygiene.}%
-% TODO add link https://veykril.github.io/tlborm/macros/minutiae/hygiene.html
-Declarative macros are \emph{partially} hygienic, meaning they are hygienic when it comes to most identifiers,
-but not when it comes to generic type parameters or lifetimes.
-Hygiene works by attaching an invisible "syntax context" value to all identifiers. When two identifiers are compared,
-both the identifiers' textural names and syntax contexts must be identical for the two to be considered equal.
+
+Hygiene works by attaching an invisible \emph{syntactic context} to all identifiers \autocite{Wirth2021}.
+Identifiers are compared over two pieces of information,
+the \emph{textual value} and their \emph{syntactic context}.
+The textual value consists of the variables name (e.g. \texttt{four}),
+the syntactic context is a kind of scope added to variables declared inside the macro,
+this is done to keep the macro declared variables from interfering with existing ones.
+
+When expanding a declarative macro\footnotemark variables declared inside the macro belong in a different scope,
+consider the macro declared in \autoref{lst:rust-macro-hygiene:declaration} and
+the respective expansion in \autoref{lst:rust-macro-hygiene:expansion}.
+As illustrated by \autoref{lst:rust-macro-hygiene:expansion},
+line 2 is considered to be in a different context than the rest of the expanded code.
+This will rightfully raise an error (shown in \autoref{lst:rust-macro-hygiene:error}),
+since line's 3 \texttt{a} will not exist due to not being in the same syntactic context as line 2.
+
+\footnotetext{
+    The same mechanism does not apply to procedural macros, which are not hygienic.
+    Their output will interfere with existing code if precautions are not taken \autocite{Koxiaet2020}.
+}
 
 \begin{listing}
     \centering
@@ -105,10 +181,9 @@ fn main() {
     \label{lst:rust-macro-rules}
 \end{listing}
 
+
 \begin{listing}
-    \centering
-    \begin{minipage}[t]{0.45\textwidth}
-        \begin{minted}{Rust}
+    \begin{minted}{Rust}
 macro_rules! using_a {
     ($e:expr) => {
         {
@@ -119,31 +194,43 @@ macro_rules! using_a {
 }
 let four = using_a!(a / 10);
     \end{minted}
-        \subcaption{\texttt{using\_a} macro definition.}
-        \label{lst:rust-macro-hygiene:a}
-    \end{minipage}
-    \hspace{2mm}
-    \begin{minipage}[t]{0.45\textwidth}
-            \begin{minted}[
-                numbers=right,
-                highlightlines=2,
-                highlightcolor=blue!10
-            ]{Rust}
+    \caption{
+        Definition of the \texttt{using\_a} macro and usage.
+        The macro simply declares a variable \texttt{a},
+        set to $42$ and then writes an expression which was passed in.
+    }
+    \label{lst:rust-macro-hygiene:declaration}
+\end{listing}
+
+\begin{listing}
+    \begin{minted}[highlightlines=2,highlightcolor=blue!10]{Rust}
 let four = {
     let a = 42;
     a / 10
 };
-        \end{minted}
-        \subcaption{\texttt{using\_a} macro expansion.
-        Declarations with a blue background will be placed in a different \emph{scope} than the others.}
-        \label{lst:rust-macro-hygiene:b}
-    \end{minipage}%
-    \caption{Hygienic macro expansion.}
-    \label{lst:rust-macro-hygiene}
+    \end{minted}
+    \caption{
+        \autoref{lst:rust-macro-hygiene:declaration} line 9's macro expansion.
+        Declarations with a blue background will be placed in a different \emph{scope} than the others,
+        thus the \texttt{a} for lines 2 and 3 will not be considered the same.
+    }
+    \label{lst:rust-macro-hygiene:expansion}
 \end{listing}
 
-% TODO add more text
-% TODO add references to the reference
+\begin{listing}
+    \begin{minted}{text}
+error[E0425]: cannot find value `a` in this scope
+  --> src/main.rs:13:21
+   |
+13 | let four = using_a!(a / 10);
+   |                     ^ not found in this scope
+    \end{minted}
+    \caption{
+        The expansion in \autoref{lst:rust-macro-hygiene:expansion} will result in an error during compile time
+        since the \texttt{a}s in line 2 and 3 are considered different.
+    }
+    \label{lst:rust-macro-hygiene:error}
+\end{listing}
 
 \subsection{Procedural Macros}
 
@@ -172,14 +259,6 @@ Derive macros are also able to add additional attributes to the scope of the cur
 Such attributes are called \emph{derive macro helper attributes} and they are \emph{inert},
 that is, they are not processed by themselves but rather serve as annotations (see \autoref{lst:rust-derive-error}).
 
-\subsubsection*{Hygiene}
-In contrast with \texttt{macro\_rules!}, procedural macros are \emph{unhygienic},
-meaning their output can interfere with the surrounding code and vice-versa,
-like C macros, they act as if the output code was simply written in the original source file.
-This leads developers to be required to add a series of extra measures when outputting code
-such as using absolute paths and function names which are unlikely of clashing with user code.
-% TODO add Koriaxet guide here
-
 \begin{listing}
     \centering
     \begin{minted}{Rust}
@@ -191,9 +270,9 @@ struct Coordinate {
 }
     \end{minted}
     \caption{
-        Example usage of \keyword{\#[derive(...)]},
-        in this case deriving \keyword{Debug} enables the structure to be printed with
-        “\mintinline{Rust}{println!("{:?}", coord)}”.
+    Example usage of \keyword{\#[derive(...)]},
+    in this case deriving \keyword{Debug} enables the structure to be printed with
+    “\mintinline{Rust}{println!("{:?}", coord)}”.
     }
     \label{lst:rust-derive-debug}
 \end{listing}

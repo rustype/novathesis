@@ -1,66 +1,6 @@
 %!TEX root = ../template.tex
 \chapter{Related Work (03/02/2021)}\label{cha:related-work}
 
-\section{Language Preprocessors}\label{sec:lang-preprocessors}
-
-Language preprocessors are a mechanism which runs during compilation,
-some languages will apply the preprocessor during different compilation stages while others will only apply the preprocessor in a single stage.
-
-% \subsection{C and C++}\label{sec:lang-preprocessors:c-cpp}
-
-\subsection{OCaml}\label{sec:lang-preprocessors:ocaml}
-
-The OCaml ecosystem currently uses OCaml \gls{PPX},
-however, previous to version 4.02, OCaml made use of \gls{p4}.
-
-We briefly review both \gls{p4} and \gls{PPX}.
-
-\subsubsection*{Camlp4}\label{sec:lang-preprocessors:ocaml:p4}
-
-Camlp4 is a parsing library which provides extensible grammars,
-its main goal is to allow users to extend OCaml syntax,
-Camlp4 is also able to redefine the core syntax,
-OCaml even introduced a revised syntax~\autocite{Rauglaudre2003} to enable Camlp4.
-
-The library has been deprecated due to being confusing to users and tools alike.
-Users were required to learn the revised OCaml syntax which complicates the development process.
-These criticisms are found throughout documents which discuss Camlp4~\autocite{Whitequark2014}.
-
-In a nutshell, the Camlp4 library would allow developers to develop an extension syntax,
-when the compiler would pass the source code as text to the preprocessor,
-which, in turn would generate valid OCaml source code.
-
-\subsubsection*{PPX}\label{sec:lang-preprocessors:ocaml:ppx}
-
-\subsection{Java}\label{sec:lang-preprocessors:java}
-
-As other languages, Java is also capable of source code processing during compile time,
-we review two existing approaches, annotations and the ExtendJ compiler.
-
-\subsubsection*{Java Annotation Processor}\label{sec:lang-preprocessors:java:annotation}
-
-Java annotations were first introduced in Java 5 \autocite{JSR269},
-they are a form of metadata which can be added to Java source code.
-Annotations can be used in conjunction with several components of the Java language,
-such as classes, interfaces, documentation and others.
-These are processed by build-time tools or by run-time libraries to achieve new semantic effects,
-a popular example of such library would be the compile-time dependency injection framework Dagger 2~\autocite{Dagger2}.
-
-% \paragraph{Annotation Syntax} is simple: every annotation starts with an \texttt{@} and is followed by an identifier, optionally, the annotation can take parameters.
-
-% \begin{minted}{java}
-% @Annotation
-% \end{minted}
-
-\subsubsection*{ExtendJ \& JastAdd}\label{sec:lang-preprocessors:java:extendj}
-
-\subsection{Kotlin}\label{sec:lang-preprocessors:kotlin}
-
-\subsubsection*{Kotlin Compiler Plugins}\label{sec:lang-preprocessors:kotlin:annotation}
-
-\subsection{Rust}\label{sec:lang-preprocessors:rust}
-
-
 \section{Typestate-oriented approaches}
 \subsection{Plaid}
 \subsection{Obsidian}

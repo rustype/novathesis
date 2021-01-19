@@ -198,13 +198,10 @@
 
 \usepackage[
   margin=0.5cm,
-  % skip=0cm,
   position=bottom
 ]{caption}
-\usepackage[
-  skip=0cm,
-  position=bottom
-]{subcaption}
+
+\usepackage{csquotes}
 
 
 %%============================================================
@@ -223,14 +220,14 @@
     \renewcommand{\subsubsectionautorefname}{Section}%
   }
   \newcommand{\listingautorefname}{Listing}%
-  % \renewnewcommand{\sublistingautorefname}{Listing}%
 }
 
-% enables sublists
-\DeclareCaptionSubType{listing}
-\newcommand\theHlisting{\arabic{listing}}
+% \captionsetup[listing]{skip=-5mm}
 
 \renewcommand{\theFancyVerbLine}{\small{\ttfamily{\arabic{FancyVerbLine}}}}
+
+% Make the citation end with " - <citation>"
+\renewcommand*{\mkcitation}[1]{\ —\ #1}
 
 %%------------------------------------------------------------
 %%============================================================
