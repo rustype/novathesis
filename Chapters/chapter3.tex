@@ -1,9 +1,7 @@
 %!TEX root = ../template.tex
-\chapter{Designing a DSL in Rust (10/02/2021)}\label{cha:rust-dsl}
-
+\chapter{Related Work (10/02/2021)}\label{cha:rust-dsl}
 
 \section{Language Preprocessors}\label{sec:lang-preprocessors}
-
 Language preprocessors are a mechanism which runs during compilation,
 some languages will apply the preprocessor during different compilation stages while others will only apply the preprocessor in a single stage.
 
@@ -60,10 +58,10 @@ a popular example of such library would be the compile-time dependency injection
 \subsubsection*{Kotlin Compiler Plugins}\label{sec:lang-preprocessors:kotlin:annotation}
 
 
-\section{Rust Macros}
+\section{Rust Macros}\label{sec:rust-macros}
 
 Just like its predecessors, C \& C++, Rust offers macros as part of the language.
-In essence, Rust macros are just like other languages macro's, they generate code before compilation.
+In essence, Rust macros are just like other languages macro's, running during compile-time to generate code.
 In Rust, macros refer to a family of features (see \autoref{fig:rust-macro-family}),
 \emph{declarative} macros and \emph{procedural} macros.
 
@@ -99,9 +97,8 @@ In Rust, macros refer to a family of features (see \autoref{fig:rust-macro-famil
 
 \subsection{Declarative Macros}
 
-Declarative macros are also known as \emph{macros-by-example}, they can be declared with \texttt{macro\_rules!}
+Declarative macros (also known as \emph{macros-by-example}) can be declared with \texttt{macro\_rules!}
 and are called with function syntax (see \autoref{lst:rust-macro-rules}).
-% From :
 
 \begin{displayquote}[{\autocite[Section 3.1]{RustRef2021}}]
     Each macro by example has a name, and one or more rules.
@@ -112,15 +109,13 @@ and are called with function syntax (see \autoref{lst:rust-macro-rules}).
     (including traits, impls, and foreign items), types, or patterns.
 \end{displayquote}
 
-\paragraph{Transcribing.}%
-
+\paragraph{Transcribing.}
 When a macro is invoked, the macro expander loops through the declared rules, transcribing the first successful match.
 It transcribes the first successful match; if this results in an error, then future matches are not tried.
 An error is thrown if the compiler cannot determine unambiguously how to parse the macro
 \autocite[Section 3.1 - Transcribing]{RustRef2021}.
 
-\paragraph{Metavariables.}%
-
+\paragraph{Metavariables.}
 To specify a macro a user first declares a pattern which will match a given form of syntax.
 \emph{Metavariables} are used to achieve such goal,
 they are declared with “\texttt{\$ \keyword{name} : \keyword{fragment-specifier}}” in the macro matcher and
@@ -128,8 +123,7 @@ can match thirteen different kinds of syntax fragments \autocite[Section 3.1 - M
 In \autoref{lst:rust-macro-rules}, the metavariable \texttt{n} is of kind \texttt{literal}
 which will match literals such as \texttt{'E'}, \texttt{"Elite"} and \texttt{420} \autocite[Section 8.2.1]{RustRef2021}.
 
-\paragraph{Repetitions.}%
-
+\paragraph{Repetitions.}
 Repetitions are indicated by placing the tokens to be repeated inside \texttt{\$(...)},
 followed by a repetition operator, optionally with a separator token between.
 This is valid both for the matcher and the transcriber.
@@ -140,8 +134,7 @@ Repetition operators are the same as the regular expression ones:
     \item \texttt{?} — indicates zero or one repetition.
 \end{compactitem}
 
-\paragraph{Hygiene.}%
-
+\paragraph{Hygiene.}
 Hygiene works by attaching an invisible \emph{syntactic context} to all identifiers \autocite{Wirth2021}.
 Identifiers are compared over two pieces of information,
 the \emph{textual value} and their \emph{syntactic context}.
@@ -222,7 +215,7 @@ let four = {
 error[E0425]: cannot find value `a` in this scope
   --> src/main.rs:13:21
    |
-13 | let four = using_a!(a / 10);
+ 9 | let four = using_a!(a / 10);
    |                     ^ not found in this scope
     \end{minted}
     \caption{
@@ -233,28 +226,58 @@ error[E0425]: cannot find value `a` in this scope
 \end{listing}
 
 \subsection{Procedural Macros}
-
 Rust also has another macro mechanism, \emph{procedural macros},
 these can take three forms: \emph{function-like macros}, \emph{derive macros} and \emph{attribute macros}.
 In a nutshell, procedural macros allow users to run code at compile time, consuming and producing Rust syntax.
 
+\subsubsection*{Function-like Macros}
+Function-like macros and declarative macros are similar regarding invocation, being indistinguishable from each other,
+and output, completely replacing the original call.
+However, the similarities stop there as their implementation methods are completely different.
 
-\subsubsection*{Function-like}
+\paragraph{Definition.}
+Function-like macros are defined by a public function with the \texttt{proc\_macro} attribute and
+a signature of type \texttt{(TokenStream) -> TokenStream}.
+Everything contained inside the call delimeters of the macro invocation is input to the function,
+as previously referred, the output will completely replace the macro call.
 
-\subsubsection*{Derive}
+\paragraph{Domain Specific Languages.}
+While the macros discussed next also provide their contribution for domain specific languages in Rust,
+function-like macros provide the necessary tools to write an embedded DSL.
+The Rust ecosystem developers have developed HTML DSLs \autocite{Wong2021, Stokke2021}
+(see the example in \autoref{lst:rust-html-dsl}) and
+the possibility to run Python inside Rust\autocite{Fusion2021}.
+
+\begin{listing}
+    \begin{minted}{Rust}
+html! {
+    h1 { "Hello, world!" }
+    p.intro {
+        "This is an example of the "
+        a href="https://github.com/lambda-fairy/maud" { "Maud" }
+        " template language."
+    }
+}
+    \end{minted}
+    \caption{HTML DSL embedded in Rust. Example taken from \autocite{Wong2021}.}
+    \label{lst:rust-html-dsl}
+\end{listing}
+
+\subsubsection*{Derive Macros}\label{sec:rust-macros:proc:derive}
 Derive macros likely are the most common kind of procedural macro in Rust,
 they are usually used to \emph{derive} a \keyword{trait} implementation from a \keyword{struct} (see \autoref{lst:rust-derive-debug}).
 They define new inputs for the \texttt{derive} attribute,
 and can also create new items given the token stream of a \keyword{struct}, \keyword{enum} or \keyword{union}.
 
-\paragraph{Definition.}%
-Derive macros are defined as public functions with the \texttt{proc\_macro\_derive} attribute
+\paragraph{Definition.}
+Just like function-like macros,
+derive macros are defined as a public function with the \texttt{proc\_macro\_derive} attribute
 and a signature of \texttt{(TokenStream) -> TokenStream}.
 The input is a token stream of the item with the \texttt{derive} attribute,
 the output is a set of items that are appended to the module or block where the input token stream is in.
 In \autoref{lst:rust-derive-debug} the \keyword{Debug} implementation will be appended to the end of the structure.
 
-\paragraph{Helper Attributes.}%
+\paragraph{Helper Attributes.}
 Derive macros are also able to add additional attributes to the scope of the current item.
 Such attributes are called \emph{derive macro helper attributes} and they are \emph{inert},
 that is, they are not processed by themselves but rather serve as annotations (see \autoref{lst:rust-derive-error}).
@@ -293,10 +316,68 @@ enum CoordinateError {
     \label{lst:rust-derive-error}
 \end{listing}
 
-\subsubsection*{Attribute}
+\subsubsection*{Attribute Macros}
+Attribute macros define new outer attributes,
+in contrast to the attributes discussed in \autoref{sec:rust-macros:proc:derive},
+attribute macros are processed as independent units and not as an annotation.
+They can be attached to items (see \autocite[Section 6]{RustRef2021}),
+including items in \keyword{extern} blocks, inherent and trait implementations, and trait definitions.
 
-\section{The DSL}
-\subsection{Objectives}
-What the DSL should achieve
-\subsection{Architecture}
-How it achieves it
+\paragraph{Definition.}
+Like its counterparts, attribute macros are also declared by a public function with the \texttt{proc\_macro\_attribute},
+however, their function signature takes two parameters instead of one, being \texttt{(TokenStream, TokenStream) -> TokenStream}.
+
+The first parameter is the token tree following the attribute name, for example, in \autoref{lst:rust-rocket-attr}
+it would contain the token tree of \texttt{("/hello/<name>/<age>")},
+in the case the attribute is written as a bare attribute name (e.g. \texttt{\#[attribute]}),
+the token tree is empty.
+
+The second parameter is the token tree of the item the macro is attached to,
+the function output will \emph{replace} such item with the return item or items.
+
+% TODO maybe add another example of attribute macros, e.g. the sorted attribute
+
+\begin{listing}
+    \centering
+    \begin{minted}{Rust}
+#[get("/hello/<name>/<age>")]
+fn hello(name: String, age: u8) -> String {
+    format!("Hello, {} year old named {}!", age, name)
+}
+    \end{minted}
+    \caption{
+        Attribute macros are commonly used in web frameworks to provide an easy way to declare an endpoint.
+        In this example (taken from \autocite{Rocket2021}) the user declares that \texttt{GET} requests to \texttt{hello/}
+        have two path parameters (\texttt{name} and \texttt{age}) and should be handled by the \texttt{hello} function.
+    }
+    \label{lst:rust-rocket-attr}
+\end{listing}
+
+\begin{table}
+    \centering
+    \begin{tabular}{l|l|l|l}
+        Macro Type    & Input Processing & Output Processing & Invocation                 \\
+        \hline
+        Declarative   & Pattern Matching & Replace           & \texttt{macro!}            \\
+        Function-like & User programmed  & Replace           & \texttt{macro!}            \\
+        Derive        & User programmed  & Append            & \texttt{\#{[}derive(...)]} \\
+        Attribute     & User programmed  & Replace           & \texttt{\#{[}attribute]}
+    \end{tabular}
+    \caption{Rust macros properties summary.}
+    \label{tab:rust-macros}
+\end{table}
+
+\subsection{Summary}
+In summary, Rust enables metaprogramming through macros, the same can be divided into two categories,
+declarative macros, with work through pattern matching, and procedural macros.
+Procedural macros can be further subdivided into three categories,
+being \emph{function-like}, \emph{derive} and \emph{attribute} macros.
+Their characteristics are summarized in \autoref{tab:rust-macros}.
+
+\section{Approaches to Behavioral Types}
+
+\subsection{Papers do NOW (Ancona)}
+
+\subsection{Mungo}
+
+\subsection{Session Types in Rust}
