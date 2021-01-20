@@ -37,7 +37,7 @@ code~\autocite{Turon2015}.
 \subsection{Session Types}
 
 
-\section{Typestates}\label{sec:typestates}
+\subsection{Typestates}\label{sec:typestates}
 
 Typestates were introduced in~\autocite{Strom1983},
 they are a subset of behavioral types and
@@ -49,7 +49,7 @@ The first language to make use of typestates was NIL~\autocite{Strom1983},
 afterwards languages like Hermes~\autocite{Strom1990} and Plaid~\autocite{Aldrich2009}
 extended the concept with new techniques.
 
-\subsection{The case for typestates}
+\subsubsection*{The case for typestates}
 
 As discussed in \autoref{sec:context}, bugs in systems programming are costly,
 thus, bugs must be minimized.
@@ -57,7 +57,7 @@ Several tools, such as static analyzers, fuzzers, testing frameworks and others,
 aid in this purpose, if we have all these external tools,
 why should we not try and leverage the programming language itself?
 
-\paragraph{Moving towards better languages}
+\paragraph{Moving towards better languages.}
 Programming languages allow the programmer to express a set of actions to be taken by the computer,
 they are tools which enable us to achieve a goal.
 Being essential to our work, better tools enable developers to be more productive and achieve higher quality work.
@@ -68,7 +68,7 @@ Furthermore, while adopting a new language for a hobby project is easy,
 the same does not apply for enterprise level projects,
 requiring several developers to know the ins and outs of the language.
 
-\paragraph{Static typed languages}
+\paragraph{Static typed languages.}
 The current trend is to move from dynamically typed languages,
 to statically typed ones, or at the very least, add typing support to existing dynamic languages.
 Typescript~\autocite{typescript},
@@ -95,7 +95,7 @@ it becomes possible to reduce the number of runtime assertions and
 completely eliminate the need for illegal state exceptions since illegal transitions are checked at compile time.
 
 
-\subsection{Typestates in action}
+\subsubsection{Typestates in action}
 
 As a simple example, consider the Java application in \autoref{fig:java-mult} which simply takes two numbers and multiples them together.
 The application will throw an exception on line 6,

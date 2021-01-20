@@ -123,8 +123,7 @@ can match thirteen different kinds of syntax fragments \autocite[Section 3.1 - M
 In \autoref{lst:rust-macro-rules}, the metavariable \texttt{n} is of kind \texttt{literal}
 which will match literals such as \texttt{'E'}, \texttt{"Elite"} and \texttt{420} \autocite[Section 8.2.1]{RustRef2021}.
 
-\paragraph{Repetitions.}
-Repetitions are indicated by placing the tokens to be repeated inside \texttt{\$(...)},
+\paragraph{Repetitions} are indicated by placing the tokens to be repeated inside \texttt{\$(...)},
 followed by a repetition operator, optionally with a separator token between.
 This is valid both for the matcher and the transcriber.
 Repetition operators are the same as the regular expression ones:
@@ -134,8 +133,7 @@ Repetition operators are the same as the regular expression ones:
     \item \texttt{?} — indicates zero or one repetition.
 \end{compactitem}
 
-\paragraph{Hygiene.}
-Hygiene works by attaching an invisible \emph{syntactic context} to all identifiers \autocite{Wirth2021}.
+\paragraph{Hygiene} works by attaching an invisible \emph{syntactic context} to all identifiers \autocite{Wirth2021}.
 Identifiers are compared over two pieces of information,
 the \emph{textual value} and their \emph{syntactic context}.
 The textual value consists of the variables name (e.g. \texttt{four}),

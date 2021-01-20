@@ -193,7 +193,8 @@
 \setminted{
     linenos,
     frame=single,
-    style=lovelace
+    style=lovelace,
+    fontsize=\small
 }
 
 \usepackage[
@@ -202,7 +203,7 @@
 ]{caption}
 
 \usepackage{csquotes}
-
+\usepackage{titlesec}
 
 %%============================================================
 %%  USER SETTINGS
@@ -228,7 +229,8 @@
 
 % Make the citation end with " - <citation>"
 \renewcommand*{\mkcitation}[1]{\ —\ #1}
-
+\renewcommand{\mkbegdispquote}[2]{\itshape}
+\titlespacing\paragraph{0pt}{*}{*}
 %%------------------------------------------------------------
 %%============================================================
 %%  DOCUMENT ATTRIBUTES
