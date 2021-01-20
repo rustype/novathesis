@@ -1,13 +1,34 @@
 %!TEX root = ../template.tex
-\chapter{Background (03/02/2021)}\label{cha:related-work}
+\chapter{Background (03/02/2021)}\label{cha:background}
 
-\section{Systems Programming Languages}
+\section{Systems Programming Languages}\label{sec:systems-programming}
 
 \subsection{C \& C++}
 
 \subsection{Ada}
 
+Ada was developed in a standardization effort for USA's Department of Defense,
+unifying projects spanning over 450 programming languages \autocite{Ada2021}.
+Its main focus was the development of embedded application,
+currently the Ada language is mostly used in the critical domain due to its strong emphasis on safety,
+some Ada success stories are the Metro Victoria Line and the Paris Metro Line \autocite{SIGAda2021}.
+Ada is also used in several other domains, such as aviation, space vehicles, financial systems and more \autocite{Feldman2014}.
+
 \subsection{Go}
+
+The Go programming language (or \texttt{golang}) is a Google project,
+according to its tale, it was designed by the authors while they waited for their C++ code to compile.
+Go tried to address several of the criticisms to C, namely memory management,
+which it solved by using a garbage collector.
+While it has made a name for itself in the network and distributed systems sector,
+being the main language behind projects like Docker \autocite{Docker2021} and Kubernetes \autocite{Kubernetes2021},
+its position as a systems programming language can be discussed.
+
+Since its binaries carry a runtime and make use of garbage collection, its performance may not be enough in some cases.
+This was the case for Discord, the popular internet voice server company,
+as demand increased, Go was not able to meet the expected performance requirements and the company replaced it with Rust \autocite{Howarth2020}.
+Regardless of discussion, Go has proven to be a viable alternative to its counterparts,
+compromising extreme performance in name of safety and simplicity.
 
 \section{The Rust Language}\label{sec:rust-lang}
 
@@ -32,18 +53,18 @@ code~\autocite{Turon2015}.
 
 \subsection{What makes Rust different?}
 
-\section{Behavioral Types}
+\section{Behavioral Types}\label{sec:behavioral-types}
 
 \subsection{Session Types}
 
 
 \subsection{Typestates}\label{sec:typestates}
 
-Typestates were introduced in~\autocite{Strom1983},
-they are a subset of behavioral types and
-according to the same article, typestates are a
-\emph{mechanism in which the compiler guarantees that for all execution paths,
-the sequence of operations on each variable obeys a finite state grammar associated with that variable's type}.
+\begin{displayquote}[{Typestates as described by \autocite{Strom1983}}]
+    ... traditional strong type checking was enhanced with \textbf{typestate checking}
+    a new mechanism in which the compiler guarantees that for all execution paths,
+    the sequence of operations on each variable obeys a finite state grammar associated with that variable's type.
+\end{displayquote}
 
 The first language to make use of typestates was NIL~\autocite{Strom1983},
 afterwards languages like Hermes~\autocite{Strom1990} and Plaid~\autocite{Aldrich2009}
@@ -95,7 +116,7 @@ it becomes possible to reduce the number of runtime assertions and
 completely eliminate the need for illegal state exceptions since illegal transitions are checked at compile time.
 
 
-\subsubsection{Typestates in action}
+\subsubsection*{Typestates in action}
 
 As a simple example, consider the Java application in \autoref{fig:java-mult} which simply takes two numbers and multiples them together.
 The application will throw an exception on line 6,
@@ -146,9 +167,7 @@ public class Mult {
     \label{fig:java-mult-typestate}
 \end{listing}
 
-\subsubsection*{Plaid}
-
-Plaid is a typestate-oriented programming language \autocite{Aldrich2009},
+\paragraph{Plaid} is a typestate-oriented programming language \autocite{Aldrich2009},
 instead of \keyword{class}es users write \keyword{typestate}s.
 Each typestate represents a class in its possible states,
 its methods and behavior change during runtime as state changes,
@@ -159,29 +178,28 @@ such as certain methods will never be called in a given state since it is not po
 (i.e. they are not available in the interface).
 
 
-\subsubsection*{Rust}
-
+\paragraph{Rust.}
 As discussed in \autoref{sec:rust-lang}, Rust takes its commitment with safety with seriousness,
 providing the necessary tools to users.
 While Rust does not support first-class typestates,
 it is possible to emulate them using its type system (as demonstrated in \autocite{Duarte2020}),
 this is discussed in further sections of this document.
 
-\paragraph{Embedded Rust.} As any systems programming language, Rust penetrated the embedded development space.
-Its features are most adequate and the community has put great effort into making Rust a viable language for embedded systems.
+\begin{description}
+    \item[Embedded Rust.] As any systems programming language, Rust penetrated the embedded development space.
+    Its features are most adequate and the community has put great effort into making Rust a viable language for embedded systems.
 
-\emph{The Embedded Rust Book}'s~\autocite{Rust2021} Chapter 4 is dedicated to static guarantees,
-introducing programmers to the concepts of typestate in Section 4.1, and their usage in embedded systems.
+    \emph{The Embedded Rust Book}'s~\autocite{Rust2021} Chapter 4 is dedicated to static guarantees,
+    introducing programmers to the concepts of typestate in Section 4.1, and their usage in embedded systems.
 
-As for real-world usage, typestates are abundantly used in the area (not just discussed in the book),
-under \autocite{Stm32} one finds several repositories (suffixed with \texttt{-hal})
-which implement typestates
-(e.g. \href{https://github.com/stm32-rs/stm32h7xx-hal/blob/master/src/gpio.rs#L51-L128}{\texttt{gpio.rs}}
-from \texttt{stm32h7xx-hal}).
+    As for real-world usage, typestates are abundantly used in the area (not just discussed in the book),
+    under \autocite{Stm32} one finds several repositories (suffixed with \texttt{-hal})
+    which implement typestates
+    (e.g. \href{https://github.com/stm32-rs/stm32h7xx-hal/blob/master/src/gpio.rs#L51-L128}{\texttt{gpio.rs}}
+    from \texttt{stm32h7xx-hal}).
+\end{description}
 
-\subsubsection*{Obsidian}
-
-Obsidian is a language targeting Hyperledger Fabric \autocite{Fabric2021},
+\paragraph{Obsidian} is a language targeting Hyperledger Fabric \autocite{Fabric2021},
 among other features it makes use of typestates to reduce the amount of bugs when dealing with assets.
 
 In \autocite{Coblenz2020} an empirical study tested and proved Obsidian claims,

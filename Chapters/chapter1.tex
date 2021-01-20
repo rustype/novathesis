@@ -33,7 +33,7 @@ The previous examples are not isolated incidents, the language and nature of the
 to put it simply, there is no silver bullet and the next best alternative is to do our best to mitigate them by
 building tools and abstractions which allow developers to increase their code's safety.
 
-\section{Problem}
+\section{Problem}\label{sec:problem}
 
 Languages like C/C++ have dominated the systems programming landscape for years and
 one of the main problems with both is the lack of memory management.
@@ -94,75 +94,34 @@ s.nextLine();                               // compile-time error
     \label{lst:java-scanner-typestate}
 \end{listing}
 
-\section{State of the Art}
+\section{State of the Art}\label{sec:state-of-the-art}
 
-% We now present a shallow review over their usefulness,
-% possible approaches to typestates and challenges faced when adding typestates to a language.
+As it stands, current mainstream languages do not provide first-class support for behavioral types,
+leaving developers to write their own abstractions over the language typesystem.
+These abstractions will usually be built on top of existing meta-programming capabilities offered by the language,
+or with the help of external tools in an ad-hoc fashion.
+The latter is the most common approach as it allows the built tool to take advantage of other existing tools.
+This is Mungo's case \autocite{Kouzapas2018, Voinea2020},
+a language which generates a Java API skeleton along with a typestate specification from a
+Scribble \autocite{Yoshida2014} protocol.
 
-% % \subsection{What are Typestates?}\label{sec:typestates:what-are-typestates}
+In Rust's ecosystem a crate providing typestated futures exists, the \texttt{state\_machine\_future} crate \autocite{Fitzgerald2019},
+it also provides some state machine related guarantees, such as that every state is reachable from the start start,
+there are no states unable to reach the final state and all state transitions are invalid.
+Furthermore, these guarantees are provided at compile-time, invalid state transitions, for example, fail to compile.
+The crate, however, revolves around futures, requiring a runtime and thus making it unsuitable for other kinds of applications.
+Other crates exist, they focus on finite state machines but are unable to provide static guarantees.
 
-% \subsection{Why are Typestates useful?}\label{sec:typestates:why-are-typestates-useful}
+Amidst the previous topics, Scribble and Rust's crates, there exists a third alternative, rooted in session types.
+The work done by \autocite{Jespersen2015, Munksgaard2015} introduces bi-directional session types to Rust,
+since then, this line of work has been expanded by \autocite{Lagaillardie2020},
+extending it to multiparty session types.
 
-% Typestates allow the developer to provide more expressive APIs, as well as securer ones.
-% Currently, in \emph{typestateless} programming,
-% programmers are required to track object state in their heads, with the help of comments,
-% the code itself and possibly the debugger, running the code and checking their assumptions by hand.
+Finally, regarding typestates, languages like Plaid \autocite{Aldrich2009} and Obsidian \autocite{Coblenz2020, Coblenz2020a}
+put typestates to use. Plaid in an object-oriented context
+while Obsidian makes use of typestates and linear types to provide more safety when writing blockchain smart contracts.
 
-
-
-% \subsection{Approaches}
-
-% As previously discussed, simply put, typestates are the elevation of state to the type system.
-% Currently, there are three main approaches to typestates,
-% some can be retrofitted into existing languages.
-
-% \paragraph{State-Based Design}
-% This is the most common approach, able to be used in any language,
-% essentially, all responsibility is on the developer, which is required to track state at runtime by adding
-% state checking barriers (e.g. \texttt{if CurrentState == DesiredState}).
-% In such case, state modelling will be done using enumerations or the language equivalent.
-
-% \paragraph{Typestate Checkers}
-% Typestate checkers are external tools to the language,
-% they may take the form of an independent tool or a compiler plugin.
-% Their goal is to run as part of the compilation stage and enforce the desired state transitions in the code.
-% The biggest problem with tools like these,
-% is the added complexity of extra tools over the build process.
-
-% \paragraph{Language-Based}
-% The language-based approach is the most solid approach to the problem.
-% At a conceptual level it is also the simplest approach,
-% instead of adding features to existing languages just to enable typestate support,
-% it prioritizes typestates and makes them a first-class language construct.
-% This approach is the one taken by languages such as \todo{Add ref}[Plaid].
-
-
-% \subsection{Challenges}
-
-% Typestates are not without their challenges,
-% attentive readers might notice that if objects are mutably aliased,
-% typestate guarantees cannot hold since the object can be mutated,
-% changing state while a client depends on the previous one.
-
-% \missingfigure{Picture which exemplifies the mutable alias problem.}
-
-% Solving this problem requires objects to be owned by a single client,
-% this is due to the fact that even if an immutable alias exists,
-% its type may be mutated by the original owner.
-
-% \todo{Verify this with the advisor}Such solution requires the type system to be at least affine,
-% being able to enforce a \emph{use at most once} policy over the language objects.
-
-% % \section{State Machines}\label{sec:state-machines}
-
-% % \section{What is the relation between them?}\label{sec:ts-fsm-relation}
-
-% \section{The Rust Language}\label{sec:rust}
-
-% \subsection{Why Rust?}\label{sec:rust:why}
-
-
-\section{Objectives \& Contributions}
+\section{Objectives \& Contributions}\label{sec:objectives}
 
 In this thesis I try to bridge the gap between typestates and Rust,
 aiming for an elegant and usable solution, allowing for effective usage of typestates in Rust.
@@ -174,6 +133,19 @@ shipped as a crate (i.e. library), as well as a small survey over the usability 
 
 % Waiting on the talk
 
-\section{Report Organization}
+\section{Report Organization}\label{sec:organization}
 
-% Waiting on Ravara's response to put it here
+This document is organized as follows:
+
+\begin{itemize}
+    \item \autoref{cha:background} provides a review over
+    existing systems programming languages (\autoref{sec:systems-programming}),
+    the Rust programming language (\autoref{sec:rust-lang}) and
+    behavioral types (\autoref{sec:behavioral-types}).
+    \item \autoref{cha:related-work} describes existing work regarding
+    language preprocessing (\autoref{sec:lang-preprocessors}),
+    Rust macros (\autoref{sec:rust-macros}) and
+    existing approaches to behavioral types (\autoref{sec:behavioral-approaches}).
+    \item \autoref{cha:planning} illustrates the development roadmap of this project,
+    detailing the required work to achieve the goals proposed in \autoref{sec:objectives}.
+\end{itemize}
