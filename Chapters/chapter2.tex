@@ -3,15 +3,89 @@
 
 \section{Systems Programming Languages}\label{sec:systems-programming}
 
-\subsection{C \& C++}
+The definition of the term \emph{systems programming language} is not agreed upon,
+being somewhat flexible and ever-changing due to constant shift in requirements for applications.
+
+Before the cloud, in the age of C, a systems programming language would
+most likely be a language able to provide an adequate interface between the programmer and the machine.
+Nowadays, the definition is more vague, as machines and software grow in complexity,
+and the definition of system grows from single computer to a distributed system,
+interfacing with the hardware in a more direct fashion is mostly not required.
+Systems programming languages become about being able to produce a standalone
+binary able to run on a variety of machines without requiring extra software.
+
+\subsection{C}
+
+C is a general-purpose programming language, while it can be considered a high-level programming language
+when put besides assembly, it also fits the description of a low-level level programming language when besides languages like Python.
+It was originally designed by Dennis Ritchie for the PDP-11 and has been around since 1972 \autocite{Kernighan1988},
+C is by no means modern, being older than myself and most likely to outlive me.
+
+Designed in a different time, its mental model is also different, the language is simple and straight forward,
+the designers had goals to achieve and designed the language with them in mind.
+Such mentality is noticeable when using the language,
+it is simple as the hardware was and the level of control C provides is unparalleled,
+being both a major benefit and a hindrance.
+An expert programmer is able to take advantage of the language to produce highly-efficient software,
+but a novice programmer will often find himself battling memory and pointer management bugs.
+
+Its influence echoes in the modern languages,
+whether in the form of syntax (i.e. the famous C-style syntax) or in the problems it tries to solve.
+Languages such as Java take from C their syntax as well as one problem to solve, memory management;
+other languages like Julia \autocite{Bezanson2017} aim to mimic its performance.
+
+While not as popular as other languages, C was able to keep its relevance in the modern development landscape,
+some of the most used software in the world is either written or powered by C.
+The Linux kernel, which powers servers, the world's most powerful computers
+and serves as a base for Android and other mobile devices,
+git, Redis and nginx are also software examples which reached the top of their respective fields.
+
+% While C and C++ constitute two very different languages,
+% however their goals are relatively while C stayed relatively close to its origin through the years, C++ has grown in size.
+% The biggest companies on earth, such as Google, Amazon and Microsoft have large codebases written in C++,
+% most operating systems are written either in C or C++ and
+% industries which require highly-performant software are powered by one of the two, or both.
+
+% While both are in widespread use, they are not without their problems,
+% in particular, C++ is known for its long compile times,
+% a problem acknowledged by its creator Bjarne Stroustrup \autocite{Torre2014}.
+% In some regards, C is considered too old, not having “modern” language features which would help developers (e.g. generics).
+% Finally, both suffer from the memory management problem, leaving it up to the programmer,
+% which inevitably leads to problems caused by human error \autocite{chromium, Miller2019}.
+
+\subsection{C++}
+
+Introduced in 1985 as an extension to C; its author, Bjarne Stroustrup writes:
+
+\begin{displayquote}[{\autocite[Section 1.2]{Stroustrup1986}}]
+    C++  is  based  on  the idea of providing both:
+    \begin{itemize}
+        \item direct mappings of built-in operations and types to hardware to provide efficient memory use and efficient low-level operations, and
+        \item affordable and flexible abstraction mechanisms to provide user-defined types with the same notational support, range of uses, and performance as built-in types.
+    \end{itemize}
+\end{displayquote}
+
+The language has since gone on to conquer the programming world, being used in a wide variety of software and hardware.
+Currently, companies such as Google, Amazon and Microsoft have widespread adoption of C++ in their codebases.
+Industries requiring the best performance as possible of the host, such as scientific computing,
+financial software, AAA games and visual effects will most likely be running C++.
+
+Just like C, C++ has its problems.
+The language is enormous, with very complicated parts (e.g. templates) and compilation for big projects is very slow,
+the author acknowledges this in \autocite{Torre2014}.
+Furthermore, as the language provides a high level of control over the system, it has manual memory management,
+suffering from the same problems as C.
+Even with smart pointers (e.g. \texttt{unique\_ptr}) the problem is not considered solved,
+as they introduce overhead in the most demanding applications.
+
 
 \subsection{Ada}
 
 Ada was developed in a standardization effort for USA's Department of Defense,
 unifying projects spanning over 450 programming languages \autocite{Ada2021}.
-Its main focus was the development of embedded application,
+Its main focus was the development of embedded applications,
 currently the Ada language is mostly used in the critical domain due to its strong emphasis on safety,
-some Ada success stories are the Metro Victoria Line and the Paris Metro Line \autocite{SIGAda2021}.
+some Ada success stories are the London Metro Victoria Line and the Paris Metro Line \autocite{SIGAda2021}.
 Ada is also used in several other domains, such as aviation, space vehicles, financial systems and more \autocite{Feldman2014}.
 
 \subsection{Go}
@@ -24,9 +98,11 @@ While it has made a name for itself in the network and distributed systems secto
 being the main language behind projects like Docker \autocite{Docker2021} and Kubernetes \autocite{Kubernetes2021},
 its position as a systems programming language can be discussed.
 
-Since its binaries carry a runtime and make use of garbage collection, its performance may not be enough in some cases.
-This was the case for Discord, the popular internet voice server company,
-as demand increased, Go was not able to meet the expected performance requirements and the company replaced it with Rust \autocite{Howarth2020}.
+Sometimes, however, the performance might not be enough,
+as was the case for Discord, the popular internet voice server company, as demand increased,
+Go was not able to meet the expected performance requirements and the company replaced it with Rust \autocite{Howarth2020}.
+In \autocite{Torre2014}, one of Go's authors, Rob Pike, says that he regrets categorizing Go as a systems programming language,
+being rather a server programming language that evolved into a cloud infrastructure language.
 Regardless of discussion, Go has proven to be a viable alternative to its counterparts,
 compromising extreme performance in name of safety and simplicity.
 
@@ -60,7 +136,7 @@ code~\autocite{Turon2015}.
 
 \subsection{Typestates}\label{sec:typestates}
 
-\begin{displayquote}[{Typestates as described by \autocite{Strom1983}}]
+\begin{displayquote}[{Typestates  described in \autocite{Strom1983}}]
     ... traditional strong type checking was enhanced with \textbf{typestate checking}
     a new mechanism in which the compiler guarantees that for all execution paths,
     the sequence of operations on each variable obeys a finite state grammar associated with that variable's type.
@@ -187,16 +263,16 @@ this is discussed in further sections of this document.
 
 \begin{description}
     \item[Embedded Rust.] As any systems programming language, Rust penetrated the embedded development space.
-    Its features are most adequate and the community has put great effort into making Rust a viable language for embedded systems.
+          Its features are most adequate and the community has put great effort into making Rust a viable language for embedded systems.
 
-    \emph{The Embedded Rust Book}'s~\autocite{Rust2021} Chapter 4 is dedicated to static guarantees,
-    introducing programmers to the concepts of typestate in Section 4.1, and their usage in embedded systems.
+          \emph{The Embedded Rust Book}'s~\autocite{Rust2021} Chapter 4 is dedicated to static guarantees,
+          introducing programmers to the concepts of typestate in Section 4.1, and their usage in embedded systems.
 
-    As for real-world usage, typestates are abundantly used in the area (not just discussed in the book),
-    under \autocite{Stm32} one finds several repositories (suffixed with \texttt{-hal})
-    which implement typestates
-    (e.g. \href{https://github.com/stm32-rs/stm32h7xx-hal/blob/master/src/gpio.rs#L51-L128}{\texttt{gpio.rs}}
-    from \texttt{stm32h7xx-hal}).
+          As for real-world usage, typestates are abundantly used in the area (not just discussed in the book),
+          under \autocite{Stm32} one finds several repositories (suffixed with \texttt{-hal})
+          which implement typestates
+          (e.g. \href{https://github.com/stm32-rs/stm32h7xx-hal/blob/master/src/gpio.rs#L51-L128}{\texttt{gpio.rs}}
+          from \texttt{stm32h7xx-hal}).
 \end{description}
 
 \paragraph{Obsidian} is a language targeting Hyperledger Fabric \autocite{Fabric2021},
