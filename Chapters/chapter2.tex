@@ -59,10 +59,10 @@ Introduced in 1985 as an extension to C; its author, Bjarne Stroustrup writes:
 
 \begin{displayquote}[{\autocite[Section 1.2]{Stroustrup1986}}]
     C++  is  based  on  the idea of providing both:
-    \begin{itemize}
+    \begin{compactitem}
         \item direct mappings of built-in operations and types to hardware to provide efficient memory use and efficient low-level operations, and
         \item affordable and flexible abstraction mechanisms to provide user-defined types with the same notational support, range of uses, and performance as built-in types.
-    \end{itemize}
+    \end{compactitem}
 \end{displayquote}
 
 The language has since gone on to conquer the programming world, being used in a wide variety of software and hardware.
@@ -109,34 +109,198 @@ compromising extreme performance in name of safety and simplicity.
 \section{The Rust Language}\label{sec:rust-lang}
 
 Rust is a fairly recent systems programming language,
-its main focus revolves around memory safety,
-effectively removing classes of such bugs (e.g. \emph{use-after-free} and \emph{double-free}).
-Another one of Rust's focus, is on productivity,
-aiming to provide the safety mechanisms necessary to remove the previous class of bugs,
-while trying to provide a pleasant and productive development experience.
-
-To achieve its goals, Rust makes use of a borrow checker and an ownership system,
-in conjunction, they're responsible for guaranteeing correct memory usage.
-At its core, the borrow checker is a lightweight theorem prover,
-it tries to prove that the code does not break safety rules.
-
-Its rules can be distilled down to the following intuition,
-only one entity can hold a reference to mutable data at a time,
-several entities may hold references to immutable data.
-This also enables Rust to also provide mechanisms which help deal with concurrency,
-allowing for developers to write data-race free
-code~\autocite{Turon2015}.
+it started as a side project of the author Graydon Hoare,
+its public history dates back to 2010 \autocite{Hoare2010}.
+In 2012 Mozilla picked up Rust to help develop the Servo browser engine, the successor to the previous Gecko engine;
+as a way to test Rust's capabilities \autocite{Klabnik2016}.
 
 \subsection{What makes Rust different?}
+
+In comparison with other languages, one of the first things someone new to Rust ought to notice is the emphasis put on safety.
+Being a competitor to C++ rather than higher-level languages like Java,
+while still providing C++-level performance and memory safety is an achievement in of itself.
+Rust, however, also aims to allow users to be productive without sacrificing safety or performance.
+
+The key to all the promises Rust makes lies in its ownership system and the borrow checker,
+completely new mechanisms when compared with other mainstream languages,
+but a product of years of research both in academia and the industry.
+This mechanism merits most of Rust's accomplishments and also its biggest problem, the learning experience.
+While Rust has become more accessible over the years,
+ownership and the borrow checker still require some effort on the part of the developer to learn.
+I provide a small overview of ownership, the borrow checker and their part in Rust's promise of “\emph{fearless concurrency}”.
+
+
+\subsection{Ownership}\label{sec:rust-lang:ownership}
+
+Ownership is the mechanism used by Rust to ensure no memory block stays allocated longer than it is required to.
+Through ownership, the compiler is able to free memory when required,
+inserting the respective deallocation calls in the output program.
+Behind ownership, there are three rules:
+
+\begin{displayquote}[{\autocite[Section 4.1]{RustBook2021}}]
+    \begin{compactitem}
+        \item Each value in Rust has a variable that’s called its owner.
+        \item There can only be one owner at a time.
+        \item When the owner goes out of scope, the value will be dropped.
+    \end{compactitem}
+\end{displayquote}
+
+To illustrate the rules, consider \autoref{lst:rust-move}, where we have two variables \texttt{x} and \texttt{y}.
+First, \texttt{"Hello"}\footnotemark is assigned to \texttt{x}, thus \texttt{x} now owns \texttt{"Hello"}.
+After, \texttt{x} is assigned to \texttt{y}, consider the second rule of ownership, since we can only have one owner,
+\texttt{x}'s value ownership is transferred to \texttt{y}.
+Since we transferred \texttt{x}'s value to \texttt{y}, \texttt{x} is no longer valid, consequently,
+when compiling the code an error will be issued due to \texttt{x} being moved.
+
+Notice how \texttt{String::from} is used instead of another type,
+since \keyword{String} type does not implement \keyword{Copy} it can only be moved.
+If the used type implemented \keyword{Copy}, the value would have been copied instead of moved.
+
+\begin{listing}
+    \begin{minted}{Rust}
+let x = String::from("Hello");  // ok: `x` is assigned "Hello"
+let y = x;                      // ok: `x` is moved into `y`
+println!("{}", x);              // error: `x` was moved in the previous line
+    \end{minted}
+    \caption{Example of the move-by-default mechanism to enforce ownership.}
+    \label{lst:rust-move}
+\end{listing}
+
+So far this illustrates the first two rules. The last rule can be considered invisible,
+as it happens during compilation and the user would not notice it usually.
+What happens is that at the end of the scope, any variable whose owner is in scope, will be freed.
+While the developer is not required to explicitly free the memory, the compiler will insert the calls for the developer.
+
+\subsection{Borrowing}\label{sec:rust-lang:borrowing}
+
+If the developer could only copy or move memory the usability of the language would be severely limited.
+For example, functions that read a variable and produce a new value,
+not requiring the variable to be consumed would be impossible.
+To cope with this, Rust allows values to be \emph{borrowed}, in other words,
+the owner of the variable allows for it to be read by others.
+
+To borrow a value, one writes \texttt{\&value}, this creates a read-only reference to \texttt{value}.
+There can be an unlimited number of read-only references to a value, but only a single mutable reference.
+This is discussed in \autoref{sec:rust-lang:concurrency}. Consider the example \autoref{lst:rust-borrow}.
+In the example, \texttt{x} is now possible to be printed since it was not moved into \texttt{y}.
+Rather, \texttt{y} borrowed \texttt{x} through a reference.
+
+Going back to the rules (\autoref{sec:rust-lang:ownership}), Rust's references obey them as all other values,
+the variable containing them has ownership \emph{over the reference}; it still is a single owner,
+as if \mintinline{Rust}{let z = y;} was to be added, the reference would be copied instead of moved;
+and finally, when the owner goes out of scope \emph{the reference is dropped}, but not original the value.
+
+\begin{listing}
+    \begin{minted}{Rust}
+let x = String::from("Hello");  // ok: `x` is assigned "Hello"
+let y = &x;                     // ok: `x` is borrowed to `y`
+println!("{}", x);              // ok: `x` can be printed since it is still valid
+    \end{minted}
+    \caption{Example using borrowing to allow for more than one reader on the same variable.}
+    \label{lst:rust-borrow}
+\end{listing}
+
+\subsubsection*{Mutable Borrows}
+
+One last thing to consider are mutable borrows.
+As previously discussed, in Rust it is possible to create multiple immutable references but only one mutable reference.
+Regarding mutable references there are two cases to consider:
+\paragraph{$N$ mutable references,} see \autoref{lst:rust-borrow-n-mut}.
+Understanding why only one mutable reference can exist at a time is trivial,
+as multiple mutable references to the same object would allow it to be mutated concurrently,
+which could lead to inconsistent values.
+
+\paragraph{$N$ immutable references and $1$ mutable reference,} see \autoref{lst:rust-borrow-n-immut-1-mut}.
+The reason behind not allowing a mutable reference to coexist is similar.
+Consider that each value can be executed by a different thread,
+the first two (\texttt{r1} and \texttt{r2}) are only read and the third (\texttt{r3}) can be read and written.
+While there will be no conflicts between writers, it is possible for the readers to read an inconsistent value,
+since it can happen during the write operation.
+
+\begin{listing}
+    \begin{minted}{Rust}
+let mut s = String::from("hello");
+let r1 = &mut s; // ok: first mutable borrow
+let r2 = &mut s; // error: `s` was mutably borrowed in the previous line
+    \end{minted}
+    \caption{Example using borrowing to allow for more than one reader on the same variable.}
+    \label{lst:rust-borrow-n-mut}
+\end{listing}
+
+\begin{listing}
+    \begin{minted}{Rust}
+let mut s = String::from("hello");
+let r1 = &s;     // ok: first immutable borrow
+let r2 = &s;     // ok: second immutable borrow
+let r3 = &mut s; // error: `s` was immutable borrowed in the previous lines
+    \end{minted}
+    \caption{Example using borrowing to allow for more than one reader on the same variable.}
+    \label{lst:rust-borrow-n-immut-1-mut}
+\end{listing}
+
+
+\subsection{Concurrency}\label{sec:rust-lang:concurrency}
+
+\begin{displayquote}[{\autocite[Section 16]{RustBook2021}}]
+    Initially, the Rust team thought that ensuring memory safety and preventing concurrency problems were two separate challenges to be solved with different methods.
+    Over time, the team discovered that the ownership and type systems are a powerful set of tools to help manage memory safety and concurrency problems!
+    By leveraging ownership and type checking, many concurrency errors are compile-time errors in Rust rather than runtime errors.
+\end{displayquote}
+
+Rust provides several kinds of mechanisms to prevent concurrency related problems.
+Mechanisms as \emph{message-passing}, \emph{shared-state} and
+traits to enable developers to extend upon the existing abstractions.
+
+\subsubsection*{Message-passing}
+
+Rust's message-passing library is inspired on Go's approach to concurrency,
+prioritizing message passing over other kinds of concurrent approaches, such as locking.
+
+\begin{displayquote}[{\autocite[Concurrency]{Go2021}}]
+    Do not communicate by sharing memory; instead, share memory by communicating.
+\end{displayquote}
+
+Rust defines channels which have two ends, the transmitter and the receiver.
+The former can also be seen as the sender, and when is declared with the message type,
+the latter is also declared with the message type, they can be the same or distinct.
+
+The ownership system comes in when the transmitter sends a message,
+when received the ownership of the message is taken on by the receiver end.
+This enforces that values cannot be in both sides of the communication at the same time,
+preventing concurrent accesses.
+
+\subsubsection*{Shared-state}
+
+Along with message-passing, Rust allows memory to be shared in a concurrent, safe way.
+Just as before, Rust's ownership system also helps with mutexes' biggest problem, locking and unlocking.
+
+In a language like Java, whenever a thread is able to call \texttt{lock} on a mutex,
+it is required to call \texttt{unlock} on it, only then can other threads can use it.
+The problem is that this approach is subject to human error,
+forgetting to call unlock or calling unlock in the wrong place is possible.
+Making use of the ownership system, Rust is able to know when the lock reached the end of the scope and should be dropped.
+
+\subsection{Why Rust instead of Language X?}
+
+% i really don't think the billion dollar mistake is a valid point here
+% if the maybe monad cant be considered a typestate, the mistake cant really be considered as a valid argument
+
+The main obstacle between typestates and programming languages is the requirement for aliasing control.
+In short, typestates are incompatible with aliasing (details are provided in \autoref{sec:typestates}).
+
+As discussed in \autoref{sec:rust-lang:borrowing}, Rust's ownership system allows for aliasing control.
+Using moves to enforce the consumption of values,
+immutable references for pure functions and mutable ones for limited mutability,
+it is possible to emulate typestates.
+
 
 \section{Behavioral Types}\label{sec:behavioral-types}
 
 \subsection{Session Types}
 
-
 \subsection{Typestates}\label{sec:typestates}
 
-\begin{displayquote}[{Typestates  described in \autocite{Strom1983}}]
+\begin{displayquote}[{\autocite{Strom1983}}]
     ... traditional strong type checking was enhanced with \textbf{typestate checking}
     a new mechanism in which the compiler guarantees that for all execution paths,
     the sequence of operations on each variable obeys a finite state grammar associated with that variable's type.

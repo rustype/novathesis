@@ -4,26 +4,21 @@
 \section{Context}\label{sec:context}
 
 % [11/01/2021]
-% TODO - Review if links should go in the bibliography
-% TODO - Review last paragraph and overall all "cohesiveness" of the text
 
-Users face bugs on a daily basis, whether in their instant messaging application or a game,
-bugs currently permeate our lives, they are mostly harmless as such applications are not critical,
+Bugs permeate our lives as users, whether in an instant messaging application or a game they are present.
+Luckily, most are harmless as such applications are not critical,
 resulting in some unsent messages or texture glitches.
 
-However, in areas as systems programming, one of the most demanding domains in computer science,
+In systems programming, one of the most demanding domains in computer science,
 bugs and their respective consequences come at a high cost to both service providers and consumers.
 There are reports from several industries where bugs lead to huge monetary losses and even death.
-
 In 2014, the Heartbleed~\autocite{Heartbleed} bug, caused due to a missing bound check,
 compromised the security of any OpenSSL user, enabling the theft of critical information (e.g. cryptographic keys).
 In 2018, a bug in Coinbase (a popular cryptocurrency exchange)
 allowed for account balance manipulation~\autocite{Vicompany2018}.
 In 2019 and 2020, after several crashes~\autocite{Campbell2019},
-the Boeing 737 Max was grounded to fix existing problems, while grounded,
-more software-related issues were
-found~\autocite{Okane2019,Okane2020},
-delaying its re-certification.
+the Boeing 737 Max was grounded to fix existing problems.
+While grounded, more software-related issues were found~\autocite{Okane2019,Okane2020}, delaying its re-certification.
 In 2020, as the number of COVID-19 grew,
 contact tracing apps were deployed as a mitigation strategy.
 The UK's National Health Service app failed to ask users to self-isolate due to a
@@ -41,29 +36,29 @@ Leaving such responsibility to the developer has proven to be \emph{a less than 
 solution, with $70\%$ of bugs in projects like Chromium~\autocite{chromium}
 and Microsoft products~\autocite{Miller2019} being due to memory management.
 
-To address such problem, several tools and languages have been and continue to be developed,
-so far, Rust has been the only one to achieve \emph{mainstream} status.
-Rust aims to provide memory safety without affecting performance or productivity,
-to achieve such ambitious goal, Rust validates code with the borrow checker, which then enforces memory safety rules,
+To address such problem, several tools and languages have been and continue to be developed.
+So far, Rust has been the only one to achieve \emph{mainstream} status.
+Rust aims to provide memory safety without affecting performance or productivity.
+To achieve such ambitious goal, Rust validates code with the borrow checker, which then enforces memory safety rules,
 targeting the problem at its root.
 
-Addressing memory safety is not enough though,
-languages which side-step the problem of having manual management
-through the use of a garbage collector (e.g. Java and Go) still suffer from other kinds bugs.
+Addressing memory safety is not enough though.
+Languages which side-step the problem of having manual management
+through the use of a garbage collector (e.g. Java and Go) still suffer from other kinds of bugs.
 As discussed in the end of \autoref{sec:context}, we can only mitigate their occurrence, and
 so we are required to reach out to new mechanisms.
 
-Typestates are an approach which aims to tame stateful computations,
+Typestates are an approach which aims to tame stateful computations;
 to do so typestates lift the concept of state to the type level,
 this enables the compiler to reason about state and provides the developer
 with information of the expected computation state at runtime.
 
-Consider Java's \keyword{Scanner}, its API allows the developer to write code like \autoref{lst:java-scanner},
-which will compile without issuing any errors or warnings (even with the \texttt{-Xlint:all} flag).
-The example in \autoref{lst:java-scanner} will crash during runtime, since it is not possible to read from a closed source,
-the thrown exception is \texttt{IllegalStateException}.
-Informing the user that the attempted operation is illegal for the current object state,
-ideally we want such illegal states to be detected at compile time.
+Consider Java's \keyword{Scanner}, its API allows the developer to write code like \autoref{lst:java-scanner}.
+Such code will compile without issuing any errors or warnings (even with the \texttt{-Xlint:all} flag),
+however, it will also crash during runtime.
+Since it is not possible to read from a closed source, the thrown exception is \texttt{IllegalStateException},
+informing the user that the attempted operation is illegal for the current object state,
+Ideally we want such illegal states to be detected at compile time.
 
 \begin{listing}
     \begin{minted}{java}
@@ -96,7 +91,18 @@ s.nextLine();                               // compile-time error
 
 \section{State of the Art}\label{sec:state-of-the-art}
 
-As it stands, current mainstream languages do not provide first-class support for behavioral types,
+The current landscape of behavioral types in mainstream languages is bare.
+While projects exist, most are academic and of little impact in the way programmers write their code.
+
+In Rust's ecosystem a crate providing typestated futures exists,
+the \texttt{state\_machine\_future} crate \autocite{Fitzgerald2019}.
+It provides some state machine related guarantees, such as every state being reachable from the start,
+there are no states unable to reach the final state and all state transitions are invalid.
+Furthermore, these guarantees are provided at compile-time, invalid state transitions, for example, fail to compile.
+The crate, however, revolves around futures, requiring a runtime and thus making it unsuitable for other kinds of applications.
+Other crates exist, they focus on finite state machines but are unable to provide static guarantees.
+
+Like Rust, current mainstream languages do not provide first-class support for behavioral types,
 leaving developers to write their own abstractions over the language typesystem.
 These abstractions will usually be built on top of existing meta-programming capabilities offered by the language,
 or with the help of external tools in an ad-hoc fashion.
@@ -105,21 +111,17 @@ This is Mungo's case \autocite{Kouzapas2018, Voinea2020},
 a language which generates a Java API skeleton along with a typestate specification from a
 Scribble \autocite{Yoshida2014} protocol.
 
-In Rust's ecosystem a crate providing typestated futures exists, the \texttt{state\_machine\_future} crate \autocite{Fitzgerald2019},
-it also provides some state machine related guarantees, such as that every state is reachable from the start start,
-there are no states unable to reach the final state and all state transitions are invalid.
-Furthermore, these guarantees are provided at compile-time, invalid state transitions, for example, fail to compile.
-The crate, however, revolves around futures, requiring a runtime and thus making it unsuitable for other kinds of applications.
-Other crates exist, they focus on finite state machines but are unable to provide static guarantees.
-
 Amidst the previous topics, Scribble and Rust's crates, there exists a third alternative, rooted in session types.
 The work done by \autocite{Jespersen2015, Munksgaard2015} introduces bi-directional session types to Rust,
 since then, this line of work has been expanded by \autocite{Lagaillardie2020},
 extending it to multiparty session types.
 
-Finally, regarding typestates, languages like Plaid \autocite{Aldrich2009} and Obsidian \autocite{Coblenz2020, Coblenz2020a}
+Regarding typestates, languages like Plaid \autocite{Aldrich2009} and Obsidian \autocite{Coblenz2020, Coblenz2020a}
 put typestates to use. Plaid in an object-oriented context
 while Obsidian makes use of typestates and linear types to provide more safety when writing blockchain smart contracts.
+While the Plaid project is considered to be done,
+Obsidian is relatively new and possibly able to provide key insights into the way we write code \autocite{Coblenz2020}.
+
 
 \section{Objectives \& Contributions}\label{sec:objectives}
 
@@ -127,25 +129,37 @@ In this thesis I try to bridge the gap between typestates and Rust,
 aiming for an elegant and usable solution, allowing for effective usage of typestates in Rust.
 To achieve such solution I expect to develop an embedded Rust DSL,
 enabling the flexibility of a dedicated language without leaving the Rust ecosystem.
-
 To this effect I expect the contributions of this thesis to be a typestate specification DSL to be embedded in Rust,
-shipped as a crate (i.e. library), as well as a small survey over the usability of the DSL.
+this topic is further developed in \autoref{cha:planning}.
 
-% Waiting on the talk
+\begin{description}
+    \item[Typestate DSL.] One of the main goals of the DSL is to be non-intrusive and easy to pick up, both the syntax and tooling,
+          this requires the syntax to extend on Rust's current syntax, introducing minimal changes where necessary.
+          However, it should also be powerful enough to specify useful protocols in it.
+    \item[Static Guarantees.] As any language, it is useless if no information is extracted from it,
+          besides the obvious parsing step the DSL should be able to extract a typestate model from the original specification
+          and generate the adequate output code.
+          The extracted model should also be checked for a series of properties such as state reachability and termination.
+    \item[Tooling \& Usability.] The DSL should not require more than the import of the library,
+          building any project using the DSL should not require extra steps as it would degrade possible adoption.
+          A survey should accompany the final product to confirm usability claims.
+    \item[Artifacts.] Finally, the DSL should be shipped as a crate (i.e. library) and available in \url{crates.io}, Rust's package registry,
+          this implies that the documentation should be available in \url{docs.rs}.
+\end{description}
 
 \section{Report Organization}\label{sec:organization}
 
 This document is organized as follows:
 
-\begin{itemize}
-    \item \autoref{cha:background} provides a review over
-    existing systems programming languages (\autoref{sec:systems-programming}),
-    the Rust programming language (\autoref{sec:rust-lang}) and
-    behavioral types (\autoref{sec:behavioral-types}).
-    \item \autoref{cha:related-work} describes existing work regarding
-    language preprocessing (\autoref{sec:lang-preprocessors}),
-    Rust macros (\autoref{sec:rust-macros}) and
-    existing approaches to behavioral types (\autoref{sec:behavioral-approaches}).
-    \item \autoref{cha:planning} illustrates the development roadmap of this project,
-    detailing the required work to achieve the goals proposed in \autoref{sec:objectives}.
-\end{itemize}
+\begin{description}
+    \item [\autoref{cha:background}] provides a review over
+          existing systems programming languages (\autoref{sec:systems-programming}),
+          the Rust programming language (\autoref{sec:rust-lang}) and
+          behavioral types (\autoref{sec:behavioral-types}).
+    \item [\autoref{cha:related-work}] describes existing work regarding
+          language preprocessing (\autoref{sec:lang-preprocessors}),
+          Rust macros (\autoref{sec:rust-macros}) and
+          existing approaches to behavioral types (\autoref{sec:behavioral-approaches}).
+    \item [\autoref{cha:planning}] illustrates the development roadmap of this project,
+          detailing the required work to achieve the goals proposed in \autoref{sec:objectives}.
+\end{description}

@@ -95,7 +95,7 @@ In Rust, macros refer to a family of features (see \autoref{fig:rust-macro-famil
     \label{fig:rust-macro-family}
 \end{figure}
 
-\subsection{Declarative Macros}
+\subsection{Declarative Macros}\label{sec:rust-macros:decl}
 
 Declarative macros (also known as \emph{macros-by-example}) can be declared with \texttt{macro\_rules!}
 and are called with function syntax (see \autoref{lst:rust-macro-rules}).
@@ -223,7 +223,7 @@ error[E0425]: cannot find value `a` in this scope
     \label{lst:rust-macro-hygiene:error}
 \end{listing}
 
-\subsection{Procedural Macros}
+\subsection{Procedural Macros}\label{sec:rust-macros:proc}
 Rust also has another macro mechanism, \emph{procedural macros},
 these can take three forms: \emph{function-like macros}, \emph{derive macros} and \emph{attribute macros}.
 In a nutshell, procedural macros allow users to run code at compile time, consuming and producing Rust syntax.
@@ -333,7 +333,8 @@ the token tree is empty.
 The second parameter is the token tree of the item the macro is attached to,
 the function output will \emph{replace} such item with the return item or items.
 
-% TODO maybe add another example of attribute macros, e.g. the sorted attribute
+While attribute macros are able to replace the input stream,
+they can also leave the stream unchanged and check for code properties (e.g. if all variables start with a given prefix).
 
 \begin{listing}
     \centering
@@ -368,9 +369,20 @@ fn hello(name: String, age: u8) -> String {
 \subsection{Summary}
 In summary, Rust enables metaprogramming through macros, the same can be divided into two categories,
 declarative macros, with work through pattern matching, and procedural macros.
-Procedural macros can be further subdivided into three categories,
+Their main characteristics are summarized in \autoref{tab:rust-macros}.
+
+Declarative macros (\autoref{sec:rust-macros:decl}) work mainly through pattern matching,
+they are the best tool to avoid code repetition without putting in the effort of writing a token parsing macro.
+However, for more complex tasks, declarative macro's readability quickly degrades leading to an unpleasant developing experience.
+
+Procedural macros (\autoref{sec:rust-macros:proc}) can be further subdivided into three categories,
 being \emph{function-like}, \emph{derive} and \emph{attribute} macros.
-Their characteristics are summarized in \autoref{tab:rust-macros}.
+Function-like macros can be considered as an alternative to declarative ones,
+they allow for more functionality and flexibility being possible for the code behind them
+to be replaced from one to the other without changes on the user's part.
+In comparison with other procedural macros, function-like macros allow for the creation of an embedded DSL inside Rust while the others are mainly annotations.
+Derive macros are mainly used to extend existing structures with traits that can be derived automatically (e.g. \keyword{Debug}).
+Finally, attribute macros can be used to modify existing code or simply check for code properties (e.g. if an \keyword{enum} fields are sorted).
 
 \section{Approaches to Behavioral Types}\label{sec:behavioral-approaches}
 
