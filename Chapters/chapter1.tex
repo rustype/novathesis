@@ -53,6 +53,36 @@ to do so typestates lift the concept of state to the type level,
 this enables the compiler to reason about state and provides the developer
 with information of the expected computation state at runtime.
 
+\subsection{The Billion Dollar Mistake}
+
+\begin{displayquote}[{\autocite{Hoare2009}}]
+    This led me to suggest that the null value is a member of every type,
+    and a null check is required on every use of that reference variable,
+    and it may be perhaps a billion dollar mistake.
+\end{displayquote}
+
+\begin{listing}
+    \begin{minted}{java}
+Integer a = null;
+a + 5; // NullPointerException: `a` is `null'
+    \end{minted}
+    \caption{Java's null reference example.}
+    \label{lst:java-scanner-null}
+\end{listing}
+
+Consider \autoref{lst:java-scanner-null}, the program compiles and will crash with a \texttt{NullPointerException}.
+While every one can see the explicit \keyword{null} attribution the compiler does not issue an error or warning.
+The original author of the \keyword{null}, Tony Hoare, considers this to be his "\emph{billion dollar mistake}".
+Since in complex codebases, this error is hard to track down among all possible states and
+has supposedly caused more than a billion dollars in damages.
+
+While in Java it manifests as an exception,
+in C/C++ tracking them down is usually more complicated as the only feedback the user receives is the infamous \texttt{SEGFAULT}.
+Again, after so many years of programming, developers ought to have better tools,
+as debugging errors like these is neither an effective time use nor pleasant.
+
+\subsection{API Misuse}
+
 Consider Java's \keyword{Scanner}, its API allows the developer to write code like \autoref{lst:java-scanner}.
 Such code will compile without issuing any errors or warnings (even with the \texttt{-Xlint:all} flag),
 however, it will also crash during runtime.
@@ -74,6 +104,7 @@ s.nextLine();                               // IllegalStateException
 If we consider a typestated language, as in \autoref{lst:java-scanner-typestate},
 the code allows us to trace the state of the object, but even better,
 the compiler is now able to tell us there is an error during compilation.
+This approach also solves \autoref{lst:java-scanner-null}, as the type is required to be explicitly \emph{nullable}.
 
 \begin{listing}
     \begin{minted}{java}
@@ -145,6 +176,8 @@ this topic is further developed in \autoref{cha:planning}.
           A survey should accompany the final product to confirm usability claims.
     \item[Artifacts.] Finally, the DSL should be shipped as a crate (i.e. library) and available in \url{crates.io}, Rust's package registry,
           this implies that the documentation should be available in \url{docs.rs}.
+          In addition to the DSL library, I am planning writing an article on the DSL, including the results from usability testing,
+          and developing a library to facilitate DSL development for Rust.
 \end{description}
 
 \section{Report Organization}\label{sec:organization}

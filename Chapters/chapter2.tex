@@ -40,19 +40,6 @@ The Linux kernel, which powers servers, the world's most powerful computers
 and serves as a base for Android and other mobile devices,
 git, Redis and nginx are also software examples which reached the top of their respective fields.
 
-% While C and C++ constitute two very different languages,
-% however their goals are relatively while C stayed relatively close to its origin through the years, C++ has grown in size.
-% The biggest companies on earth, such as Google, Amazon and Microsoft have large codebases written in C++,
-% most operating systems are written either in C or C++ and
-% industries which require highly-performant software are powered by one of the two, or both.
-
-% While both are in widespread use, they are not without their problems,
-% in particular, C++ is known for its long compile times,
-% a problem acknowledged by its creator Bjarne Stroustrup \autocite{Torre2014}.
-% In some regards, C is considered too old, not having “modern” language features which would help developers (e.g. generics).
-% Finally, both suffer from the memory management problem, leaving it up to the programmer,
-% which inevitably leads to problems caused by human error \autocite{chromium, Miller2019}.
-
 \subsection{C++}
 
 Introduced in 1985 as an extension to C; its author, Bjarne Stroustrup writes:
@@ -81,12 +68,23 @@ as they introduce overhead in the most demanding applications.
 
 \subsection{Ada}
 
-Ada was developed in a standardization effort for USA's Department of Defense,
-unifying projects spanning over 450 programming languages \autocite{Ada2021}.
+Ada was developed in 1980, during a standardization effort in the USA's Department of Defense,
+with the goal of unifying projects spanning over 450 programming languages \autocite{Ada2021}.
 Its main focus was the development of embedded applications,
 currently the Ada language is mostly used in the critical domain due to its strong emphasis on safety,
 some Ada success stories are the London Metro Victoria Line and the Paris Metro Line \autocite{SIGAda2021}.
 Ada is also used in several other domains, such as aviation, space vehicles, financial systems and more \autocite{Feldman2014}.
+
+In comparison with the other languages in this section, Ada is eclipsed, barely showing in the GitHub rankings \autocite{Palmer2021}.
+However, given that Ada's compiler is mostly a product, it makes sense that most Ada code is not open-source.
+Regardless, when one views the list of features Ada has, the first arising question is “\emph{why is Ada not popular?}”.
+
+An old article in AdaPower \autocite{Heaney1998} provides some possible insight over the question,
+referring to the compiler's price and the Hoare's harsh critics.
+From my point of view, the critics to the compiler and ecosystem pricing still make sense,
+as access to the full tooling is limited.
+The lack of programmers goes on to deepen the lack of adoption in the industry
+and this cycle ends up limiting Ada's reach in the market.
 
 \subsection{Go}
 
@@ -106,6 +104,16 @@ being rather a server programming language that evolved into a cloud infrastruct
 Regardless of discussion, Go has proven to be a viable alternative to its counterparts,
 compromising extreme performance in name of safety and simplicity.
 
+\subsection{Summary}
+
+I reviewed four system programming languages, suited for different kinds of environments,
+C, C++ and Ada can be considered the traditional system languages kind, with a strong emphasis on efficiency
+and support for embedded devices.
+Go on the other hand, could be considered a new generation systems programming language, a language for cloud infrastructure.
+Among the four, only Ada places strong emphasis on safety, with several features allowing for more guarantees at compile time,
+such as contract based programming and non-nullable types by default,
+being the only one which does not suffer from the “\emph{billion dollar mistake}” \autocite{Hoare2009}.
+
 \section{The Rust Language}\label{sec:rust-lang}
 
 Rust is a fairly recent systems programming language,
@@ -117,13 +125,12 @@ as a way to test Rust's capabilities \autocite{Klabnik2016}.
 \subsection{What makes Rust different?}
 
 In comparison with other languages, one of the first things someone new to Rust ought to notice is the emphasis put on safety.
-Being a competitor to C++ rather than higher-level languages like Java,
-while still providing C++-level performance and memory safety is an achievement in of itself.
+Being a competitor to C++ and achieving memory safety while still providing C++-level performance is quite an accomplishment.
 Rust, however, also aims to allow users to be productive without sacrificing safety or performance.
 
-The key to all the promises Rust makes lies in its ownership system and the borrow checker,
-completely new mechanisms when compared with other mainstream languages,
-but a product of years of research both in academia and the industry.
+The key to all the promises Rust makes lies in its ownership system and the borrow checker.
+The borrow checker is a completely new mechanism when compared with other mainstream languages.
+However, it is a product of years of research both in academia and the industry.
 This mechanism merits most of Rust's accomplishments and also its biggest problem, the learning experience.
 While Rust has become more accessible over the years,
 ownership and the borrow checker still require some effort on the part of the developer to learn.
@@ -185,9 +192,9 @@ This is discussed in \autoref{sec:rust-lang:concurrency}. Consider the example \
 In the example, \texttt{x} is now possible to be printed since it was not moved into \texttt{y}.
 Rather, \texttt{y} borrowed \texttt{x} through a reference.
 
-Going back to the rules (\autoref{sec:rust-lang:ownership}), Rust's references obey them as all other values,
-the variable containing them has ownership \emph{over the reference}; it still is a single owner,
-as if \mintinline{Rust}{let z = y;} was to be added, the reference would be copied instead of moved;
+Going back to the rules (\autoref{sec:rust-lang:ownership}), Rust's references obey them just like all other values.
+The variable containing them has ownership \emph{over the reference}; it still is a single owner
+(if \mintinline{Rust}{let z = y;} was to be added, the reference would be copied instead of moved);
 and finally, when the owner goes out of scope \emph{the reference is dropped}, but not original the value.
 
 \begin{listing}
@@ -205,6 +212,7 @@ println!("{}", x);              // ok: `x` can be printed since it is still vali
 One last thing to consider are mutable borrows.
 As previously discussed, in Rust it is possible to create multiple immutable references but only one mutable reference.
 Regarding mutable references there are two cases to consider:
+
 \paragraph{$N$ mutable references,} see \autoref{lst:rust-borrow-n-mut}.
 Understanding why only one mutable reference can exist at a time is trivial,
 as multiple mutable references to the same object would allow it to be mutated concurrently,
@@ -293,10 +301,138 @@ Using moves to enforce the consumption of values,
 immutable references for pure functions and mutable ones for limited mutability,
 it is possible to emulate typestates.
 
-
 \section{Behavioral Types}\label{sec:behavioral-types}
 
+As previously discussed, with the growth in software complexity, developers are required to develop better tools to tame such complexity.
+While the tools are "physical" in the sense that they are programs, they will most likely have a theoretical background.
+Behavioral types are part of such background. The theory behind them encompasses several domains,
+they can be applied over a wide range of entities, from an object to a web service.
+
+\begin{displayquote}[\autocite{Ancona2016}]
+    Roughly speaking, a behavioral type describes a software entity, such as an object, a communication channel,
+    or a Web Service, in terms of the sequences of operations that allow for a correct interaction among the involved entities.
+\end{displayquote}
+
+Behavioral types allow developers to model a protocol,
+define the communication messages and possible interactions and
+check that certain requirements are met when implementing.
+Consider the protocol from \autoref{fig:login-protocol},
+where a user tries to authenticate.
+A developer can use it as a specification
+(for simplicity consider the uppercase messages to be simple strings),
+using behavioral types the developer could be able to specify the described interactions and all boilerplate could be generated for him.
+While using strings is not very interesting “\emph{interesting}”,
+if we consider the object in transit to be an encrypted payload, the boilerplate will take care of decryption and deserialization.
+Furthermore, consider the constraint that \emph{all interactions end with a message from the server}.
+If the specification has an interaction that is not compliant with such rule,
+the code should not compile, raising an error.
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \tikzstyle{entity}=[rectangle, rounded corners, thick, draw=black, minimum width=15mm, minimum height=7mm]
+        \tikzstyle{timeline}=[-Square, thick]
+        \tikzstyle{message}=[->, thick]
+        \node[entity] (client) at (0, 1) {Client};
+        \node[entity] (server) at (0, -1) {Server};
+
+        \draw[message] (1.5, 1) -- node[rotate=90, above] {\small{\texttt{LOGIN}}} ++(0, -2);
+        \draw[message] (2.5, 1) -- node[rotate=90, above] {\small{username}} node[rotate=90, below] {\small{\keyword{String}}} ++(0, -2);
+        \draw[message] (3.75, 1) -- node[rotate=90, above] {\small{password}} node[rotate=90, below] {\small{\keyword{String}}} ++(0, -2);
+
+        \draw[message] (5.25, -1) -- node[rotate=90, above] {\small{\texttt{ACCEPTED}}} ++ (0, 2);
+
+        \draw[message] (6.5, -1) -- node[rotate=90, above] {\small{\texttt{REJECTED}}} ++ (0, 2);
+
+        \draw[thick] (client) to ++(5.5, 0);
+        \draw[thick] (server) to ++(5.5, 0);
+
+        \draw[timeline] (6, -1) to ++(1.5, 0);
+        \draw[timeline] (6, 1) to ++(1.5, 0);
+
+        \draw[dashed, semithick] (4.5, -1.25) rectangle (7, 1.25);
+        \path (4.5, 1.25) -- node[above] {\emph{Choice}} (7, 1.25);
+    \end{tikzpicture}
+    \caption{
+        Communication protocol example. The communication establishment step is omitted for simplicity.
+        In this protocol the client tries to login to a service by sending a message
+        \texttt{LOGIN} followed by the username and password, both of type \keyword{String}.
+        The server then replies with either an \texttt{ACCEPTED} or \texttt{REJECTED}, if the login was successful or not, respectively.
+    }
+    \label{fig:login-protocol}
+\end{figure}
+
 \subsection{Session Types}
+
+Session types are a subset of behavioral types, focused on communication,
+from entities in a distributed system to threads in a computer.
+Session types are based on process calculi and can be thought as “\emph{types for protocols}”.
+They elevate communication to the type level, allowing expressing them as types in a program,
+in turn this enables the compiler to reason about the protocol during compile-time.
+
+In Rust, a channel is created with \mintinline{Rust}{let (tx, rx) = channel::<SenderT, ReceiverT>()},
+where \texttt{SenderT} and \texttt{ReceiverT} are the types sent and received by the channel.
+Channels are well-typed, meaning that if \mintinline{Rust}{SenderT = String},
+sending another type over the channel will result in a type error.
+
+\begin{listing}
+    \centering
+    \begin{minted}{Rust}
+enum Request {
+    Login(String, String),      // login with: {username, password}
+    SendMessage(String, String),// send message to an user: {user, message}
+}
+enum Reply {
+    AuthOk,     // successful login
+    AuthErr,    // failed login
+    MessageOk,  // successful message
+    MessageErr, // failed message
+}
+fn communicate() {
+    let (tx, rx) = channel<Request, Reply>();
+    tx.send(Request::Login("foo", "bar"));
+    match tx.recv() {
+        // ...
+    }
+}
+    \end{minted}
+    \caption{
+        Application login example, modelled using Rust's \keyword{enum}s
+        (some channel details were omitted for simplicity).
+        Reusing channels requires the developer to clump all states in a single \keyword{enum}.
+        Better state management requires the use of more channels, neither approaches are ideal.
+    }
+    \label{lst:rust-login-chan}
+\end{listing}
+
+Session types extend on this notion, not only allowing for a single type to be sent or received,
+but also model the protocol.
+Consider \autoref{lst:rust-login-chan}, the example has unnecessary complexity,
+for each receive the developer is required to match all possible replies.
+Ideally, we declare the steps and possible outcomes beforehand.
+For example, in plain English:
+\begin{compactenum}
+    \item Send login credentials.
+    \item If successful, send a message to user \texttt{jmgd}.
+    \item Otherwise, exit.
+\end{compactenum}
+
+No message matching required, the compiler does it for the developer.
+Using session types it is possible to write it in a simpler form,
+where each endpoint has its type:
+\begin{equation*}
+    \begin{aligned}
+        \mathbf{Login}   & = \{user: \keyword{String}, password: \keyword{String}\}                                                       \\
+        \mathbf{Message} & = \{user: \keyword{String}, message: \keyword{String}\}                                                        \\
+        Client           & = ~!\mathbf{Login}.\&\langle ?Ok.!\mathbf{Message}.?\&\langle Ok.End, Err.End \rangle, ?Err.End\rangle         \\
+        Server           & = ~?\mathbf{Login}.\oplus\langle !Ok.?\mathbf{Message}.!\oplus\langle Ok.End, Err.End \rangle, !Err.End\rangle \\
+    \end{aligned}
+\end{equation*}
+Consider $!$ to be \emph{sends}, $?$ to be \emph{receives}, $.$ the \emph{sequence} operator finally,
+$\&$ the \emph{choice offering} and $\oplus$ the \emph{choice making}.
+Using session types effectively offloads complexity to the type system,
+resulting in more complex types, but simpler implementations,
+since protocol compliance can be checked during compilation and boilerplate can be added by the compiler.
 
 \subsection{Typestates}\label{sec:typestates}
 
@@ -309,6 +445,51 @@ it is possible to emulate typestates.
 The first language to make use of typestates was NIL~\autocite{Strom1983},
 afterwards languages like Hermes~\autocite{Strom1990} and Plaid~\autocite{Aldrich2009}
 extended the concept with new techniques.
+
+\subsubsection*{Automata}
+
+A possible question on the reader's mind is “\emph{how are automata and typestates related?}”.
+This section tries to address that question and exemplify how automata helps prove typestates properties.
+It is possible to express typestates as automata, as the reader can observe in \autoref{fig:file-automata}.
+Each state is a possible state the object can be in, transitions are done through methods.
+Methods can either mutate the object state, such as \texttt{open} and \texttt{close},
+or leave it unchanged, such as \texttt{nextLine}.
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \tikzstyle{open-file}=[circle, thick, draw=blue!75, fill=blue!20, minimum size=10mm]
+        \tikzstyle{closed-file}=[circle, thick, draw=red!75, fill=red!20, minimum size=10mm]
+        \tikzstyle{transition} = [->, thick];
+
+        % \draw (0, 0) grid (\textwidth, 2);
+        \node[open-file, label=above:\texttt{Scanner[Open]}] (open-file) at (0.25\textwidth, 1) {};
+        \node[closed-file, label=above:\texttt{Scanner[Closed]}] (closed-file) at (0.75\textwidth, 1) {};
+        \draw[transition]
+        (open-file)
+        edge[out=10, in=170] node[above] {\texttt{close()}}
+        (closed-file) ;
+        \draw[transition]
+        (closed-file)
+        edge[out=-170, in=-10] node[below] {\texttt{open()}}
+        (open-file);
+        \draw[transition]
+        (open-file)
+        edge[loop left] node {\texttt{nextLine()}}
+        (open-file);
+    \end{tikzpicture}
+    \caption{The \keyword{Scanner} typestate automata, based on \autoref{lst:java-scanner-typestate}.}
+    \label{fig:file-automata}
+\end{figure}
+
+\paragraph{Real-world scenario.} In production applications, the API is not this simple.
+In fact, the \keyword{Scanner} API is not this simple, however it was reduced to the simplest possible for the example.
+Complex APIs can be designed by a team and implemented by another,
+specifications can be changed and during project development some details may be lost.
+Details like those can be costly, imagine for example that a method call reaches a state, which as no outgoing edges,
+but it is not a final state. This is a problem addressed by existing automata algorithms,
+thus representing typestates as automata,
+extracting all necessary information and applying such algorithms provides the API extra safety.
 
 \subsubsection*{The case for typestates}
 
@@ -358,7 +539,7 @@ completely eliminate the need for illegal state exceptions since illegal transit
 
 \subsubsection*{Typestates in action}
 
-As a simple example, consider the Java application in \autoref{fig:java-mult} which simply takes two numbers and multiples them together.
+As a simple example, consider the Java application in \autoref{lst:java-mult} which simply takes two numbers and multiples them together.
 The application will throw an exception on line 6,
 since the programmer closed the \texttt{Scanner} in line 5.
 In this example, the error is simple to catch,
@@ -378,7 +559,7 @@ public class Mult {
 }
     \end{minted}
     \caption{The \texttt{Mult} program, which reads two integer and multiplies them together.}
-    \label{fig:java-mult}
+    \label{lst:java-mult}
 \end{listing}
 
 In the case of \emph{typestated} programming,
@@ -386,7 +567,7 @@ the type system will provide the programmer with better tools to express state,
 furthermore, the compiler will then catch errors regarding state,
 such as the previous \emph{use-after-close}.
 
-\autoref{fig:java-mult-typestate} shows the \texttt{Mult} program written in a typestated fashion,
+\autoref{lst:java-mult-typestate} shows the \texttt{Mult} program written in a typestated fashion,
 notice that the \texttt{Scanner} type is now augmented with its state and
 the compiler is able to catch the misuse of the \texttt{Scanner[Closed]} interface.
 
@@ -404,7 +585,7 @@ public class Mult {
 }
     \end{minted}
     \caption{The \texttt{Mult} program, written in a typestated fashion.}
-    \label{fig:java-mult-typestate}
+    \label{lst:java-mult-typestate}
 \end{listing}
 
 \paragraph{Plaid} is a typestate-oriented programming language \autocite{Aldrich2009},

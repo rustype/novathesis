@@ -137,8 +137,8 @@ Repetition operators are the same as the regular expression ones:
 Identifiers are compared over two pieces of information,
 the \emph{textual value} and their \emph{syntactic context}.
 The textual value consists of the variables name (e.g. \texttt{four}),
-the syntactic context is a kind of scope added to variables declared inside the macro,
-this is done to keep the macro declared variables from interfering with existing ones.
+the syntactic context is a kind of scope added to variables declared inside the macro.
+This is done to keep the macro declared variables from interfering with existing ones.
 
 When expanding a declarative macro\footnotemark variables declared inside the macro belong in a different scope,
 consider the macro declared in \autoref{lst:rust-macro-hygiene:declaration} and
