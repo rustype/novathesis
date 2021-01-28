@@ -153,7 +153,7 @@ Behind ownership, there are three rules:
 \end{displayquote}
 
 To illustrate the rules, consider \autoref{lst:rust-move}, where we have two variables \texttt{x} and \texttt{y}.
-First, \texttt{"Hello"}\footnotemark is assigned to \texttt{x}, thus \texttt{x} now owns \texttt{"Hello"}.
+First, \texttt{"Hello"}\footnotemark~is assigned to \texttt{x}, thus \texttt{x} now owns \texttt{"Hello"}.
 After, \texttt{x} is assigned to \texttt{y}, consider the second rule of ownership, since we can only have one owner,
 \texttt{x}'s value ownership is transferred to \texttt{y}.
 Since we transferred \texttt{x}'s value to \texttt{y}, \texttt{x} is no longer valid, consequently,
@@ -290,23 +290,33 @@ Making use of the ownership system, Rust is able to know when the lock reached t
 
 \subsection{Why Rust instead of Language X?}
 
-% i really don't think the billion dollar mistake is a valid point here
-% if the maybe monad cant be considered a typestate, the mistake cant really be considered as a valid argument
-
 The main obstacle between typestates and programming languages is the requirement for aliasing control.
 In short, typestates are incompatible with aliasing (details are provided in \autoref{sec:typestates}).
 
+So to implement a language from the ground up, it is required that aliasing is handled,
+however, instead of building a new one, the goal is to extend an existing one, Rust.
 As discussed in \autoref{sec:rust-lang:borrowing}, Rust's ownership system allows for aliasing control.
 Using moves to enforce the consumption of values,
 immutable references for pure functions and mutable ones for limited mutability,
-it is possible to emulate typestates.
+it is possible to emulate typestates. This takes care of aliasing concerns.
+
+When designing on top of another language, two more ingredients are required,
+a powerful extension mechanism (i.e. Rust's macros, discussed in \autoref{sec:rust-macros})
+and a strong type system, able to provide the necessary abstractions.
+Rust provides both, the type systems goes as far as allowing zero-sized types,
+allowing type-level abstractions to incur no runtime overhead.
+This is a key ingredient in our DSL, aiming to provide the minimal possible runtime with an expressive language.
 
 \section{Behavioral Types}\label{sec:behavioral-types}
 
 As previously discussed, with the growth in software complexity, developers are required to develop better tools to tame such complexity.
-While the tools are "physical" in the sense that they are programs, they will most likely have a theoretical background.
-Behavioral types are part of such background. The theory behind them encompasses several domains,
-they can be applied over a wide range of entities, from an object to a web service.
+Such tools require a theoretical body of work to support them, behavioral types are part of such body of work.
+The theory behind them encompasses several domains, and they can be applied over a wide range of entities, from an object to a web service.
+
+The work on behavioral types arose in the context of type systems able to capture properties of computations \autocite{Huttel2016}.
+Session types and typestates are part of this field of study,
+both capturing distinct property kinds while aiming for a common goal,
+stronger type systems and better static assurances.
 
 \begin{displayquote}[\autocite{Ancona2016}]
     Roughly speaking, a behavioral type describes a software entity, such as an object, a communication channel,
@@ -321,8 +331,9 @@ where a user tries to authenticate.
 A developer can use it as a specification
 (for simplicity consider the uppercase messages to be simple strings),
 using behavioral types the developer could be able to specify the described interactions and all boilerplate could be generated for him.
-While using strings is not very interesting “\emph{interesting}”,
-if we consider the object in transit to be an encrypted payload, the boilerplate will take care of decryption and deserialization.
+While using strings as a payload is not very “\emph{interesting}”,
+consider instead that the object in transit is an encrypted payload,
+the boilerplate will take care of decryption and deserialization.
 Furthermore, consider the constraint that \emph{all interactions end with a message from the server}.
 If the specification has an interaction that is not compliant with such rule,
 the code should not compile, raising an error.
@@ -379,14 +390,15 @@ sending another type over the channel will result in a type error.
     \centering
     \begin{minted}{Rust}
 enum Request {
-    Login(String, String),      // login with: {username, password}
-    SendMessage(String, String),// send message to an user: {user, message}
+    Login(String, String),       // login with: {username, password}
+    SendMessage(String, String), // send message to a user: {user, message}
+    CheckStatus(String),         // check the status of a given user: {user}
 }
 enum Reply {
-    AuthOk,     // successful login
-    AuthErr,    // failed login
-    MessageOk,  // successful message
-    MessageErr, // failed message
+    AuthOk,             // successful login
+    AuthErr,            // failed login
+    MessageOk,          // successful message
+    UserStatus(String), // user status
 }
 fn communicate() {
     let (tx, rx) = channel<Request, Reply>();
@@ -410,6 +422,7 @@ but also model the protocol.
 Consider \autoref{lst:rust-login-chan}, the example has unnecessary complexity,
 for each receive the developer is required to match all possible replies.
 Ideally, we declare the steps and possible outcomes beforehand.
+
 For example, in plain English:
 \begin{compactenum}
     \item Send login credentials.
@@ -417,22 +430,32 @@ For example, in plain English:
     \item Otherwise, exit.
 \end{compactenum}
 
-No message matching required, the compiler does it for the developer.
-Using session types it is possible to write it in a simpler form,
-where each endpoint has its type:
-\begin{equation*}
-    \begin{aligned}
-        \mathbf{Login}   & = \{user: \keyword{String}, password: \keyword{String}\}                                                       \\
-        \mathbf{Message} & = \{user: \keyword{String}, message: \keyword{String}\}                                                        \\
-        Client           & = ~!\mathbf{Login}.\&\langle ?Ok.!\mathbf{Message}.?\&\langle Ok.End, Err.End \rangle, ?Err.End\rangle         \\
-        Server           & = ~?\mathbf{Login}.\oplus\langle !Ok.?\mathbf{Message}.!\oplus\langle Ok.End, Err.End \rangle, !Err.End\rangle \\
-    \end{aligned}
-\end{equation*}
+And now using session types (\autoref{eq:session-types},
+where the first four assignments ($:=$) are simple aliases, to simplify reading):
+
+\begin{figure}
+    \begin{align*}
+        \mathbf{Login}   & := \{user: \keyword{String},~password: \keyword{String}\}                                                                                                 \\
+        \mathbf{Message} & := \{user: \keyword{String},~message: \keyword{String}\}                                                                                                  \\
+        \mathbf{Status}  & := \{user: \keyword{String}\}                                                                                                                             \\
+        \mathbf{SReply}  & := \{status: \keyword{String}\}                                                                                                                           \\
+        Server           & = ~?\mathbf{Login}.\oplus\langle !Ok.?\mathbf{Message}.\oplus\langle Ok.End, Err.End \rangle, !Err.End\rangle                                             \\
+        Client           & = ~!\mathbf{Login}.\&\langle ?Ok.\&\langle ?\mathbf{Status}.!\mathbf{SReply}, !\mathbf{Message}.\&\langle Ok.End, Err.End \rangle\rangle, ?Err.End\rangle
+    \end{align*}
+    \caption{Session type example, equivalent to \autoref{lst:rust-login-chan}.}
+    \label{eq:session-types}
+\end{figure}
+
 Consider $!$ to be \emph{sends}, $?$ to be \emph{receives}, $.$ the \emph{sequence} operator finally,
-$\&$ the \emph{choice offering} and $\oplus$ the \emph{choice making}.
+$\&$ the \emph{choice offering} and $\oplus$ the \emph{choice selection}.
 Using session types effectively offloads complexity to the type system,
 resulting in more complex types, but simpler implementations,
 since protocol compliance can be checked during compilation and boilerplate can be added by the compiler.
+
+No message is matching required, the compiler does it for the developer.
+Using session types it is possible to write it in a simpler form,
+where each endpoint has its type.
+Notice how the server provides more than one operation after login but the user does not call it.
 
 \subsection{Typestates}\label{sec:typestates}
 
@@ -528,6 +551,9 @@ through tools such as Mungo~\autocite{Voinea2020},
 by contract-style assertions as in Ada2012, Eiffel or pre-0.4 Rust,
 or finally by leveraging the existing type system to write typestate enabled code as it is possible in
 Rust~\autocite{Duarte2020}.
+Typestate-related concepts were also used in Singularity OS \autocite[Section 6]{Ancona2016}, a reliable operating system prototype,
+its programs were written using Sing\#, a language derived from C\# which supports behavioral typing,
+specifically contracts in a similar capacity to typestates.
 
 \paragraph{Why use typestates?}
 By leveraging the state to the typesystem, the compiler is able to aid the programmer during development,
@@ -593,11 +619,37 @@ instead of \keyword{class}es users write \keyword{typestate}s.
 Each typestate represents a class in its possible states,
 its methods and behavior change during runtime as state changes,
 in contrast with other languages (e.g. Java) where public methods and fields are always available.
+In \autoref{lst:plaid-file-use}, the \keyword{File} passes through states as it is open, read and closed in \texttt{readClosedFile}.
 
 This property allows the typesystem to enforce certain properties at compile time,
 such as certain methods will never be called in a given state since it is not possible by design
 (i.e. they are not available in the interface).
 
+
+\begin{listing}
+    \centering
+    \begin{minted}{java}
+state File {
+    val filename;
+}
+state OpenFile case of File = {
+    val filePtr;
+    method read() { ... }
+    method close() { this <- ClosedFile; }
+}
+state ClosedFile case of File {
+    method open() { this <- OpenFile; }
+}
+method readClosedFile(f) {
+    f.open();
+    val x = f.read();
+    f.close();
+    x;
+}
+    \end{minted}
+    \caption{The \keyword{File} declaration and usage in Plaid.}
+    \label{lst:plaid-file-use}
+\end{listing}
 
 \paragraph{Rust.}
 As discussed in \autoref{sec:rust-lang}, Rust takes its commitment with safety with seriousness,
@@ -605,6 +657,33 @@ providing the necessary tools to users.
 While Rust does not support first-class typestates,
 it is possible to emulate them using its type system (as demonstrated in \autocite{Duarte2020}),
 this is discussed in further sections of this document.
+
+While the file example does not apply in Rust, since files and other objects are closed as they leave the scopes,
+enforcing protocols is important and an aspect not covered by the language.
+Consider \autoref{lst:rust-protocol}, the example is expected to call first \texttt{F1}, followed by \texttt{F2} and finally \texttt{F3},
+however such does not happen and the error may only be caught during runtime.
+
+\begin{listing}
+    \centering
+    \begin{minted}{rust}
+fn main() {
+    let protocol = Protocol::new();
+    protocol.F1();
+    protocol.F3(); // possible crash during runtime
+    protocol.F2();
+}
+    \end{minted}
+    \caption{
+        The protocol expected operation order is \texttt{F1}, \texttt{F2}, \texttt{F3},
+        however, the developer placed the operations in the wrong order.
+        This mistake is only caught during runtime.
+    }
+    \label{lst:rust-protocol}
+\end{listing}
+
+As the next paragraph discusses, this behavior can be prevented using the language's type system.
+However, such utilization requires complex (and possibly hard to read) types.
+Since it is not “\emph{part}” of the language, most users will neither use it nor be aware of it.
 
 \begin{description}
     \item[Embedded Rust.] As any systems programming language, Rust penetrated the embedded development space.
@@ -627,3 +706,4 @@ In \autocite{Coblenz2020} an empirical study tested and proved Obsidian claims,
 when compared with Solidity, the leading blockchain language,
 users inserted fewer bugs and were able to start developing safer code faster.
 
+% TODO arranjar exemplo obsidian
