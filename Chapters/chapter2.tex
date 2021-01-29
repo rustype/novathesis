@@ -647,7 +647,7 @@ method readClosedFile(f) {
     x;
 }
     \end{minted}
-    \caption{The \keyword{File} declaration and usage in Plaid.}
+    \caption{The \keyword{File} declaration and usage in Plaid (taken from \autocite{Mota2020}).}
     \label{lst:plaid-file-use}
 \end{listing}
 
@@ -728,7 +728,7 @@ contract LightSwitch {
     int switchLocation available in On, Off;
 }
     \end{minted}
-    \caption{The \keyword{File} declaration and usage in Plaid.}
+    \caption{Obsidian state declaration example.}
     \label{lst:obsidian-state}
 \end{listing}
 
@@ -740,7 +740,7 @@ transaction OffToOn() {
    s.turnOn();
 }
     \end{minted}
-    \caption{The \keyword{File} declaration and usage in Plaid.}
+    \caption{Correct state usage example in Obsidian.}
     \label{lst:obsidian-transaction-ok}
 \end{listing}
 
@@ -752,7 +752,7 @@ transaction OffToOff() {
    s.turnOff(); // error: turnOff() requires that s is On, but here s is Off
 }
     \end{minted}
-    \caption{The \keyword{File} declaration and usage in Plaid.}
+    \caption{Invalid state transition example in Obsidian. Since \texttt{LightSwitch} is instantiated as \texttt{Off}, calling \texttt{turnOff} is not valid.}
     \label{lst:obsidian-transaction-err}
 \end{listing}
 
