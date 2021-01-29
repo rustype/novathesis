@@ -706,4 +706,53 @@ In \autocite{Coblenz2020} an empirical study tested and proved Obsidian claims,
 when compared with Solidity, the leading blockchain language,
 users inserted fewer bugs and were able to start developing safer code faster.
 
-% TODO arranjar exemplo obsidian
+Consider \autoref{lst:obsidian-state}, in which a light switch is modeled,
+the same can either be \texttt{On} or \texttt{Off}, but not both.
+The \texttt{brightness} field can only be accessed if \texttt{LightSwitch} is in the \texttt{On} state,
+however the \texttt{switchLocation} field can be accessed from both states.
+Furthermore, consider that upon instantiation, the \texttt{LightSwitch} is set to the \texttt{Off} state.
+Notice that in \autoref{lst:obsidian-transaction-ok} the user is able to call \texttt{turnOn},
+as the switch is in the \texttt{Off} state, as expected.
+However, the user is unable to call \texttt{turnOff} in \autoref{lst:obsidian-transaction-err},
+since the switch is already set to the \texttt{Off} state.
+The Obsidian compiler is able to notice such invalid transitions and provide an error during compile time.
+
+\begin{listing}
+    \centering
+    \begin{minted}{java}
+contract LightSwitch {
+    state On {
+      int brightness;
+    }
+    state Off;
+    int switchLocation available in On, Off;
+}
+    \end{minted}
+    \caption{The \keyword{File} declaration and usage in Plaid.}
+    \label{lst:obsidian-state}
+\end{listing}
+
+\begin{listing}
+    \centering
+    \begin{minted}{java}
+transaction OffToOn() {
+   LightSwitch s = new LightSwitch(); // LightSwitch is in Off upon instantiation
+   s.turnOn();
+}
+    \end{minted}
+    \caption{The \keyword{File} declaration and usage in Plaid.}
+    \label{lst:obsidian-transaction-ok}
+\end{listing}
+
+\begin{listing}
+    \centering
+    \begin{minted}{java}
+transaction OffToOff() {
+   LightSwitch s = new LightSwitch(); // LightSwitch is in Off upon instantiation
+   s.turnOff(); // error: turnOff() requires that s is On, but here s is Off
+}
+    \end{minted}
+    \caption{The \keyword{File} declaration and usage in Plaid.}
+    \label{lst:obsidian-transaction-err}
+\end{listing}
+
