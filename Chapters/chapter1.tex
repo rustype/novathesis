@@ -123,40 +123,46 @@ s.nextLine();                               // compile-time error
 \section{State of the Art}\label{sec:state-of-the-art}
 
 Behavioral types are types which capture aspects of computation, they are further discussed in \autoref{sec:behavioral-types}.
-For example, session types, a subset of behavioral types,
-will often refer to endpoints and their messages, capturing aspects of communication between them.
-Typestates, another subset of behavioral types, capture the state of the program,
-allowing the developer to express the state of objects during runtime, at compile-time.
 The current landscape of behavioral types in mainstream languages is bare.
 While projects exist, most are academic and of little impact in the way programmers write their code.
+I focus on two subsets of behavioral types, session types and typestates.
 
-In Rust's ecosystem a crate providing typestated futures exists,
-the \texttt{state\_machine\_future} crate \autocite{Fitzgerald2019}.
-It provides some state machine related guarantees, such as every state being reachable from the start,
+Session types, will often refer to endpoints and their messages, capturing aspects of communication between them.
+Languages like ATS provide session type features and further enable the generation of source code in other languages
+such as Erlang \autocite{Xi2016}. ATS also serves as research playground for other topic related with session types \autocite{Xi2016a}.
+There are also tools that plug into existing languages, such as session types for OCaml and Haskell \autocite{Gay2017}
+as well as the Mungo \& StMungo projects \autocite{Kouzapas2018, Voinea2020}.
+StMungo converts Scribble \autocite{Yoshida2014} protocols to Java classes with typestates which are then checked by Mungo,
+this enables developers to write session-typed Java.
+By itself, Mungo is a typechecker with support for typestates.
+
+Typestates capture the state of the program,
+allowing the developer to express the state of objects during runtime, at compile-time.
+I discuss typestates further in \autoref{sec:typestates}.
+Languages like Plaid \autocite{Aldrich2009} and Obsidian \autocite{Coblenz2020, Coblenz2020a} put typestates to use,
+trying to bridge the gap between academia and industrial usage.
+Plaid is an object-oriented language with first class support for typestates.
+Obsidian is relatively new language which targets the Hyperledger Fabric blockchain.
+The language aims to make writing smart contracts simpler and less error prone
+through the addition of linear types and typestate mechanisms to the language.
+In \autocite{Coblenz2020} the effectiveness of the approach is put to test,
+achieving positive results when compared with the Solidity programming language.
+
+The \texttt{state\_machine\_future} crate \autocite{Fitzgerald2019}, provides typestated futures in Rust.
+The crate provides some state machine related guarantees, such as every state being reachable from the start,
 there are no states unable to reach the final state and all state transitions are invalid.
 Furthermore, these guarantees are provided at compile-time, invalid state transitions, for example, fail to compile.
 The crate, however, revolves around futures, requiring a runtime and thus making it unsuitable for other kinds of applications.
 Other crates exist, they focus on finite state machines but are unable to provide static guarantees.
 
-Like Rust, current mainstream languages do not provide first-class support for behavioral types,
-leaving developers to write their own abstractions over the language typesystem.
-These abstractions will usually be built on top of existing meta-programming capabilities offered by the language,
-or with the help of external tools in an ad-hoc fashion.
-The latter is the most common approach as it allows the built tool to take advantage of other existing tools.
-This is Mungo's case \autocite{Kouzapas2018, Voinea2020},
-a language which generates a Java API skeleton along with a typestate specification from a
-Scribble \autocite{Yoshida2014} protocol.
-
-Amidst the previous topics, Scribble and Rust's crates, there exists a third alternative, rooted in session types.
+Like other mainstream programming languages, Rust does not have first class support for session types.
+Its implementations are rare and rooted in the meta-programming system.
 The work done by \autocite{Jespersen2015, Munksgaard2015} introduces bi-directional session types to Rust,
 since then, this line of work has been expanded by \autocite{Lagaillardie2020},
 extending it to multiparty session types.
-
-Regarding typestates, languages like Plaid \autocite{Aldrich2009} and Obsidian \autocite{Coblenz2020, Coblenz2020a}
-put typestates to use. Plaid in an object-oriented context
-while Obsidian makes use of typestates and linear types to provide more safety when writing blockchain smart contracts.
-While the Plaid project is considered to be done,
-Obsidian is relatively new and possibly able to provide key insights into the way we write code \autocite{Coblenz2020}.
+While Rust dropped typestate support during early development (Rust 0.4), that does not mean Rust is not able to provide them.
+Its typesystem is able to emulate typestates with efficiency, the approach however comes at the cost of verbosity.
+This approach is used in the embedded systems development sphere of the Rust community.
 
 
 \section{Objectives \& Contributions}\label{sec:objectives}
