@@ -12,24 +12,67 @@ some languages will apply the preprocessor during different compilation stages w
 The OCaml ecosystem currently uses OCaml \gls{PPX},
 however, previous to version 4.02, OCaml made use of \gls{p4}.
 
-We briefly review both \gls{p4} and \gls{PPX}.
-
-\subsubsection*{Camlp4}\label{sec:lang-preprocessors:ocaml:p4}
-
 Camlp4 is a parsing library which provides extensible grammars,
 its main goal is to allow users to extend OCaml syntax,
 Camlp4 is also able to redefine the core syntax,
 OCaml even introduced a revised syntax~\autocite{Rauglaudre2003} to enable Camlp4.
 
+In a nutshell, the Camlp4 library would allow developers to develop an extension syntax,
+when the compiler would pass the source code as text to the preprocessor,
+which, in turn would generate valid OCaml source code.
 The library has been deprecated due to being confusing to users and tools alike.
 Users were required to learn the revised OCaml syntax which complicates the development process.
 These criticisms are found throughout documents which discuss Camlp4~\autocite{Whitequark2014}.
 
-In a nutshell, the Camlp4 library would allow developers to develop an extension syntax,
-when the compiler would pass the source code as text to the preprocessor,
-which, in turn would generate valid OCaml source code.
-
 \subsubsection*{PPX}\label{sec:lang-preprocessors:ocaml:ppx}
+
+In OCaml version 4.02 syntax extensions were introduced, this mechanism was meant to enable preprocessor extensions.
+This meta programming mechanism come to replace \gls{p4}, which was not well liked by the community due to its complexity.
+The resources on \gls{PPX} are not as widespread as the resources for similar mechanisms in other languages (i.e. Rust and its macros).
+There are two main entry points to the PPX system, attribute and extension nodes \autocite[Sections 8.12 \& 8.13]{Leroy2020}.
+
+\paragraph{Attribute Nodes} are attached to the existing AST nodes,
+they are not forcefully compiled, that is, if the compiler is not aware of a matching extension they will be ignored.
+There are three kinds of attribute nodes (example in \autoref{lst:ocaml-attr-bindings}):
+\begin{displayquote}[{\autocite[Section 8.12]{Leroy2020}}]
+    \begin{compactitem}
+        \item \mintinline{ocaml}{[@attr payload]} - attached with a postfix notation on "algebraic" categories.
+        \item \mintinline{ocaml}{[@@attr payload]} - attached to “blocks” such as type declarations, class fields, etc.
+        \item \mintinline{ocaml}{[@@@attr payload]} - not attached to any specific node in the syntax tree.
+    \end{compactitem}
+\end{displayquote}
+
+One of the main kinds of PPXs are \emph{derivers} (see \autoref{sec:rust-macros:proc:derive} for the Rust equivalent).
+Deriveres are mostly used to generate error-prone code where the implementation pattern is common to a series of sittuations.
+Examples include but are not limited to: comparison functions, pretty printers and serializers \autocite{Rebours2019}.
+
+\begin{listing}
+    \begin{minted}{Rust}
+let a = 12 [@attr pl]
+let b = "some string" [@@attr pl]
+[@@@attr pl]
+    \end{minted}
+    \caption{
+        Example of the three kinds of attributes, taken from \autocite{Rebours2019}.
+        The first line attaches to the \texttt{12} expression.
+        The second attaches to the whole \texttt{let} binding (i.e \texttt{let b = "some string"}).
+        Finally, the third line, does not attach to a particular member of the AST.
+    }
+    \label{lst:ocaml-attr-bindings}
+\end{listing}
+
+\paragraph{Extension Nodes} are similar in syntax to the attribute nodes (instead of \texttt{@} they use \texttt{\%}).
+Extension nodes are meant to be placeholders in the syntax tree.
+That means they get replaced with the expanded code (like attribute macros in Rust \autoref{sec:rust-macros:proc:attr}).
+They are also required to be expanded by a PPX during compile-time,
+if such does not happen an \texttt{Uninterpreted expression} error is issued.
+
+\begin{displayquote}[{\autocite[Section 8.13]{Leroy2020}}]
+    \begin{compactitem}
+        \item \mintinline{ocaml}{[%attr payload]} - used for “algebraic” categories.
+        \item \mintinline{ocaml}{[%%attr payload]} - used in structures and signatures, both in the module and object languages.
+    \end{compactitem}
+\end{displayquote}
 
 \subsection{Java}\label{sec:lang-preprocessors:java}
 
@@ -314,7 +357,7 @@ enum CoordinateError {
     \label{lst:rust-derive-error}
 \end{listing}
 
-\subsubsection*{Attribute Macros}
+\subsubsection*{Attribute Macros}\label{sec:rust-macros:proc:attr}
 Attribute macros define new outer attributes,
 in contrast to the attributes discussed in \autoref{sec:rust-macros:proc:derive},
 attribute macros are processed as independent units and not as an annotation.

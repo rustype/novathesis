@@ -101,10 +101,11 @@ s.nextLine();                               // IllegalStateException
     \label{lst:java-scanner}
 \end{listing}
 
-If we consider a typestated language, as in \autoref{lst:java-scanner-typestate},
+Typestated languages, as in \autoref{lst:java-scanner-typestate},
 the code allows us to trace the state of the object, but even better,
 the compiler is now able to tell us there is an error during compilation.
 This approach also solves \autoref{lst:java-scanner-null}, as the type is required to be explicitly \emph{nullable}.
+The remaining question is, how can we avoid API misusages while also avoid creating a new language (in this case Rust)?
 
 \begin{listing}
     \begin{minted}{java}
@@ -130,11 +131,23 @@ I focus on two subsets of behavioral types, session types and typestates.
 Session types, will often refer to endpoints and their messages, capturing aspects of communication between them.
 Languages like ATS provide session type features and further enable the generation of source code in other languages
 such as Erlang \autocite{Xi2016}. ATS also serves as research playground for other topic related with session types \autocite{Xi2016a}.
-There are also tools that plug into existing languages, such as session types for OCaml and Haskell \autocite{Gay2017}
-as well as the Mungo \& StMungo projects \autocite{Kouzapas2018, Voinea2020}.
-StMungo converts Scribble \autocite{Yoshida2014} protocols to Java classes with typestates which are then checked by Mungo,
-this enables developers to write session-typed Java.
+There are also tools that plug into existing languages.
+These may come under the form of libraries such as session types
+for Haskell \autocite[Section 3.3]{Ancona2016}, \autocite[Chapter 10]{Gay2017} and OCaml \autocite[Chapter 11]{Gay2017}
+extending the language to provide session types through existing mechanisms.
+In OCaml's case, this is done without reaching for external tools or language extensions,
+relying purely on the existing type system.
+However, existing session type research is not only based on functional languages.
+Session C \autocite[Section 4.1]{Ancona2016} makes use of Scribble \autocite{Yoshida2014} to capture the communication pattern of the algorithm.
+The tool then generates the required endpoints that guide the design and implementation of the program.
+Java has been the target several other research efforts, for example SessionJ \autocite[Section 2.2.1]{Ancona2016}, \autocite{Hu2008},
+a Java extension which is an implementation of Moose \autocite[Section 2.1.1]{Ancona2016}.
+Another session type enabling project is Mungo \& StMungo \autocite{Kouzapas2018, Voinea2020}, also targeting Java.
+They define specification languages which check that the code complies with the required properties.
+StMungo converts Scribble protocols to Java classes with typestates which are then checked by Mungo,
+this enables developers to write effectively session-typed Java.
 By itself, Mungo is a typechecker with support for typestates.
+
 
 Typestates capture the state of the program,
 allowing the developer to express the state of objects during runtime, at compile-time.
