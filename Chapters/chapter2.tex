@@ -195,7 +195,7 @@ Rather, \texttt{y} borrowed \texttt{x} through a reference.
 Going back to the rules (\autoref{sec:rust-lang:ownership}), Rust's references obey them just like all other values.
 The variable containing them has ownership \emph{over the reference}; it still is a single owner
 (if \mintinline{Rust}{let z = y;} was to be added, the reference would be copied instead of moved);
-and finally, when the owner goes out of scope \emph{the reference is dropped}, but not original the value.
+and finally, when the owner goes out of scope \emph{the reference is dropped}, but not the original value.
 
 \begin{listing}
     \begin{minted}{Rust}
@@ -377,9 +377,9 @@ the code should not compile, raising an error.
 
 Session types are a subset of behavioral types, focused on communication,
 from entities in a distributed system to threads in a computer.
-Session types are based on process calculi and can be thought as “\emph{types for protocols}”.
+Session types are based on process calculi and can be thought as “\emph{types for protocols}” \autoref{Honda1993, Honda1998}.
 They elevate communication to the type level, allowing expressing them as types in a program,
-in turn this enables the compiler to reason about the protocol during compile-time.
+in turn this enables the compiler to reason about the protocol during compile-time \autocite{Vasconcelos2006, Gay2015}.
 
 In Rust, a channel is created with \mintinline{Rust}{let (tx, rx) = channel::<SenderT, ReceiverT>()},
 where \texttt{SenderT} and \texttt{ReceiverT} are the types sent and received by the channel.
@@ -430,7 +430,8 @@ For example, in plain English:
     \item Otherwise, exit.
 \end{compactenum}
 
-And now using session types (\autoref{eq:session-types},
+And now using session types (\autoref{eq:session-types}
+with syntax adapted from \autocite{Vasconcelos2006},
 where the first four assignments ($:=$) are simple aliases, to simplify reading):
 
 \begin{figure}
@@ -584,7 +585,7 @@ public class Mult {
     }
 }
     \end{minted}
-    \caption{The \texttt{Mult} program, which reads two integer and multiplies them together.}
+    \caption{The \texttt{Mult} Java program, which reads two integer and multiplies them together.}
     \label{lst:java-mult}
 \end{listing}
 
@@ -610,7 +611,7 @@ public class Mult {
     }
 }
     \end{minted}
-    \caption{The \texttt{Mult} program, written in a typestated fashion.}
+    \caption{The \texttt{Mult} program, written in a Java-like typestated fashion.}
     \label{lst:java-mult-typestate}
 \end{listing}
 
@@ -674,6 +675,7 @@ fn main() {
 }
     \end{minted}
     \caption{
+        Rust example of an unchecked failure protocol compliance.
         The protocol expected operation order is \texttt{F1}, \texttt{F2}, \texttt{F3},
         however, the developer placed the operations in the wrong order.
         This mistake is only caught during runtime.
@@ -685,19 +687,17 @@ As the next paragraph discusses, this behavior can be prevented using the langua
 However, such utilization requires complex (and possibly hard to read) types.
 Since it is not “\emph{part}” of the language, most users will neither use it nor be aware of it.
 
-\begin{description}
-    \item[Embedded Rust.] As any systems programming language, Rust penetrated the embedded development space.
-          Its features are most adequate and the community has put great effort into making Rust a viable language for embedded systems.
+\paragraph{Embedded Rust.} As any systems programming language, Rust penetrated the embedded development space.
+Its features are most adequate and the community has put great effort into making Rust a viable language for embedded systems.
 
-          \emph{The Embedded Rust Book}'s~\autocite{Rust2021} Chapter 4 is dedicated to static guarantees,
-          introducing programmers to the concepts of typestate in Section 4.1, and their usage in embedded systems.
+\emph{The Embedded Rust Book}'s~\autocite{Rust2021} Chapter 4 is dedicated to static guarantees,
+introducing programmers to the concepts of typestate in Section 4.1, and their usage in embedded systems.
 
-          As for real-world usage, typestates are abundantly used in the area (not just discussed in the book),
-          under \autocite{Stm32} one finds several repositories (suffixed with \texttt{-hal})
-          which implement typestates
-          (e.g. \href{https://github.com/stm32-rs/stm32h7xx-hal/blob/master/src/gpio.rs#L51-L128}{\texttt{gpio.rs}}
-          from \texttt{stm32h7xx-hal}).
-\end{description}
+As for real-world usage, typestates are abundantly used in the area (not just discussed in the book),
+under \autocite{Stm32} one finds several repositories (suffixed with \texttt{-hal})
+which implement typestates
+(e.g. \href{https://github.com/stm32-rs/stm32h7xx-hal/blob/master/src/gpio.rs#L51-L128}{\texttt{gpio.rs}}
+from \texttt{stm32h7xx-hal}).
 
 \paragraph{Obsidian} is a language targeting Hyperledger Fabric \autocite{Fabric2021},
 among other features it makes use of typestates to reduce the amount of bugs when dealing with assets.

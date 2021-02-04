@@ -101,11 +101,14 @@ s.nextLine();                               // IllegalStateException
     \label{lst:java-scanner}
 \end{listing}
 
-Typestated languages, as in \autoref{lst:java-scanner-typestate},
+As shown in \autoref{lst:java-scanner-typestate}, using a \emph{typestated} Java example,
 the code allows us to trace the state of the object, but even better,
 the compiler is now able to tell us there is an error during compilation.
 This approach also solves \autoref{lst:java-scanner-null}, as the type is required to be explicitly \emph{nullable}.
-The remaining question is, how can we avoid API misusages while also avoid creating a new language (in this case Rust)?
+The remaining question is:
+\begin{displayquote}
+    How can we avoid API misusages without creating a new full-fledged programming language?
+\end{displayquote}
 
 \begin{listing}
     \begin{minted}{java}
@@ -152,6 +155,9 @@ By itself, Mungo is a typechecker with support for typestates.
 Typestates capture the state of the program,
 allowing the developer to express the state of objects during runtime, at compile-time.
 I discuss typestates further in \autoref{sec:typestates}.
+Fugue \autocite{DeLine2004} is a protocol checker that achieves similar functionality to typestates.
+The tool provides a series of annotations to be used in code which are then processed into protocols to be checked by Fugue.
+Using the tool, the authors found several errors which would inhibit application scaling in a Microsoft internal project.
 Languages like Plaid \autocite{Aldrich2009} and Obsidian \autocite{Coblenz2020, Coblenz2020a} put typestates to use,
 trying to bridge the gap between academia and industrial usage.
 Plaid is an object-oriented language with first class support for typestates.
@@ -209,14 +215,14 @@ this topic is further developed in \autoref{cha:planning}.
 This document is organized as follows:
 
 \begin{description}
-    \item [\autoref{cha:background}] provides a review over
+    \item[\autoref{cha:background}] provides a review over
           existing systems programming languages (\autoref{sec:systems-programming}),
           the Rust programming language (\autoref{sec:rust-lang}) and
           behavioral types (\autoref{sec:behavioral-types}).
-    \item [\autoref{cha:related-work}] describes existing work regarding
+    \item[\autoref{cha:related-work}] describes existing work regarding
           language preprocessing (\autoref{sec:lang-preprocessors}),
           Rust macros (\autoref{sec:rust-macros}) and
           existing approaches to behavioral types (\autoref{sec:behavioral-approaches}).
-    \item [\autoref{cha:planning}] illustrates the development roadmap of this project,
+    \item[\autoref{cha:planning}] illustrates the development roadmap of this project,
           detailing the required work to achieve the goals proposed in \autoref{sec:objectives}.
 \end{description}

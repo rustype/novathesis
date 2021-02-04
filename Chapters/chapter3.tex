@@ -76,10 +76,12 @@ if such does not happen an \texttt{Uninterpreted expression} error is issued.
 
 \subsection{Java}\label{sec:lang-preprocessors:java}
 
-As other languages, Java is also capable of source code processing during compile time,
-we review two existing approaches, annotations and the ExtendJ compiler.
+In Java, meta programming takes the form of annotations, these are processed by user code during the compilation process.
+Besides annotations, there is another project able to “\emph{extend}” Java.
+The ExtendJ research compiler (formerly JastAddJ) \autocite{Ekman2007} aims to provide a “\emph{hackable}” Java compiler for research purposes,
+such as static analysis tool development to Java features prototyping.
 
-\subsubsection*{Java Annotation Processor}\label{sec:lang-preprocessors:java:annotation}
+\subsubsection*{Java Annotations}\label{sec:lang-preprocessors:java:annotation}
 
 Java annotations were first introduced in Java 5 \autocite{JSR269},
 they are a form of metadata which can be added to Java source code.
@@ -87,18 +89,227 @@ Annotations can be used in conjunction with several components of the Java langu
 such as classes, interfaces, documentation and others.
 These are processed by build-time tools or by run-time libraries to achieve new semantic effects,
 a popular example of such library would be the compile-time dependency injection framework Dagger 2~\autocite{Dagger2}.
+Another popular library using annotations is the Checker Framework \autocite{CheckerFramework2018},
+besides the classic \texttt{@NonNull} example, the tool provides several other kinds of annotations.
+The annotations are then checked by Checker Framework annotation processor.
+An example would be the \texttt{@Tainted}/\texttt{@Untainted} annotations,
+which serve the purpose of annotating data to indicate whether it can be trusted.
+This helps avoid potentially harmful code from being executed (e.g. malicious SQL queries).
 
-% \paragraph{Annotation Syntax} is simple: every annotation starts with an \texttt{@} and is followed by an identifier, optionally, the annotation can take parameters.
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \tikzstyle{edge-node}=[font=\small\ttfamily, align=center, fill=white]
+        \tikzstyle{node}=[circle, thick, draw=black, minimum size=5mm]
+        \tikzstyle{transition}=[->, thick]
+        % \draw (0, -2) grid (6, 2);
+        \node[node, draw=blue!75, fill=blue!10] (start) at (0, 0) {};
+        \node[node, draw=blue!75, fill=blue!15] (processor) at (0, -1.5) {};
+        \node[node, draw=blue!75, fill=blue!20] (processor-init) at (0, -3) {};
+        \node[node, draw=blue!75, fill=blue!25] (processor-gets) at (0, -5.5) {};
+        % \node[node] (process) at (0, -7.5) {};
 
-% \begin{minted}{java}
-% @Annotation
-% \end{minted}
+        \draw[transition] (start) -- node[edge-node] {new Processor()} (processor);
+        \draw[transition] (processor) -- node[edge-node] {.init(ProcessingEnvironment)} (processor-init);
+        \draw[transition] (processor-init) -- node[edge-node] {.getSupportedOptions()\\.getSupportedSourceVersion()\\.getSupportedAnnotationTypes()} (processor-gets);
+        \draw[transition] (processor-gets) edge[loop right] node[edge-node] {.process()} (processor-gets);
+
+    \end{tikzpicture}
+    \caption{Java's annotation processor lifecycle.}
+    \label{fig:java-annotation-processor}
+\end{figure}
+
+\begin{listing}
+    \centering
+    \begin{minted}{Java}
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.ANNOTATION_TYPE)
+@interface Foo {}
+    \end{minted}
+    \caption{
+        Example code for Java's annotation declaration.
+        Possible values for \texttt{@Retention} and \texttt{@Target} are summed up in \autoref{fig:java-annotation-class-dia}.
+    }
+    \label{lst:java-annotation-declaration}
+\end{listing}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        % \draw[draw=black!20] (0, -0.5) grid (10, 10);
+        \draw (0, 9) -- (0, 9.6) -- (4, 9.6) -- (4.5, 9);
+        \draw (0, -0.5) rectangle (10.5, 9);
+        \node[draw=none, above right] (package-name) at (0, 9) {\texttt{java.lang.annotation}};
+
+        \node[circle, draw] (annotation-id) at (1.5, 8) {\texttt{@}};
+        \node[draw=none, right=3mm] (annotation-label) at (1.5, 8) {\texttt{Retention}};
+        \draw (1, 7.5) rectangle (4, 8.5);
+
+        \node[circle, draw] (annotation-id) at (7, 8) {\texttt{@}};
+        \node[draw=none, right=3mm] (annotation-label) at (7, 8) {\texttt{Target}};
+        \draw (6.5, 7.5) rectangle (9, 8.5);
+
+        \node[circle, draw] (annotation-id) at (1, 4) {\texttt{E}};
+        \node[draw=none, right=3mm] (annotation-label) at (1, 4) {\texttt{RetentionPolicy}};
+        \draw (0.5, 3.5) rectangle (4.5, 4.5);
+        \draw (0.5, 3.5) -- (0.5, 2) -- (4.5, 2) -- (4.5, 3.5);
+        \node[align=left, below right] (members) at (1, 3.5) {
+            $\bullet$~\texttt{CLASS}\\
+            $\bullet$~\texttt{SOURCE}\\
+            $\bullet$~\texttt{RUNTIME}\\
+        };
+
+        \node[circle, draw] (annotation-id) at (6, 6) {\texttt{E}};
+        \node[draw=none, right=3mm] (annotation-label) at (6, 6) {\texttt{ElementType}};
+        \draw (5.5, 5.5) rectangle (10, 6.5);
+        \draw (5.5, 5.5) -- (5.5, 0) -- (10, 0) -- (10, 5.5);
+        \node[align=left, below right] (members) at (6, 5.5) {
+            $\bullet$~\texttt{TYPE}\\
+            $\bullet$~\texttt{FIELD}\\
+            $\bullet$~\texttt{METHOD}\\
+            $\bullet$~\texttt{PARAMETER}\\
+            $\bullet$~\texttt{CONSTRUCTOR}\\
+            $\bullet$~\texttt{LOCAL\_VARIABLE}\\
+            $\bullet$~\texttt{ANNOTATION\_TYPE}\\
+            $\bullet$~\texttt{PACKAGE}\\
+            $\bullet$~\texttt{TYPE\_PARAMETER}\\
+            $\bullet$~\texttt{TYPE\_USE}\\
+            $\bullet$~\texttt{MODULE}\\
+        };
+
+        \draw[->] (2.5, 7.5) -- node[left] {\texttt{value}} (2.5, 4.5) node[above right] {\texttt{1}};
+        \draw[->] (7.75, 7.5) -- node[left] {\texttt{value}} (7.75, 6.5) node[above right] {\texttt{*}};
+
+    \end{tikzpicture}
+    \caption{\texttt{java.lang.annotation} class diagram.}
+    \label{fig:java-annotation-class-dia}
+\end{figure}
+
+\paragraph{Implementing an Annotation.}
+To implement an annotation, start by declaring it as in \autoref{lst:java-annotation-declaration}.
+The annotation may contain parameters, these allow to add configuration when the declaration is used.
+Supported types are:
+\begin{compactitem}
+    \item Primitive types (e.g. \keyword{int}, \keyword{long}, etc).
+    \item \keyword{String}
+    \item \keyword{Class<T>}
+    \item \keyword{enum} types.
+    \item Other annotation types.
+    \item An array of the above.
+\end{compactitem}
+At this point the annotation is processed by the compiler but does not do anything useful.
+To address that, the code needs to either handle the annotation at runtime, through reflection.
+Or at compile-time, through an annotation processor.
+Since processing the annotation at runtime incurs a cost, I'll only discuss the annotation processor approach.
+
+\paragraph{Annotation Processor.}
+Putting it simply, is a specific class registered at compile-time as able to process annotations.
+The compiler can then make use of the class to process the new annotations.
+The class itself will usually extend the \texttt{AbstractProcessor} class,
+overriding some methods present in \autoref{fig:java-annotation-processor}.
+The processor will then be called for each annotation belonging to the package.
+
+Annotation processors are also able to generate code.
+This is usually done by means of a library such as JavaPoet \autocite{Square2021}.
+After generation, the output code is then compiled and subject to the same treatment as handwritten files.
+If the generated code, generates more code, this process repeats itself until no more code is generated.
 
 \subsubsection*{ExtendJ \& JastAdd}\label{sec:lang-preprocessors:java:extendj}
 
+ExtendJ is an extensible compiler, its goals are to facilitate the development of Java compiler tools.
+The compiler supports Java from version 5 up to 8.
+The extensions are written in JastAdd \autocite{JastAdd2021}, a meta-compilation system upon which ExtendJ is built.
+It is possible to extend the compiler during any of the following phases: \emph{Scanning}, \emph{Parsing}, \emph{Analysis} and \emph{Code Generation}.
+Extending the language with new syntax requires the modification of the \emph{Scanner} and \emph{Parser}.
+The \emph{Analysis} phase is occurs after parsing, when types are checked.
+Hence, to extend type analysis, one must modify it in the compiler.
+Finally, \emph{Code Generation} has two possible extension methods in ExtendJ:
+\emph{direct bytecode generation} and \emph{desugaring}.
+The latter being the simpler approach and recommended being tried before the former.
+Desugaring can be used to prototype new languages constructs, by mapping them to the respective Java code.
+
+\begin{listing}
+    \centering
+    \begin{minted}{Java}
+@any Person people;
+people += new Person("Bob");
+people += new Person("Gene");
+people += new Person("Tina");
+for (Person person : people) {
+    System.out.println(person.getName());
+}
+    \end{minted}
+    \caption{
+        The \texttt{@any} annotation allows an object to carry several instances of itself.
+        In the example, \texttt{@any Person} is rather a collection of \texttt{Person}.
+        This extension is enabled by the ExtendJ compiler.
+    }
+    \label{lst:java-annotation-declaration}
+\end{listing}
+
 \subsection{Kotlin}\label{sec:lang-preprocessors:kotlin}
 
+While Kotlin also allows and makes use of Java annotations, it is also possible to write plugins for the Kotlin compiler.
+Compiler plugins are much more complex pieces of software in comparison with annotations,
+this is due to the amount of detail required to take into account.
+An example of such detail is the amount of Kotlin backends available, not all targeting the Java Virtual Machine.
+This is also a motivation to write a compiler plugin, as annotations may not be compatible with all backends.
+
 \subsubsection*{Kotlin Compiler Plugins}\label{sec:lang-preprocessors:kotlin:annotation}
+The Kotlin compiler plugin stack is illustrated in \autoref{fig:kotlin-compiler-plugin-arch}.
+From top to bottom, the first two parts are related to Gradle, the main build system for Kotlin.
+These parts to not work on the plugin itself, but rather help the plugin coexist with the rest of the Kotlin ecosystem.
+
+\paragraph{\texttt{Plugin}.}
+The plugin interacts only in the Gradle segment,
+it provides an entrypoint from a \texttt{build.gradle} plugin and allows plugin configuration.
+
+\paragraph{\texttt{Subplugin}.}
+The subplugin acts as the glue between Gradle and Kotlin.
+It sets up a series on options for the layer below from the configuration provided in the first layer.
+It also defines a plugin ID to avoid name clashing with other plugins and Maven coordinates, which allow the plugin to be downloaded.
+
+\paragraph{\texttt{CommandLineProcessor}.}
+This layer reads the arguments for \texttt{kotlinc -Xplugin}.
+The options from the previous layer are passed through here.
+Finally, it writes \texttt{CompilerConfigurationKeys} which will be passed to the layer bellow.
+
+\paragraph{\texttt{ComponentRegistar}.}
+This component just reads the passed keys and registers extensions to be used by the compiler.
+It is possible to register several extensions at a time.
+
+\paragraph{\texttt{Extension}.}
+The extension is the main part of the plugin.
+There are multiple types of extensions able to deal with the input at different levels,
+from the class level to the code generation.
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \tikzstyle{layer}=[thick, rectangle, rounded corners, minimum height=7.5mm, minimum width=5cm, draw, font=\ttfamily]
+        % \draw[draw=black!20] (-4,1) grid (4, -7);
+        \node[layer] (plugin) at (0, 0) {Plugin};
+        \node[layer] (subplugin) at (0, -1.5) {Subplugin};
+        \node[layer] (cli-processor) at (0, -3) {CommandLineProcessor};
+        \node[layer] (registar) at (0, -4.5) {ComponentRegistar};
+        \node[layer, minimum width=2cm] (ext-left) at (-1.5, -6) {Extension};
+        \node[layer, minimum width=2cm] (ext-right) at (1.5, -6) {Extension};
+
+        \draw[->, thick] (plugin) -- (subplugin);
+        \draw[->, thick] (subplugin) -- (cli-processor);
+        \draw[->, thick] (cli-processor) -- (registar);
+        \draw[->, thick] (registar) -- (ext-left);
+        \draw[->, thick] (registar) -- (ext-right);
+
+        \draw[thick] (2.9, 0.5) -- (3, 0.5) -- (3, -2) -- (2.9, -2);
+        \draw[thick] (2.9, -2.5) -- (3, -2.5) -- (3, -6.5) -- (2.9, -6.5);
+
+        \path (3, 0.5) -- node[below, rotate=90]{Gradle} (3, -2);
+        \path (3, -2.5) -- node[below, rotate=90]{Kotlin} (3, -6.5);
+    \end{tikzpicture}
+    \caption{Kotlin compiler plugin architecture stack \autocite{Most2018}.}
+    \label{fig:kotlin-compiler-plugin-arch}
+\end{figure}
 
 
 \section{Rust Macros}\label{sec:rust-macros}
