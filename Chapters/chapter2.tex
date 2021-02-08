@@ -231,7 +231,7 @@ let mut s = String::from("hello");
 let r1 = &mut s; // ok: first mutable borrow
 let r2 = &mut s; // error: `s` was mutably borrowed in the previous line
     \end{minted}
-    \caption{Example using borrowing to allow for more than one reader on the same variable.}
+    \caption{Example error while using multiple mutable borrows over the same variable.}
     \label{lst:rust-borrow-n-mut}
 \end{listing}
 
@@ -240,9 +240,9 @@ let r2 = &mut s; // error: `s` was mutably borrowed in the previous line
 let mut s = String::from("hello");
 let r1 = &s;     // ok: first immutable borrow
 let r2 = &s;     // ok: second immutable borrow
-let r3 = &mut s; // error: `s` was immutable borrowed in the previous lines
+let r3 = &mut s; // error: `s` was immutably borrowed in the previous lines
     \end{minted}
-    \caption{Example using borrowing to allow for more than one reader on the same variable.}
+    \caption{Example error while using a mutable borrow in conjunction with immutable ones.}
     \label{lst:rust-borrow-n-immut-1-mut}
 \end{listing}
 
@@ -506,14 +506,14 @@ or leave it unchanged, such as \texttt{nextLine}.
     \label{fig:file-automata}
 \end{figure}
 
-\paragraph{Real-world scenario.} In production applications, the API is not this simple.
-In fact, the \keyword{Scanner} API is not this simple, however it was reduced to the simplest possible for the example.
+\paragraph{Real-world scenario.}
+In production applications, the API is not this simple.
+In fact, the \keyword{Scanner} API is not this simple, however it was simplified for the example.
 Complex APIs can be designed by a team and implemented by another,
 specifications can be changed and during project development some details may be lost.
-Details like those can be costly, imagine for example that a method call reaches a state, which as no outgoing edges,
-but it is not a final state. This is a problem addressed by existing automata algorithms,
-thus representing typestates as automata,
-extracting all necessary information and applying such algorithms provides the API extra safety.
+Such details can be costly, imagine for example that a method call reaches a state, which has no outgoing edges,
+but it is not a final state. This is a problem addressed by existing automata algorithms.
+Representing typestates as automata, extracting all necessary information and applying such algorithms provides the API with extra safety.
 
 \subsubsection*{The case for typestates}
 

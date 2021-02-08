@@ -411,15 +411,9 @@ since line's 3 \texttt{a} will not exist due to not being in the same syntactic 
     \centering
     \begin{minted}{Rust}
 macro_rules! say_hello {
-    ($n:literal) => {
-        for 0..$n {
-            println!("Hello, world!");
-        }
-    }
+    ($n:literal) => { for 0..$n { println!("Hello, world!"); } }
 }
-fn main() {
-    say_hello!(5);
-}
+fn main() { say_hello!(5); }
     \end{minted}
     \caption{Example \texttt{macro\_rules!} usage.
         When executed, the code above will print “\texttt{Hello, world!}” five times.}
@@ -430,12 +424,7 @@ fn main() {
 \begin{listing}
     \begin{minted}{Rust}
 macro_rules! using_a {
-    ($e:expr) => {
-        {
-            let a = 42;
-            $e
-        }
-    }
+    ($e:expr) => { { let a = 42; $e } }
 }
 let four = using_a!(a / 10);
     \end{minted}
@@ -640,8 +629,136 @@ Finally, attribute macros can be used to modify existing code or simply check fo
 
 \section{Approaches to Behavioral Types}\label{sec:behavioral-approaches}
 
-\subsection{Papers do NOW (Ancona)}
+As previously discussed, there are several kinds of approaches to behavioral types,
+some approaches aim to bridge modern languages and behavioral types,
+others build a language from scratch.
+Building a new language is a more attractive approach since there is no requirement for retrofitting.
+This approach is more common in the typestate domain, with Vault and Plaid being prime examples.
+The library approach receives more attention from the session types domain,
+where projects aim to implement them in existing languages such as Java, Go and Rust.
 
-\subsection{Mungo}
+\subsection{Session Types}
+As established so far, session types are mostly used for communication protocols,
+defining message types and their order in a conversation.
+Session types also share common ground with typestates as works StMungo \autocite{Dardha2017, Kouzapas2018, Voinea2020}
+and others \autocite{Gay2015, Vasconcelos2017} demonstrate.
 
-\subsection{Session Types in Rust}
+\paragraph{StMungo} it is a transpiler from Scribble \autocite{Yoshida2014} to Java based on session types and typestate.
+The transpilation process takes Scribble local protocols as input, it outputs Mungo typestate specifications and Java skeleton implementation code.
+The output is then checked by Mungo \autocite{Dardha2017, Kouzapas2018, Voinea2020}.
+This process is based on a formal translation of session types into typestate specifications for channel objects, and
+extends the translation from binary to multiparty session types.
+
+\paragraph{Session Types for Rust.}
+As far as I am aware, the work on Rust session types was started by Jespersen et al. \autocite{Jespersen2015},
+such work was limited since it only supported binary session types.
+It builds on a Haskell-based approach \autocite{Pucella2008}, mirroring the implementation interface.
+
+The type constructs in the original session types formulation have correspondents in the Rust implementation,
+this is part of a DSL embedded in the Rust type system.
+The library makes use of \keyword{unsafe} to allow for transmutation (i.e. unsafe type casting)
+and sending untyped values over the channels.
+Finally, the library is able to provide compile-time safety, that is, the code will not compile if the channels protocols do not match.
+
+\paragraph{Multiparty Session Types for Rust.}
+Work on multiparty session types started with Lagaillardie et al. \autocite{Lagaillardie2020}.
+This work makes use of the Scribble \autocite{Yoshida2014} toolchain, just like StMungo;
+and it is a thin wrapper over previous work done by Kokke \autocite{Kokke2019}.
+Similarly to the previously presented work \autocite{Jespersen2015},
+this work also takes advantage Rust's type system to provide compile-time safety.
+While using Scribble allows the library to make use of a tried and tested toolchain,
+it also implies the usage of an external tool, which in previous works was not necessary \autocite{Jespersen2015, Kokke2019}.
+
+\subsection{Typestate}
+In the work of Ancona et al. \autocite[Section 2.3]{Ancona2016} several approaches to typestates are enumerated.
+While most approaches create a new language,
+approaches like Fugue \autocite{DeLine2004} simply build on top of existing languages.
+This kind of approach is extremely valuable as it bridges the gap between existing programming languages and the theoretical field.
+
+\paragraph{Vault} is a programming language with the aim of researching lifetime tracking and the symbolic state of objects \autocite{Fahndrich2002}.
+Vault introduces two new concepts, \emph{adoption} and \emph{focus}, these two serve to relax constrains imposed by a linear type system.
+Since aliasing can be controlled through the linear type system, Vault is able to check for states, hence supporting typestate.
+Vault bridges the best of both worlds by splitting programs into two groups:
+the ones able to be checked for protocols (i.e. \emph{typestated}) and
+the ones free of aliasing restrictions and thus unable to verify protocol rules.
+
+The adoption mechanism works by means of an \emph{adopter} (i.e. which adopts a linear reference) and an \emph{adoptee} (i.e. the adopted reference).
+Through adoption, the adopted linear reference is consumed, and thus cannot be directly accessed.
+When the adopter is freed, all adopted references recover their linear type,
+this way, all aliases lifetimes are tied to the lifetime of the adopter.
+
+The focusing mechanism provides a temporarily linear view on a nonlinear object.
+The focused object is required to be live and of the same type in the end of the focus usage.
+Access to the parent of the focused object is temporarily revoked, disabling its aliases to be accessed.
+
+\paragraph{Fugue} is a software checker that enables interface protocols (i.e. typestates) to be specified as annotations \autocite{DeLine2004}.
+It provides two main protocol checking functions, \emph{resource protocols} and \emph{state-machine protocols}.
+Resource protocols relate to the allocation and release of resources,
+since Rust takes care of such concerns through ownership I will not discuss this feature of Fugue.
+
+State-machine protocols allow the programmer to constrain the sequence of method calls on an object.
+This is also known as typestate, as one can only transition between valid states.
+In Fugue, the developer adds annotations to the object's methods and from them, a state-machine is derived.
+Fugue also allows for states to relate to one another.
+Consider the example in \autoref{lst:csharp-fugue-states}, by relating the states in the \texttt{OuterSocket} class
+with the \texttt{innerSocket} field states Fugue can ensure that \texttt{OuterSocket} is a well-behaved client of the field's class.
+
+\begin{listing}
+    \centering
+    \begin{minted}{csharp}
+[WithProtocol("open", "closed")]
+class OuterSocket {
+    [InState(”connected”, WhenEnclosingState=”open”),
+        NotAliased(WhenEnclosingState=”open”)]
+    [Unavailable(WhenEnclosingState=”closed”)]
+    private Socket innerSocket;
+}
+    \end{minted}
+    \caption{
+        Relating a class's states with the \texttt{innerSocket} states.
+        In this example, the \texttt{OuterSocket}'s \texttt{open} state is related with the \texttt{connected} state of the socket.
+        This ensures that the \texttt{OuterSocket} is a well-behaved client of \texttt{innerSocket}.
+    }
+    \label{lst:csharp-fugue-states}
+\end{listing}
+
+\paragraph{Plaid} is a typestate-oriented language.
+The idea, proposed in \autocite{Aldrich2009}, is based on support for first-class typestates in an object-oriented setting.
+In Plaid, objects are described by their state rather than members.
+While the object is able to have fields common to all states, there is also the possibility for fields to be exclusive to a given state.
+For the example of the \texttt{File} which can be either in the \keyword{Open} state or the \keyword{closed}, the former state would have an OS file descriptor,
+while the closed state would not. The path to the file could be available for both states, since it would allow the file to be re-opened.
+
+In Plaid, methods can make the object transition between states. Building on the file example,
+the method \texttt{open} would transition the file from the \keyword{Closed} state to the \keyword{Open} state.
+Plaid also introduces a series of aliasing control keywords,
+\keyword{unique} disallows aliasing on an object while allowing for state transitions,
+\keyword{immutable} disallows mutation (i.e. state transitions).
+It also introduces the \keyword{shared} keyword, which makes an object behave like it normally would in Java,
+allowing aliasing. Since it allows aliasing, it also requires runtime checks over state on sensitive operations.
+
+\paragraph{Mungo} is a static analysis tool \autocite{Dardha2017, Kouzapas2018, Voinea2020} for Java programs.
+It checks typestate properties and can be divided into two components, a Java-like language to define typestate specifications
+and a typechecker, which checks that objects follow the typestate specification.
+Specifications are written as separate files and can then be used in Java classes through annotations, as demonstrated in \autoref{lst:java-mungo-typestate}.
+The annotations enable Mungo to be unobtrusive in projects since annotations are not required to be processed (as seen in \autoref{sec:lang-preprocessors:java:annotation}).
+\begin{displayquote}[{\autocite[Section 1.2]{Dardha2017}}]
+If a class has a typestate specification, the Mungo typechecker analyses each object of that class in the program and extracts the method call behaviour (sequences of method calls) through
+the object’s life. Finally, it checks the extracted information against the sequences of method calls allowed by the typestate specification.
+\end{displayquote}
+
+\begin{listing}
+    \centering
+    \begin{minted}{csharp}
+@Typestate("StateIteratorProtocol")
+class StateIterator { /* ... */ }
+    \end{minted}
+    \caption{
+        Mungo's \texttt{Typestate} annotation. Normal Java code ends up ignoring the annotation.
+        However, Mungo is able to process it and check the class calls against the specification to ensure typestate compliance.
+        In this case the class specification is \texttt{StateIteratorProtocol}.
+    }
+    \label{lst:java-mungo-typestate}
+\end{listing}
+
+% https://github.com/rust-lang/rfcs/issues/814
