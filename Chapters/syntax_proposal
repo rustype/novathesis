@@ -1,0 +1,46 @@
+typestate! { [Drone]
+    struct Grounded;
+
+    struct Hovering {
+        x: f32,
+        y: f32,
+    }
+
+    struct Flying {
+        to_x: f32,
+        to_y: f32,
+    }
+
+    fn take_off(self: Grounded) -> Hovering;
+
+}
+
+// converts
+
+struct Drone<State> {
+    state: State
+}
+
+struct GroundedState;
+
+trait Grounded {
+    fn take_off(self) -> Drone<Hovering>;
+}
+
+struct Hovering {
+    x: f32,
+    y: f32,
+}
+
+struct Flying {
+    to_x: f32,
+    to_y: f32,
+}
+
+// user
+
+impl Grounded for Drone<Grounded> {
+    fn take_off(self) -> Drone<Hovering> {
+
+    }
+}

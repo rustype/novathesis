@@ -10,7 +10,7 @@ some languages will apply the preprocessor during different compilation stages w
 \subsection{OCaml}\label{sec:lang-preprocessors:ocaml}
 
 The OCaml ecosystem currently uses OCaml \gls{PPX},
-however, previous to version 4.02, OCaml made use of \gls{p4}.
+previous to version 4.02, OCaml made use of \gls{p4}.
 
 Camlp4 is a parsing library which provides extensible grammars,
 its main goal is to allow users to extend OCaml syntax,
@@ -26,7 +26,7 @@ These criticisms are found throughout documents which discuss Camlp4~\autocite{W
 
 \subsubsection*{PPX}\label{sec:lang-preprocessors:ocaml:ppx}
 
-In OCaml version 4.02 syntax extensions were introduced, this mechanism was meant to enable preprocessor extensions.
+In OCaml version 4.02 syntax extensions were introduced, to enable preprocessor extensions.
 This meta programming mechanism come to replace \gls{p4}, which was not well liked by the community due to its complexity.
 The resources on \gls{PPX} are not as widespread as the resources for similar mechanisms in other languages (i.e. Rust and its macros).
 There are two main entry points to the PPX system, attribute and extension nodes \autocite[Sections 8.12 \& 8.13]{Leroy2020}.
@@ -73,6 +73,13 @@ if such does not happen an \texttt{Uninterpreted expression} error is issued.
         \item \mintinline{ocaml}{[%%attr payload]} - used in structures and signatures, both in the module and object languages.
     \end{compactitem}
 \end{displayquote}
+
+\paragraph{Ecosystem Presence.}
+The current state of affairs regarding the PPX brings up mixed reactions.
+From my research, the environment is well maintained, with regular commits to the main PPX repositories.
+However, the entry-barrier is high due to the lack of introductory materials.
+Despite this, PPX has seen use in the ReasonML community, more specifically in the ReasonReact framework,
+where the Tailwind CSS dialect is supported by PPX to enhance developer ergonomics.
 
 \subsection{Java}\label{sec:lang-preprocessors:java}
 
@@ -187,7 +194,7 @@ This helps avoid potentially harmful code from being executed (e.g. malicious SQ
 
 \paragraph{Implementing an Annotation.}
 To implement an annotation, start by declaring it as in \autoref{lst:java-annotation-declaration}.
-The annotation may contain parameters, these allow to add configuration when the declaration is used.
+The annotation may contain parameters that allow to add configuration when the declaration is used.
 Supported types are:
 \begin{compactitem}
     \item Primitive types (e.g. \keyword{int}, \keyword{long}, etc).
@@ -214,19 +221,36 @@ This is usually done by means of a library such as JavaPoet \autocite{Square2021
 After generation, the output code is then compiled and subject to the same treatment as handwritten files.
 If the generated code, generates more code, this process repeats itself until no more code is generated.
 
+\paragraph{Ecosystem Presence.}
+Java annotations are ubiquitous.
+Examples include but are not limited to the development of REST APIs,
+Android applications and database tools.
+As discussed in \autoref{sec:lang-preprocessors:java:annotation},
+annotations are picked up by several tools and serve a plethora of purposes,
+from cutting boilerplate to providing an extra layer of security and assurance.
+However, being ubiquitous does not imply that resources are widely available.
+Learning to develop annotations seems to be an almost exotic topic in Java,
+with few quality resources available.
+
 \subsubsection*{ExtendJ \& JastAdd}\label{sec:lang-preprocessors:java:extendj}
 
-ExtendJ is an extensible compiler, its goals are to facilitate the development of Java compiler tools.
+ExtendJ is an extensible compiler aiming at facilitating the development of Java compiler tools.
 The compiler supports Java from version 5 up to 8.
 The extensions are written in JastAdd \autocite{JastAdd2021}, a meta-compilation system upon which ExtendJ is built.
 It is possible to extend the compiler during any of the following phases: \emph{Scanning}, \emph{Parsing}, \emph{Analysis} and \emph{Code Generation}.
 Extending the language with new syntax requires the modification of the \emph{Scanner} and \emph{Parser}.
-The \emph{Analysis} phase is occurs after parsing, when types are checked.
+The \emph{Analysis} phase occurs after parsing, when types are checked.
 Hence, to extend type analysis, one must modify it in the compiler.
 Finally, \emph{Code Generation} has two possible extension methods in ExtendJ:
 \emph{direct bytecode generation} and \emph{desugaring}.
 The latter being the simpler approach and recommended being tried before the former.
 Desugaring can be used to prototype new languages constructs, by mapping them to the respective Java code.
+
+\paragraph{Ecosystem Presence.}
+While both ExtendJ and JastAdd are powerful tools, they lack of support for versions after Java 8.
+Their usage is generally confined to academia being unsuited for industrial usage.
+Documentation on getting up and running is also limited,
+being mostly based on papers and examples rather than entry-level explanations.
 
 \begin{listing}
     \centering
@@ -251,7 +275,7 @@ for (Person person : people) {
 
 While Kotlin also allows and makes use of Java annotations, it is also possible to write plugins for the Kotlin compiler.
 Compiler plugins are much more complex pieces of software in comparison with annotations,
-this is due to the amount of detail required to take into account.
+due to the amount of detail required to take into account.
 An example of such detail is the amount of Kotlin backends available, not all targeting the Java Virtual Machine.
 This is also a motivation to write a compiler plugin, as annotations may not be compatible with all backends.
 
@@ -282,6 +306,11 @@ It is possible to register several extensions at a time.
 The extension is the main part of the plugin.
 There are multiple types of extensions able to deal with the input at different levels,
 from the class level to the code generation.
+
+\paragraph{Ecosystem Presence.}
+Just like the previous languages, the Kotlin compiler plugins suffer from the same discoverability problem.
+While depending on it are widely used (e.g. Kotlin serialization \autocite{Kotlin2020}),
+the resources to learn how to develop such tools are rare.
 
 \begin{figure}
     \centering
@@ -630,7 +659,7 @@ Finally, attribute macros can be used to modify existing code or simply check fo
 \section{Approaches to Behavioral Types}\label{sec:behavioral-approaches}
 
 As previously discussed, there are several kinds of approaches to behavioral types,
-some approaches aim to bridge modern languages and behavioral types,
+some aim to bridge modern languages and behavioral types,
 others build a language from scratch.
 Building a new language is a more attractive approach since there is no requirement for retrofitting.
 This approach is more common in the typestate domain, with Vault and Plaid being prime examples.
@@ -644,14 +673,14 @@ Session types also share common ground with typestates as works StMungo \autocit
 and others \autocite{Gay2015, Vasconcelos2017} demonstrate.
 
 \paragraph{StMungo} it is a transpiler from Scribble \autocite{Yoshida2014} to Java based on session types and typestate.
-The transpilation process takes Scribble local protocols as input, it outputs Mungo typestate specifications and Java skeleton implementation code.
+The transpilation process takes Scribble local protocols as input, generating Mungo typestate specifications and Java skeleton implementation code.
 The output is then checked by Mungo \autocite{Dardha2017, Kouzapas2018, Voinea2020}.
 This process is based on a formal translation of session types into typestate specifications for channel objects, and
 extends the translation from binary to multiparty session types.
 
 \paragraph{Session Types for Rust.}
 As far as I am aware, the work on Rust session types was started by Jespersen et al. \autocite{Jespersen2015},
-such work was limited since it only supported binary session types.
+such work was limited since it only supported binary session types for channels.
 It builds on a Haskell-based approach \autocite{Pucella2008}, mirroring the implementation interface.
 
 The type constructs in the original session types formulation have correspondents in the Rust implementation,
@@ -676,7 +705,7 @@ approaches like Fugue \autocite{DeLine2004} simply build on top of existing lang
 This kind of approach is extremely valuable as it bridges the gap between existing programming languages and the theoretical field.
 
 \paragraph{Vault} is a programming language with the aim of researching lifetime tracking and the symbolic state of objects \autocite{Fahndrich2002}.
-Vault introduces two new concepts, \emph{adoption} and \emph{focus}, these two serve to relax constrains imposed by a linear type system.
+Vault introduces two new concepts — \emph{adoption} and \emph{focus}, which serve to relax constrains imposed by a linear type system.
 Since aliasing can be controlled through the linear type system, Vault is able to check for states, hence supporting typestate.
 Vault bridges the best of both worlds by splitting programs into two groups:
 the ones able to be checked for protocols (i.e. \emph{typestated}) and
@@ -684,8 +713,8 @@ the ones free of aliasing restrictions and thus unable to verify protocol rules.
 
 The adoption mechanism works by means of an \emph{adopter} (i.e. which adopts a linear reference) and an \emph{adoptee} (i.e. the adopted reference).
 Through adoption, the adopted linear reference is consumed, and thus cannot be directly accessed.
-When the adopter is freed, all adopted references recover their linear type,
-this way, all aliases lifetimes are tied to the lifetime of the adopter.
+Furthermore, the lifetime of each reference alias is tied to the lifetime of the adopter.
+When the adopter is freed, all adopted references recover their linear type.
 
 The focusing mechanism provides a temporarily linear view on a nonlinear object.
 The focused object is required to be live and of the same type in the end of the focus usage.
@@ -700,7 +729,7 @@ State-machine protocols allow the programmer to constrain the sequence of method
 This is also known as typestate, as one can only transition between valid states.
 In Fugue, the developer adds annotations to the object's methods and from them, a state-machine is derived.
 Fugue also allows for states to relate to one another.
-Consider the example in \autoref{lst:csharp-fugue-states}, by relating the states in the \texttt{OuterSocket} class
+Consider the example in \autoref{lst:csharp-fugue-states}; by relating the states in the \texttt{OuterSocket} class
 with the \texttt{innerSocket} field states Fugue can ensure that \texttt{OuterSocket} is a well-behaved client of the field's class.
 
 \begin{listing}
@@ -733,9 +762,9 @@ In Plaid, methods can make the object transition between states. Building on the
 the method \texttt{open} would transition the file from the \keyword{Closed} state to the \keyword{Open} state.
 Plaid also introduces a series of aliasing control keywords,
 \keyword{unique} disallows aliasing on an object while allowing for state transitions,
-\keyword{immutable} disallows mutation (i.e. state transitions).
-It also introduces the \keyword{shared} keyword, which makes an object behave like it normally would in Java,
-allowing aliasing. Since it allows aliasing, it also requires runtime checks over state on sensitive operations.
+\keyword{immutable} disallows mutation (i.e. state transitions),
+\keyword{shared} makes an object behave like it normally would in Java,
+allowing aliasing (since it allows aliasing, it also requires runtime checks over state on sensitive operations).
 
 \paragraph{Mungo} is a static analysis tool \autocite{Dardha2017, Kouzapas2018, Voinea2020} for Java programs.
 It checks typestate properties and can be divided into two components, a Java-like language to define typestate specifications
@@ -761,4 +790,15 @@ class StateIterator { /* ... */ }
     \label{lst:java-mungo-typestate}
 \end{listing}
 
-% https://github.com/rust-lang/rfcs/issues/814
+\subsection{Summary}
+
+In summary, behavioral types is a topic which for now, is still mostly confined to the academia circles.
+Despite the efforts put into the development of tools for “\emph{business}” languages,
+the tools were either abandoned (e.g. Fugue) or
+superseded by other developments in the field (e.g. the initial work in session types for Rust).
+Languages developed for research purposes (e.g. Vault and Plaid) seem to make little to no effect on the outside world.
+While adoption of the language itself is not expected, such could be expected for the mechanisms,
+though it does not seem to be the case.
+Finally, in the case of tools (e.g. Scribble and Mungo), they seem to pick the most traction from academia.
+The motivation seems to be based on the possibility of extension and continuous improvement.
+However, they seem to suffer the same destiny as others, causing little to no impact in the outside world.

@@ -107,3 +107,110 @@ These are to be addressed in the new version, based on procedural macros.
     \item The macro only supports “\emph{phantom}” states, that is, states do not hold any data
     (the name comes from Rust's \keyword{PhantomData}, which is used to implement these kind of states).
 \end{compactitem}
+
+
+
+
+
+
+\begin{listing}
+    \centering
+    \begin{minted}{rust}
+typestate! { (Drone)
+    struct Grounded { location: Coordinates }
+    struct Hovering { location: Coordinates }
+    struct Flying {
+        location:    Coordinates,
+        destination: Coordinates,
+    }
+    fn take_off(self: Grounded) -> Hovering;
+    fn fly_to(self: Hovering, dst: Coordinates) -> Hovering;
+    fn land(self: Hovering) -> Grounded;
+}
+\end{minted}
+\caption{
+    Example specification of the \texttt{Drone} typestate using the proposed DSL.
+}
+    \label{lst:dsl-typestate-spec}
+\end{listing}
+
+
+\begin{listing}
+    \centering
+    \begin{minted}{rust}
+trait DroneState {}
+struct Grounded { location: Coordinates }
+impl DroneState for Grounded {}
+struct Drone<State: DroneState> { state: State }
+trait GroundedOps { fn take_off(self) -> Drone<Hovering>; }
+    \end{minted}
+    \caption{
+        Example generated Rust code for the \texttt{Grounded} state.
+        Notice the \texttt{DroneState} trait, its purpose is to bound valid drone states.
+        The trait should follow the sealed trait pattern, but it was simplified in this example.
+    }
+    \label{lst:dsl-typestate-generated}
+\end{listing}
+
+
+\begin{listing}
+    \centering
+    \begin{minted}{rust}
+impl GroundedOps for Drone<Grounded> {
+    fn take_off(self) -> Drone<Hovering> { /* ... */ }
+}
+    \end{minted}
+    \caption{
+        To make the drone usable, the developer must implement the generated traits.
+        In this case, only the \texttt{Grounded} state is considered.
+    }
+    \label{lst:dsl-typestate-impl}
+\end{listing}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \tikzstyle{code} = [fill=white, font=\tiny]
+
+        \node[code] (code) at (0,0) {\tiny\mintinline{rust}{typestate!{ ... }}};
+
+        \begin{scope}[shift={(3.5, 0.75)}]
+            \tikzstyle{n}=[circle, draw=blue!70, fill=blue!20]
+            \node[n] (root) at (0, 0) {};
+            \node[n] (l1) at (-0.35, -0.75) {};
+            \node[n] (l2) at (0.35, -0.75) {};
+            \node[n] (l11) at (-0.7, -1.5) {};
+            \draw[-] (root) -- (l1);
+            \draw[-] (root) -- (l2);
+            \draw[-] (l1) -- (l11);
+        \end{scope}
+
+        \begin{scope}[shift={(6, 0.75)}]
+            \tikzstyle{n}=[circle, draw=blue!70, fill=blue!20]
+            \tikzstyle{f}=[circle, draw=red!70, fill=red!20]
+            \tikzstyle{s}=[circle, draw=green!70, fill=green!20]
+            \node[s] (root) at (0, 0) {};
+            \node[n] (l1) at (-0.5, -0.75) {};
+            \node[n] (l2) at (0.5, -0.75) {};
+            \node[f] (l11) at (0, -1.5) {};
+            \draw[->] (root) -- (l1);
+            \draw[->] (root) -- (l2);
+            \draw[->] (l1) -- (l11);
+            \draw[->] (l2) -- (l1);
+        \end{scope}
+
+        \node[code] (rust-code) at (9.5,0) {\mintinline{rust}{struct S { ... }}};
+
+        \draw[->, thick] (code) -> (2.5, 0);
+        \draw[->, thick] (4.5, 0) -> (5, 0);
+        \draw[->, thick] (7, 0) -> (rust-code);
+
+    \end{tikzpicture}
+    \caption{
+        From DSL specification to Rust code.
+        First the DSL is parsed, then converted to a state machine and its properties checked
+        (in the case some property is not respected, an error is issued).
+        After the properties are validated, the Rust code is generated.
+    }
+    \label{fig:dsl-processing}
+\end{figure}
