@@ -18,7 +18,7 @@ along this idea, the language itself should be a simple dependency and avoid any
 Finally, as discussed in \autoref{sec:objectives}, the language should provide static guarantees.
 These static guarantees should check for properties such as state reachability and termination.
 
-\section{Architecture}
+\section{Architecture}\label{sec:arch}
 
 I now discuss the DSL architecture and the decisions made so far.
 From a high-level view, the DSL should provide a specification language.
@@ -59,17 +59,92 @@ When the DSL is parsed and the specification extracted, there are two important 
 After these two steps are completed, the final Rust code can be emitted.
 All that is left for the developer to do is the implementation of the \keyword{trait}s.
 
-\missingfigure{code -> (ast | fsm) -> output}
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \tikzstyle{code} = [fill=white, font=\tiny, align=left]
+        \tikzstyle{phase} = [below, font=\small\itshape]
+
+        \def\xSpec{0}
+        \def\xAST{4}
+        \def\xFSM{8}
+        \def\xCode{12}
+        \def\yLabel{-1.75}
+
+        \node[code] (code) at (\xSpec,0) {\mintinline{rust}{typestate!{ ... }}};
+
+        \begin{scope}[shift={(\xAST, 0.75)}]
+            \tikzstyle{n}=[circle, draw=blue!70, fill=blue!20]
+            \node[n] (root) at (0, 0) {};
+            \node[n] (l1) at (-0.35, -0.75) {};
+            \node[n] (l2) at (0.35, -0.75) {};
+            \node[n] (l11) at (-0.7, -1.5) {};
+            \draw[-] (root) -- (l1);
+            \draw[-] (root) -- (l2);
+            \draw[-] (l1) -- (l11);
+        \end{scope}
+
+        \begin{scope}[shift={(\xFSM, 0.75)}]
+            \tikzstyle{n}=[circle, draw=blue!70, fill=blue!20]
+            \tikzstyle{f}=[circle, draw=red!70, fill=red!20]
+            \tikzstyle{s}=[circle, draw=green!70, fill=green!20]
+            \node[s] (root) at (0, 0) {};
+            \node[n] (l1) at (-0.5, -0.75) {};
+            \node[n] (l2) at (0.5, -0.75) {};
+            \node[f] (l11) at (0, -1.5) {};
+            \draw[->] (root) -- (l1);
+            \draw[->] (root) -- (l2);
+            \draw[->] (l1) -- (l11);
+            \draw[->] (l2) -- (l1);
+        \end{scope}
+
+        \node[code] (rust-code) at (\xCode,0) {\mintinline{rust}{struct S { ... }}\\\mintinline{rust}{trait SOps { ... }}\\\mintinline{rust}{// ...}};
+
+        % \draw[->, thick] (code) -> (2.5, 0);
+        % \draw[->, thick] (4.5, 0) -> (5, 0);
+        % \draw[->, thick] (7, 0) -> (rust-code);
+
+        \node[align=center] (label-1) at (\xSpec, \yLabel) {Typestate\\Specification};
+        \node[align=center] (label-2) at (\xAST, \yLabel) {AST};
+        \node[align=center] (label-3) at (\xFSM, \yLabel) {State\\Machine};
+        \node[align=center] (label-4) at (\xCode, \yLabel) {Rust\\Code};
+
+        \draw[->, thick] (label-1) -- node[phase] {Parse} (label-2);
+        \draw[->, thick] (label-2) -- node[phase] {Convert} (label-3);
+        \draw[->, thick] (label-3) -- node[phase] {Check: Ok} (label-4);
+        \draw[->, thick] (label-3) edge[in=-35, out=-145] node[phase] {Check: Error} (label-1);
+
+    \end{tikzpicture}
+    \caption{
+        From DSL specification to Rust code.
+        First the DSL is parsed, then converted to a state machine and its properties checked
+        (in the case some property is not respected, an error is issued).
+        After the properties are validated, the Rust code is generated.
+    }
+    \label{fig:dsl-processing}
+\end{figure}
 
 \subsection{Syntax}
 
 % One of the DSL's syntax goals is to stay as close to Rust as possible.
 The macro is invoked through a \keyword{typestate!} call, inside it, lives the DSL.
 I go through some important aspects, such as state and function declaration syntax.
+\autoref{lst:dsl-typestate-spec} is an example of the full syntax.
 
-\paragraph{State declaration.}
-States are declared as \keyword{struct} as to not insert a new \keyword{state} keyword.
-% There can be multiple declarations
+\paragraph{Top-level declaration.} The top-level declaration names the typestated output structure (line 1 of \autoref{lst:dsl-typestate-spec}).
+It starts with a name, followed by the structure identifier and a pair of curly brackets containing the specification.
+While this syntax would allow for multiple declarations to be written,
+the macro call can be become unnecessarily complex if several declarations are allowed inside.
+
+\paragraph{State declaration} uses the \keyword{struct} keyword.
+The choice of \keyword{struct} over \keyword{state} is based on the following reasons:
+\begin{compactitem}
+    \item Keeping the syntax close to Rust by avoiding a new keyword.
+    \item Each state boils down to a structure, hence it is a natural mapping made explicit.
+    \item Since the code inside the DSL already implies typestates, each structure can easily be thought of as a state.
+    This follows the previous point idea.
+\end{compactitem}
 
 \paragraph{Function declaration} shares the syntax with regular Rust function declaration.
 They can be one of three possible categories:
@@ -84,53 +159,32 @@ They can be one of three possible categories:
     Their signature takes ownership of \keyword{self},
     forcing the consumption of the current state disabling possible aliasing.
 \end{compactitem}
-The shown keywords can be explicit, but they can also be inferred from the code.
-
-\section{Existing Work}
-
-Currently, I have developed a really simple proof-of-concept macro for Rust typestates.
-The macro is based on declarative macros and has several limitations,
-its syntax is also distant from the current proposal.
-The macro takes a simple typestate specification and expands into several traits and structures.
-This project can be found on GitHub \autocite{Duarte2020a}.
-
-\subsection{Limitations}
-
-As it stands, the project suffers from several limitations.
-These are to be addressed in the new version, based on procedural macros.
-\begin{compactitem}
-    \item The macro's syntax does not support functions. This implies that it does not support transitions.
-    \item The fact that the macro is written using declarative macros makes the underlying code complex and barely readable.
-    This is due to the fact that declarative macros are not suited for bigger scale macros.
-    \item The macro does not verify state-machine properties, such as the previously enumerated, reachability and termination.
-    \item The supported syntax adds new language constructs, such as the \keyword{limited} and \keyword{strict} keywords.
-    \item The macro only supports “\emph{phantom}” states, that is, states do not hold any data
-    (the name comes from Rust's \keyword{PhantomData}, which is used to implement these kind of states).
-\end{compactitem}
-
-
-
-
-
+These keywords can be explicit, but they can also be inferred from the code.
+Along with the keyword distinction, the \keyword{self} parameter is now typed.
+This represents a change to original Rust's syntax, although a required one,
+since there is no other way to declare the expected current state.
 
 \begin{listing}
     \centering
     \begin{minted}{rust}
-typestate! { (Drone)
+typestate! { Drone {
     struct Grounded { location: Coordinates }
     struct Hovering { location: Coordinates }
     struct Flying {
         location:    Coordinates,
         destination: Coordinates,
     }
+    fn get_location(&self: Grounded) -> &Coordinates;
     fn take_off(self: Grounded) -> Hovering;
     fn fly_to(self: Hovering, dst: Coordinates) -> Hovering;
     fn land(self: Hovering) -> Grounded;
-}
-\end{minted}
-\caption{
-    Example specification of the \texttt{Drone} typestate using the proposed DSL.
-}
+    fn new() -> Grounded;   // defines the start state
+    fn end(self: Grounded); // defines the final state
+} }
+    \end{minted}
+    \caption{
+        Example specification of the \texttt{Drone} typestate using the proposed DSL.
+    }
     \label{lst:dsl-typestate-spec}
 \end{listing}
 
@@ -142,7 +196,10 @@ trait DroneState {}
 struct Grounded { location: Coordinates }
 impl DroneState for Grounded {}
 struct Drone<State: DroneState> { state: State }
-trait GroundedOps { fn take_off(self) -> Drone<Hovering>; }
+trait GroundedOps {
+    fn get_location(&self) -> &Coordinates;
+    fn take_off(self) -> Drone<Hovering>;
+}
     \end{minted}
     \caption{
         Example generated Rust code for the \texttt{Grounded} state.
@@ -167,50 +224,66 @@ impl GroundedOps for Drone<Grounded> {
     \label{lst:dsl-typestate-impl}
 \end{listing}
 
-\begin{figure}
-    \centering
-    \begin{tikzpicture}
-        \tikzstyle{code} = [fill=white, font=\tiny]
+\subsection{State-Machine Conversion}
+As the reader might have noticed, the specification cleanly maps to a state machine.
+Each \keyword{struct} is a state and each function is either a transition or a function which does not change state.
+From the code, we can establish edges in the automata from the \keyword{self} parameter and the return function.
 
-        \node[code] (code) at (0,0) {\tiny\mintinline{rust}{typestate!{ ... }}};
+\paragraph{Start \& Final States} are special cases of the transition functions.
+Both can be inferred with similar rules. In the case of the start state, the function parameters should not contain \keyword{self},
+as it represents the current state, which it is yet to be built.
+The final state is similar in that instead of the \keyword{self} being absent, the return type is missing.
+This is the case since if the automata has finished running, the last state should be consumed to avoid future use.
 
-        \begin{scope}[shift={(3.5, 0.75)}]
-            \tikzstyle{n}=[circle, draw=blue!70, fill=blue!20]
-            \node[n] (root) at (0, 0) {};
-            \node[n] (l1) at (-0.35, -0.75) {};
-            \node[n] (l2) at (0.35, -0.75) {};
-            \node[n] (l11) at (-0.7, -1.5) {};
-            \draw[-] (root) -- (l1);
-            \draw[-] (root) -- (l2);
-            \draw[-] (l1) -- (l11);
-        \end{scope}
+\subsection{State-Machine Verification}\label{sec:arch:fsm-verification}
+After extraction the state-machine is subject to verification.
+This process is done using existing algorithms, to check the following properties:
+\begin{compactitem}
+    \item The state-machine is minimal. In this case, the user should get feedback explaining why the automata is not minimal and how to make it so.
+    There is also the possibility that only a warning is issued and the minimization is done “\emph{behind the scenes}”, by the macro.
+    \item Missing start and final states.
+    \item All states should be productive. In the case that states are not productive, and error should be produced and the offending states highlighted.
+    % how could i write an non deterministic automaton?
+\end{compactitem}
 
-        \begin{scope}[shift={(6, 0.75)}]
-            \tikzstyle{n}=[circle, draw=blue!70, fill=blue!20]
-            \tikzstyle{f}=[circle, draw=red!70, fill=red!20]
-            \tikzstyle{s}=[circle, draw=green!70, fill=green!20]
-            \node[s] (root) at (0, 0) {};
-            \node[n] (l1) at (-0.5, -0.75) {};
-            \node[n] (l2) at (0.5, -0.75) {};
-            \node[f] (l11) at (0, -1.5) {};
-            \draw[->] (root) -- (l1);
-            \draw[->] (root) -- (l2);
-            \draw[->] (l1) -- (l11);
-            \draw[->] (l2) -- (l1);
-        \end{scope}
+\subsection{Developer Workflow}
+The final user workflow should be as follows:
+\begin{compactenum}
+    \item The developer starts by writing the specification, as in \autoref{lst:dsl-typestate-spec}.
+    \item When done, the developer compiles the code.
+    In turn, the compiler will begin the process of expanding the macro.
+    This process illustrated in \autoref{fig:dsl-processing}.
+    \begin{compactitem}
+        \item During expansion, if the state machine fails any of the verifications described in \autoref{sec:arch:fsm-verification},
+        a compiler error is issued.
+        \item If no errors are reported, the process continues as normal and generates all required boilerplate, like in \autoref{lst:dsl-typestate-generated}.
+        This boilerplate does not appear for the user, hence it is required the generation process is as predictable as possible.
+    \end{compactitem}
+    \item After generation, the user is now required to implement all functions, as in \autoref{lst:dsl-typestate-impl}.
+\end{compactenum}
 
-        \node[code] (rust-code) at (9.5,0) {\mintinline{rust}{struct S { ... }}};
 
-        \draw[->, thick] (code) -> (2.5, 0);
-        \draw[->, thick] (4.5, 0) -> (5, 0);
-        \draw[->, thick] (7, 0) -> (rust-code);
+\section{Existing Work}
 
-    \end{tikzpicture}
-    \caption{
-        From DSL specification to Rust code.
-        First the DSL is parsed, then converted to a state machine and its properties checked
-        (in the case some property is not respected, an error is issued).
-        After the properties are validated, the Rust code is generated.
-    }
-    \label{fig:dsl-processing}
-\end{figure}
+Currently, I have developed a really simple proof-of-concept macro for Rust typestates.
+The macro is based on declarative macros and has several limitations,
+its syntax is also distant from the current proposal.
+The macro takes a simple typestate specification and expands into several traits and structures.
+This project can be found on GitHub \autocite{Duarte2020a}.
+
+\subsection{Improvement Points}
+
+As it stands, the project has several possible improvement points to be addressed during the development phase.
+Such points are as follows:
+\begin{compactitem}
+    \item The macro's syntax does not support functions. This implies that it does not support transitions.
+    \item The fact that the macro is written using declarative macros makes the underlying code complex and barely readable.
+    This is due to the fact that declarative macros are not suited for bigger scale macros.
+    \item The macro does not verify state-machine properties, such as the previously enumerated, reachability and termination.
+    \item The supported syntax adds new language constructs, such as the \keyword{limited} and \keyword{strict} keywords.
+    \item The macro only supports “\emph{phantom}” states, that is, states do not hold any data
+    (the name comes from Rust's \keyword{PhantomData}, which is used to implement these kind of states).
+\end{compactitem}
+
+
+
