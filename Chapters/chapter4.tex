@@ -11,21 +11,33 @@
 As previously discussed, the present work proposes the design of a new DSL embedded in Rust.
 The core goal of the DSL is to provide typestates without getting in the way of the developer.
 This means providing a syntax that stays close to Rust, only introducing new constructs when required.
-Errors should be helpful and point to the original DSL code, avoiding scenarios like the “\emph{infamous}” C++ template errors.
+Errors should be helpful and point to the original DSL code (see \autoref{lst:dsl-typestate-error}), avoiding scenarios like the “\emph{infamous}” C++ template errors.
 Features should be well documented allowing anyone to get up and running quickly,
 along this idea, the language itself should be a simple dependency and avoid any complicated build process.
 
 Finally, as discussed in \autoref{sec:objectives}, the language should provide static guarantees.
-These static guarantees should check for properties such as state reachability and termination.
+Typestate checking should account for usefulness and minimality.
+That is, respectively, if a state is reachable from the start state and if it is possible to reach the end state from it;
+and if the automata is minimal.
+Along with usefulness checks, the presence of start and final states are also checked,
+otherwise such check would not work.
+
+\begin{align}
+    Start \rightarrow A~   & ;~A \rightarrow End   \\
+    Start \rightarrow End~ & ;~Start \rightarrow B \\
+    Start \rightarrow End~ & ;~B \rightarrow End
+\end{align}
+
+As an example, consider the previous equations as simple state machines.
+From the three, the last two would not compile as it is impossible to reach $End$ from $B$, and it is impossible to reach $B$ from $Start$, respectively.
 
 \section{Architecture}\label{sec:arch}
 
-I now discuss the DSL architecture and the decisions made so far.
-From a high-level view, the DSL should provide a specification language.
-This language then allows the developer to describe a structure, its possible states and functions,
-the functions can be pure, impure (i.e. mutating some aspect of the structure without transitioning states)
+The DSL should provide a specification language,
+allowing the developer to describe a structure, its possible states and functions,
+which can be pure, impure (i.e. mutating some aspect of the structure without transitioning states)
 or transitions (i.e. making the transition between states).
-The specification is then compiled into the necessary Rust structures and traits.
+The specification is then transformed into the necessary Rust structures and traits.
 In the end, the developer should only be required to write the \keyword{impl}s for each state.
 
 \subsection{Why function-like macros?}
@@ -34,7 +46,7 @@ In short, function-like macros allow true DSLs in Rust. However, the answer is n
 
 \paragraph{Derive macros} seem to be a great candidate for our purpose.
 We can add them to an enumeration (just like \autocite{Fitzgerald2019}) and derive the necessary states from there.
-The main limitation of this approach is the lack of transparency,
+The main limitation of this approach is the lack of transparency —
 the derived methods are fixed by the macro and the developer does not have control over them.
 
 \paragraph{Attribute macros} would be an ideal candidate if we were able to tie multiple of them together.
@@ -51,14 +63,15 @@ Allowing the developer to easily control states, transitions and others.
 
 As stated, this approach provides a DSL.
 Such DSL is responsible for allowing the developer to write an expressive typestate specification.
-When the DSL is parsed and the specification extracted, there are two important things to do:
+The DSL processing is done as follows (illustrated in \autoref{fig:dsl-processing}):
 \begin{compactenum}
+    \item The DSL is first parsed during macro expansion.
+    \item The extracted structure is converted into a state-machine.
+    \item The state-machine is verified against our checks (see \autoref{sec:arch:fsm-verification}).
     \item Extract all required \keyword{trait}s and \keyword{struct}s from the specification.
-    \item Build a state machine with all transitions and run the desired checks over the state machine.
+    \item Expand the macro into valid Rust code.
 \end{compactenum}
-After these two steps are completed, the final Rust code can be emitted.
-All that is left for the developer to do is the implementation of the \keyword{trait}s.
-
+After this process, all that is left to do is the implementation of the \keyword{trait}s.
 
 \begin{figure}
     \centering
@@ -119,8 +132,8 @@ All that is left for the developer to do is the implementation of the \keyword{t
     \caption{
         From DSL specification to Rust code.
         First the DSL is parsed, then converted to a state machine and its properties checked
-        (in the case some property is not respected, an error is issued).
-        After the properties are validated, the Rust code is generated.
+        (in the some property is not respected, an error is issued).
+        Once the properties are validated, the Rust code is generated.
     }
     \label{fig:dsl-processing}
 \end{figure}
@@ -133,11 +146,11 @@ I go through some important aspects, such as state and function declaration synt
 \autoref{lst:dsl-typestate-spec} is an example of the full syntax.
 
 \paragraph{Top-level declaration.} The top-level declaration names the typestated output structure (line 1 of \autoref{lst:dsl-typestate-spec}).
-It starts with a name, followed by the structure identifier and a pair of curly brackets containing the specification.
+It starts with a name, the structure identifier, and a pair of curly brackets containing the specification.
 While this syntax would allow for multiple declarations to be written,
 the macro call can be become unnecessarily complex if several declarations are allowed inside.
 
-\paragraph{State declaration} uses the \keyword{struct} keyword.
+\paragraph{State declaration} uses the \keyword{struct} keyword (lines 2-7 of \autoref{lst:dsl-typestate-spec}).
 The choice of \keyword{struct} over \keyword{state} is based on the following reasons:
 \begin{compactitem}
     \item Keeping the syntax close to Rust by avoiding a new keyword.
@@ -146,23 +159,32 @@ The choice of \keyword{struct} over \keyword{state} is based on the following re
     This follows the previous point idea.
 \end{compactitem}
 
-\paragraph{Function declaration} shares the syntax with regular Rust function declaration.
+\paragraph{Function declaration} shares the syntax with regular Rust function declaration (lines 12-17 of \autoref{lst:dsl-typestate-spec}).
 They can be one of three possible categories:
 \begin{compactitem}
-    \item \keyword{pure} functions, which do not mutate state.
+    \item \keyword{pure} functions, which do not mutate state (e.g. line 12 of \autoref{lst:dsl-typestate-spec}).
     Their signature takes an immutable reference to \keyword{self} as an argument,
     disabling mutation.
     \item \keyword{impure} functions, which can mutate state but not transition between states.
     Their signature takes a mutable reference to \keyword{self} as an argument.
     This allows for mutation of the current state, but not transition.
-    \item \keyword{transition} functions, which transition between states.
+    \item \keyword{transition} functions, which transition between states (lines 13-17 of \autoref{lst:dsl-typestate-spec}).
     Their signature takes ownership of \keyword{self},
     forcing the consumption of the current state disabling possible aliasing.
 \end{compactitem}
 These keywords can be explicit, but they can also be inferred from the code.
 Along with the keyword distinction, the \keyword{self} parameter is now typed.
-This represents a change to original Rust's syntax, although a required one,
-since there is no other way to declare the expected current state.
+This represents a change to original Rust's syntax, although a required one.
+The alternative would be to specify the state parameter inside brackets,
+which in comparison with the typed-\keyword{self} approach is less natural.
+
+\paragraph{Non-deterministic transitions} are useful to cover cases where the output is dependent on some external factors.
+Consider a process that can fail, the developer is required to model both the success and failure cases.
+To do so, the developer can declare an \keyword{enum}, containing possible outcomes.
+Such enumeration has one key difference from regular Rust enumerations, the fields must contain existing states only,
+that is, structures declared inside the same macro call (lines 9-11 and 14 of \autoref{lst:dsl-typestate-spec}).
+Enforcing these transitions can either be done by leveraging Rust's enumerations and leaving the matching up to the user,
+or through determinization of the automata.
 
 \begin{listing}
     \centering
@@ -174,9 +196,13 @@ typestate! { Drone {
         location:    Coordinates,
         destination: Coordinates,
     }
+    enum FlyResult {
+        Success(Hovering),  // moved to destination
+        Error(Hovering),    // did not move
+    }
     fn get_location(&self: Grounded) -> &Coordinates;
     fn take_off(self: Grounded) -> Hovering;
-    fn fly_to(self: Hovering, dst: Coordinates) -> Hovering;
+    fn fly_to(self: Hovering, dst: Coordinates) -> FlyResult;
     fn land(self: Hovering) -> Grounded;
     fn new() -> Grounded;   // defines the start state
     fn end(self: Grounded); // defines the final state
@@ -188,6 +214,19 @@ typestate! { Drone {
     \label{lst:dsl-typestate-spec}
 \end{listing}
 
+\begin{listing}
+    \centering
+    \begin{minted}{text}
+typestate! { Drone {
+    struct State;
+           ^^^^^ : error `State` is not a useful state
+} }
+    \end{minted}
+    \caption{
+        Example error issued by the DSL.
+    }
+    \label{lst:dsl-typestate-error}
+\end{listing}
 
 \begin{listing}
     \centering
@@ -227,24 +266,25 @@ impl GroundedOps for Drone<Grounded> {
 \subsection{State-Machine Conversion}
 As the reader might have noticed, the specification cleanly maps to a state machine.
 Each \keyword{struct} is a state and each function is either a transition or a function which does not change state.
-From the code, we can establish edges in the automata from the \keyword{self} parameter and the return function.
+From the code, we can establish edges in the automata from the \keyword{self} parameter and the function return type.
 
 \paragraph{Start \& Final States} are special cases of the transition functions.
 Both can be inferred with similar rules. In the case of the start state, the function parameters should not contain \keyword{self},
-as it represents the current state, which it is yet to be built.
-The final state is similar in that instead of the \keyword{self} being absent, the return type is missing.
+as it represents the current state, which it is yet to be built (line 12 of \autoref{lst:dsl-typestate-spec}).
+The final state is similar in that instead of the \keyword{self} being absent, the return type is missing (line 13 of \autoref{lst:dsl-typestate-spec}).
 This is the case since if the automata has finished running, the last state should be consumed to avoid future use.
 
 \subsection{State-Machine Verification}\label{sec:arch:fsm-verification}
-After extraction the state-machine is subject to verification.
-This process is done using existing algorithms, to check the following properties:
+After extraction the state-machine is subject to verification,
+this process is done using existing algorithms, to check the following properties:
 \begin{compactitem}
     \item The state-machine is minimal. In this case, the user should get feedback explaining why the automata is not minimal and how to make it so.
     There is also the possibility that only a warning is issued and the minimization is done “\emph{behind the scenes}”, by the macro.
     \item Missing start and final states.
-    \item All states should be productive. In the case that states are not productive, and error should be produced and the offending states highlighted.
+    \item All states should be useful. As discussed, all states should be reachable from the start state and be able to reach the end state.
     % how could i write an non deterministic automaton?
 \end{compactitem}
+% Motwani and UlmanHopcroft,
 
 \subsection{Developer Workflow}
 The final user workflow should be as follows:
@@ -252,7 +292,7 @@ The final user workflow should be as follows:
     \item The developer starts by writing the specification, as in \autoref{lst:dsl-typestate-spec}.
     \item When done, the developer compiles the code.
     In turn, the compiler will begin the process of expanding the macro.
-    This process illustrated in \autoref{fig:dsl-processing}.
+    This process is illustrated in \autoref{fig:dsl-processing}.
     \begin{compactitem}
         \item During expansion, if the state machine fails any of the verifications described in \autoref{sec:arch:fsm-verification},
         a compiler error is issued.
@@ -263,7 +303,7 @@ The final user workflow should be as follows:
 \end{compactenum}
 
 
-\section{Existing Work}
+\section{Previously Developed Work}
 
 Currently, I have developed a really simple proof-of-concept macro for Rust typestates.
 The macro is based on declarative macros and has several limitations,
