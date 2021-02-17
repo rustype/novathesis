@@ -1,5 +1,5 @@
 %!TEX root = ../template.tex
-\chapter{DSL \& Planning (17/02/2021)}\label{cha:planning}
+\chapter{Contributions \& Planning}\label{cha:planning}
 
 % I now propose the typestate DSL.
 % This chapter goes through the “\emph{why}”, “\emph{how}” and to some extent the “\emph{when}” (i.e. the planning timeline).
@@ -138,19 +138,19 @@ After this process, all that is left to do is the implementation of the \keyword
     \label{fig:dsl-processing}
 \end{figure}
 
-\subsection{Syntax}
+\subsection{Syntax}\label{sec:arch:syntax}
 
 % One of the DSL's syntax goals is to stay as close to Rust as possible.
 The macro is invoked through a \keyword{typestate!} call, inside it, lives the DSL.
 I go through some important aspects, such as state and function declaration syntax.
 \autoref{lst:dsl-typestate-spec} is an example of the full syntax.
 
-\paragraph{Top-level declaration.} The top-level declaration names the typestated output structure (line 1 of \autoref{lst:dsl-typestate-spec}).
+\paragraph{The top-level declaration} names the typestated output structure (line 1 of \autoref{lst:dsl-typestate-spec}).
 It starts with a name, the structure identifier, and a pair of curly brackets containing the specification.
 While this syntax would allow for multiple declarations to be written,
 the macro call can be become unnecessarily complex if several declarations are allowed inside.
 
-\paragraph{State declaration} uses the \keyword{struct} keyword (lines 2-7 of \autoref{lst:dsl-typestate-spec}).
+\paragraph{A state declaration} uses the \keyword{struct} keyword (lines 2-7 of \autoref{lst:dsl-typestate-spec}).
 The choice of \keyword{struct} over \keyword{state} is based on the following reasons:
 \begin{compactitem}
     \item Keeping the syntax close to Rust by avoiding a new keyword.
@@ -159,7 +159,7 @@ The choice of \keyword{struct} over \keyword{state} is based on the following re
     This follows the previous point idea.
 \end{compactitem}
 
-\paragraph{Function declaration} shares the syntax with regular Rust function declaration (lines 12-17 of \autoref{lst:dsl-typestate-spec}).
+\paragraph{A function declaration} shares the syntax with their Rust counterparts (lines 12-17 of \autoref{lst:dsl-typestate-spec}).
 They can be one of three possible categories:
 \begin{compactitem}
     \item \keyword{pure} functions, which do not mutate state (e.g. line 12 of \autoref{lst:dsl-typestate-spec}).
@@ -177,6 +177,17 @@ Along with the keyword distinction, the \keyword{self} parameter is now typed.
 This represents a change to original Rust's syntax, although a required one.
 The alternative would be to specify the state parameter inside brackets,
 which in comparison with the typed-\keyword{self} approach is less natural.
+
+\paragraph{Initial and final states} are special cases as they are defined with both structures and functions.
+The syntax to declare initial and final states is presented in lines 16-17 of \autoref{lst:dsl-typestate-spec}.
+As the reader can observe, the syntax uses functions to declare with states are initial and final.
+Both can also be inferred using the following rules:
+\begin{compactitem}
+    \item \textbf{Initial states} are declared with functions that do not take \keyword{self} as a parameter and return a state.
+    The \keyword{self} keyword is omitted since the state is yet to be built.
+    \item \textbf{Final states} are declared as “\emph{consumers}”, that is, they take \keyword{self} as a parameter and do not return a value.
+    This syntax makes clear that the state becomes unavailable for further processing.
+\end{compactitem}
 
 \paragraph{Non-deterministic transitions} are useful to cover cases where the output is dependent on some external factors.
 Consider a process that can fail, the developer is required to model both the success and failure cases.
@@ -264,27 +275,21 @@ impl GroundedOps for Drone<Grounded> {
 \end{listing}
 
 \subsection{State-Machine Conversion}
-As the reader might have noticed, the specification cleanly maps to a state machine.
-Each \keyword{struct} is a state and each function is either a transition or a function which does not change state.
-From the code, we can establish edges in the automata from the \keyword{self} parameter and the function return type.
-
-\paragraph{Start \& Final States} are special cases of the transition functions.
-Both can be inferred with similar rules. In the case of the start state, the function parameters should not contain \keyword{self},
-as it represents the current state, which it is yet to be built (line 12 of \autoref{lst:dsl-typestate-spec}).
-The final state is similar in that instead of the \keyword{self} being absent, the return type is missing (line 13 of \autoref{lst:dsl-typestate-spec}).
-This is the case since if the automata has finished running, the last state should be consumed to avoid future use.
+The reader might have noticed that the specification syntax cleanly maps to a state machine.
+As discussed in \autoref{sec:arch:syntax}, each \keyword{struct} is a state and each function is either a transition or a function which does not change state.
+From the code, we can establish states as nodes and functions as edges,
+effectively converting the specification into automata.
 
 \subsection{State-Machine Verification}\label{sec:arch:fsm-verification}
 After extraction the state-machine is subject to verification,
-this process is done using existing algorithms, to check the following properties:
+this process is done using existing algorithms \autocite{Hopcroft2013}, to check the following properties:
 \begin{compactitem}
-    \item The state-machine is minimal. In this case, the user should get feedback explaining why the automata is not minimal and how to make it so.
-    There is also the possibility that only a warning is issued and the minimization is done “\emph{behind the scenes}”, by the macro.
-    \item Missing start and final states.
-    \item All states should be useful. As discussed, all states should be reachable from the start state and be able to reach the end state.
-    % how could i write an non deterministic automaton?
+    \item \textbf{Minimality.} The state machine should be minimal in the sense that there should be no redundancy in states and transitions.
+    \item \textbf{Non-empty language.} Ensuring the presence of final states.
+    \item \textbf{Usefulness.} As discussed, all states should be reachable from the start state and be able to reach the end state.
 \end{compactitem}
-% Motwani and UlmanHopcroft,
+In this case, the user should get feedback over any infraction,
+explaining the reasoning behind the error or warning.
 
 \subsection{Developer Workflow}
 The final user workflow should be as follows:
