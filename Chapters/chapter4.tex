@@ -159,16 +159,16 @@ The choice of \keyword{struct} over \keyword{state} is based on the following re
     This follows the previous point idea.
 \end{compactitem}
 
-\paragraph{A function declaration} shares the syntax with their Rust counterparts (lines 12-17 of \autoref{lst:dsl-typestate-spec}).
+\paragraph{A function declaration} shares the syntax with their Rust counterparts (lines 12-18 of \autoref{lst:dsl-typestate-spec}).
 They can be one of three possible categories:
 \begin{compactitem}
     \item \keyword{pure} functions, which do not mutate state (e.g. line 12 of \autoref{lst:dsl-typestate-spec}).
     Their signature takes an immutable reference to \keyword{self} as an argument,
     disabling mutation.
-    \item \keyword{impure} functions, which can mutate state but not transition between states.
+    \item \keyword{impure} functions, which can mutate state but not transition between states (e.g. line 13 of \autoref{lst:dsl-typestate-spec}).
     Their signature takes a mutable reference to \keyword{self} as an argument.
     This allows for mutation of the current state, but not transition.
-    \item \keyword{transition} functions, which transition between states (lines 13-17 of \autoref{lst:dsl-typestate-spec}).
+    \item \keyword{transition} functions, which transition between states (lines 14-18 of \autoref{lst:dsl-typestate-spec}).
     Their signature takes ownership of \keyword{self},
     forcing the consumption of the current state disabling possible aliasing.
 \end{compactitem}
@@ -177,6 +177,13 @@ These keywords can be explicit, but they can also be inferred from the code.
 % This represents a change to original Rust's syntax, although a required one.
 % The alternative would be to specify the state parameter inside brackets,
 % which in comparison with the typed-\keyword{self} approach is less natural.
+The reader may have noticed two details in \autoref{lst:dsl-typestate-spec} ---
+the \texttt{Flying} state is not used,
+the \texttt{fly\_to} function returns the same state as \keyword{self}.
+This is the case since the function will make the transition between \texttt{Hovering}, \texttt{Flying} and back internally.
+Thus requiring \keyword{self} to be consumed.
+
+
 
 \paragraph{Initial and final states} are special cases as they are defined with both structures and functions.
 The syntax to declare initial and final states is presented in lines 16-17 of \autoref{lst:dsl-typestate-spec}.
@@ -193,7 +200,7 @@ Both can also be inferred using the following rules:
 Consider a process that can fail, the developer is required to model both the success and failure cases.
 To do so, the developer can declare an \keyword{enum}, containing possible outcomes.
 Such enumeration has one key difference from regular Rust enumerations, the fields must contain existing states only,
-that is, structures declared inside the same macro call (lines 9-11 and 14 of \autoref{lst:dsl-typestate-spec}).
+that is, structures declared inside the same macro call (lines 8-11 and 15 of \autoref{lst:dsl-typestate-spec}).
 Enforcing these transitions can either be done by leveraging Rust's enumerations and leaving the matching up to the user,
 or through determinization of the automata.
 
@@ -207,14 +214,15 @@ typestate! { Drone {
         location:    Coordinates,
         destination: Coordinates,
     }
-    enum FlyResult {
-        Success(Hovering),  // moved to destination
-        Error(Hovering),    // did not move
+    enum Landed {
+        Success(Grounded),  // houston, touchdown!!
+        Error,              // crashed
     }
     fn get_location(&self: Grounded) -> &Coordinates;
+    fn correct_coordinates(&mut self: Grounded);
     fn take_off(self: Grounded) -> Hovering;
-    fn fly_to(self: Hovering, dst: Coordinates) -> FlyResult;
-    fn land(self: Hovering) -> Grounded;
+    fn fly_to(self: Hovering, dst: Coordinates) -> Hovering;
+    fn land(self: Hovering) -> Landed;
     fn new() -> Grounded;   // defines the start state
     fn end(self: Grounded); // defines the final state
 } }
