@@ -5,7 +5,7 @@
 
 % [11/01/2021]
 
-Bugs permeate our lives as users - whether in an instant messaging application or a game they are present.
+Bugs permeate our lives as users --- whether in an instant messaging application or a game they are present.
 Luckily, most are harmless as such applications are not critical,
 resulting in some unsent messages or texture glitches.
 
@@ -20,25 +20,24 @@ In 2019 and 2020, after several crashes~\autocite{Campbell2019},
 the Boeing 737 Max was grounded to fix existing problems.
 While grounded, more software-related issues were found~\autocite{Okane2019,Okane2020}, delaying its re-certification.
 In 2020, as the number of COVID-19 grew,
-contact tracing apps were deployed as a mitigation strategy.
-The UK's National Health Service app failed to ask users to self-isolate due to a
-bug~\autocite{Mageit2020}.
+contact tracing apps were deployed as a mitigation strategy ---
+due to a bug the UK's National Health Service app failed to ask users to self-isolate ~\autocite{Mageit2020}.
 
 The previous examples are not isolated incidents.
 The language and nature of the bugs are different for each case, but to put it simply,
-there is no silver bullet and the next best alternative is to do our best to mitigate them,
-by building tools and abstractions which allow developers to increase their code's safety.
+there is no silver bullet and the next best alternative is to do our best to mitigate them ---
+building tools and abstractions which allow developers to increase their code's safety.
 
 \section{Problem}\label{sec:problem}
 
 Languages like C/C++ have dominated the systems programming landscape for years and
 one of the main problems with both is the lack of memory management.
-Leaving such responsibility to the developer has proven to be \emph{a less than ideal}
-solution, with $70\%$ of bugs in projects like Chromium~\autocite{chromium}
-and Microsoft products~\autocite{Miller2019} being due to memory management.
+Leaving such responsibility to the developer has proven to be \emph{a less than ideal} solution.
+Memory management is responsible for $70\%$ of the bugs found in projects like Chromium~\autocite{chromium}
+and Microsoft products~\autocite{Miller2019}.
 
-To address such problem, several tools and languages have been and continue to be developed.
-So far, Rust has been the only one to achieve \emph{mainstream} status.
+To address such problem, several tools and languages have been and continue to be developed ---
+so far, Rust has been the only one to achieve \emph{mainstream} status.
 Rust aims to provide memory safety without affecting performance or productivity.
 To achieve such ambitious goal, Rust validates code with the borrow checker, which then enforces memory safety rules,
 targeting the problem at its root.
@@ -46,8 +45,8 @@ targeting the problem at its root.
 Addressing memory safety is not enough though.
 Languages which side-step the problem of having manual management
 through the use of a garbage collector (e.g. Java and Go) still suffer from other kinds of bugs.
-As discussed in the end of \autoref{sec:context}, we can only mitigate their occurrence, and
-so we are required to reach out to new mechanisms.
+As discussed in the end of \autoref{sec:context}, we can only mitigate their occurrence,
+hence we are required to reach out to new mechanisms.
 
 Typestates are an approach which aims to tame stateful computations;
 to do so typestates lift the concept of state to the type level,
@@ -87,8 +86,8 @@ as debugging errors like these is neither an effective time use nor pleasant.
 Consider Java's \keyword{Scanner}, its API allows the developer to write code like \autoref{lst:java-scanner}.
 Such code will compile without issuing any errors or warnings (even with the \texttt{-Xlint:all} flag),
 however, it will also crash during runtime.
-Since it is not possible to read from a closed source, the thrown exception is \texttt{IllegalStateException},
-informing the user that the attempted operation is illegal for the current object state,
+Since it is not possible to read from a closed source, the thrown exception is an \texttt{IllegalStateException},
+informing the user that the attempted operation is illegal for the current object state.
 Ideally we want such illegal states to be detected at compile time.
 
 \begin{listing}
@@ -130,9 +129,9 @@ s.nextLine();                               // compile-time error
 Behavioral types are types which capture aspects of computation, they are further discussed in \autoref{sec:behavioral-types}.
 The current landscape of behavioral types in mainstream languages is bare.
 While projects exist, most are academic and of little impact in the way programmers write their code.
-I focus on two subsets of behavioral types, session types and typestates.
+I focus on two subsets of behavioral types --- session types and typestates.
 
-Session types, will often refer to endpoints and their messages, capturing aspects of communication between them.
+\paragraph{Session types} will often refer to endpoints and their messages, capturing aspects of communication between them.
 Languages like ATS provide session type features and further enable the generation of source code in other languages
 such as Erlang \autocite{Xi2016}. ATS also serves as research playground for other topic related with session types \autocite{Xi2016a}.
 There are also tools that plug into existing languages.
@@ -141,7 +140,7 @@ for Haskell \autocite[Section 3.3]{Ancona2016}, \autocite[Chapter 10]{Gay2017} a
 extending the language to provide session types through existing mechanisms.
 In OCaml's case, this is done without reaching for external tools or language extensions,
 relying purely on the existing type system.
-However, existing session type research is not only based on functional languages.
+However, existing session types research is not only based on functional languages.
 Session C \autocite[Section 4.1]{Ancona2016} makes use of Scribble \autocite{Yoshida2014} to capture the communication pattern of the algorithm.
 The tool then generates the required endpoints that guide the design and implementation of the program.
 Java has been the target several other research efforts, for example SessionJ \autocite[Section 2.2.1]{Ancona2016}, \autocite{Hu2008},
@@ -153,7 +152,7 @@ this enables developers to write effectively session-typed Java.
 By itself, Mungo is a typechecker with support for typestates.
 
 
-Typestates capture the state of the program,
+\paragraph{Typestates} capture the state of the program,
 allowing the developer to express the state of objects during runtime, at compile-time.
 I discuss typestates further in \autoref{sec:typestates}.
 Fugue \autocite{DeLine2004} is a protocol checker that achieves similar functionality to typestates.
@@ -162,27 +161,26 @@ Using the tool, the authors found several errors which would inhibit application
 Languages like Plaid \autocite{Aldrich2009} and Obsidian \autocite{Coblenz2020, Coblenz2020a} put typestates to use,
 trying to bridge the gap between academia and industrial usage.
 Plaid is an object-oriented language with first class support for typestates.
-Obsidian is relatively new language which targets the Hyperledger Fabric blockchain.
+Obsidian is a relatively new language which targets the Hyperledger Fabric blockchain.
 The language aims to make writing smart contracts simpler and less error prone
 through the addition of linear types and typestate mechanisms to the language.
 In \autocite{Coblenz2020} the effectiveness of the approach is put to test,
 achieving positive results when compared with the Solidity programming language.
 
-The \texttt{state\_machine\_future} crate \autocite{Fitzgerald2019}, provides typestated futures in Rust.
-The crate provides some state machine related guarantees, such as every state being reachable from the start,
-there are no states unable to reach the final state and all state transitions are invalid.
-Furthermore, these guarantees are provided at compile-time, invalid state transitions, for example, fail to compile.
-The crate, however, revolves around futures, requiring a runtime and thus making it unsuitable for other kinds of applications.
+The \texttt{state\_machine\_future} crate \autocite{Fitzgerald2019}, provides typestated futures in Rust as well as some state machine related guarantees,
+such as every state being reachable from the start,
+there are no states unable to reach the final state and that all state transitions are valid.
+Furthermore, these guarantees are provided at compile-time --- for example, invalid state transitions will fail to compile.
+The crate, however, revolves around futures, requiring an asynchronous runtime and thus making it unsuitable for other kinds of applications.
 Other crates exist, they focus on finite state machines but are unable to provide static guarantees.
 
 Like other mainstream programming languages, Rust does not have first class support for session types.
 Its implementations are rare and rooted in the meta-programming system.
 The work done by \autocite{Jespersen2015, Munksgaard2015} introduces bi-directional session types to Rust,
-since then, this line of work has been expanded by \autocite{Lagaillardie2020},
-extending it to multiparty session types.
+since then, this line of work has been expanded by \autocite{Lagaillardie2020}, extending it to multiparty session types.
 While Rust dropped typestate support during early development (Rust 0.4), that does not mean Rust is not able to provide them.
-Its typesystem is able to emulate typestates with efficiency, the approach however comes at the cost of verbosity.
-This approach is used in the embedded systems development sphere of the Rust community.
+The type system is able to emulate typestates with efficiency, the approach however comes at the cost of verbosity.
+Regardless of the verbosity typestates are used by the embedded systems development sphere of the Rust community.
 
 
 \section{Objectives \& Contributions}\label{sec:objectives}
@@ -190,17 +188,17 @@ This approach is used in the embedded systems development sphere of the Rust com
 In this thesis I try to bridge the gap between typestates and Rust,
 aiming for an elegant and usable solution, allowing for effective usage of typestates in Rust.
 To achieve such solution I expect to develop an embedded Rust DSL,
-enabling the flexibility of a dedicated language without leaving the Rust ecosystem.
+enabling the flexibility of a dedicated language inside the Rust ecosystem.
 To this effect I expect the contributions of this thesis to be a typestate specification DSL to be embedded in Rust,
 this topic is further developed in \autoref{cha:planning}.
 
 \begin{description}
-    \item[Typestate DSL.] One of the main goals of the DSL is to be non-intrusive and easy to pick up, both the syntax and tooling,
-          this requires the syntax to extend on Rust's current syntax, introducing minimal changes where necessary.
+    \item[Typestate DSL.] One of the main goals of the DSL is to be non-intrusive and easy to pick up --- both the syntax and tooling.
+          Such requires the syntax to extend over Rust's current syntax, introducing minimal changes where necessary.
           However, it should also be powerful enough to specify useful protocols in it.
     \item[Static Guarantees.] As any language, it is useless if no information is extracted from it,
-          besides the obvious parsing step the DSL should be able to extract a typestate model from the original specification
-          and generate the adequate output code.
+          besides the obvious parsing step,
+          the DSL should be able to extract a typestate model from the original specification and generate adequate output code.
           The extracted model should also be checked for a series of properties such as state reachability and termination.
     \item[Tooling \& Usability.] The DSL should not require more than the import of the library,
           building any project using the DSL should not require extra steps as it would degrade possible adoption.

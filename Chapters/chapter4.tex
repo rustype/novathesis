@@ -15,8 +15,8 @@ Errors should be helpful and point to the original DSL code (see \autoref{lst:ds
 Features should be well documented allowing anyone to get up and running quickly,
 along this idea, the language itself should be a simple dependency and avoid any complicated build process.
 
-Finally, as discussed in \autoref{sec:objectives}, the language should provide static guarantees.
-Typestate checking should account for usefulness and minimality.
+Finally, as discussed in \autoref{sec:objectives}, the language should provide static guarantees ---
+such as state usefulness and automata minimality.
 That is, respectively, if a state is reachable from the start state and if it is possible to reach the end state from it;
 and if the automata is minimal.
 Along with usefulness checks, the presence of start and final states are also checked,
@@ -34,7 +34,7 @@ From the three, the last two would not compile as it is impossible to reach $End
 \section{Architecture}\label{sec:arch}
 
 The DSL should provide a specification language,
-allowing the developer to describe a structure, its possible states and functions,
+allowing the developer to describe a structure, along with possible states and functions ---
 which can be pure, impure (i.e. mutating some aspect of the structure without transitioning states)
 or transitions (i.e. making the transition between states).
 The specification is then transformed into the necessary Rust structures and traits.
@@ -173,10 +173,10 @@ They can be one of three possible categories:
     forcing the consumption of the current state disabling possible aliasing.
 \end{compactitem}
 These keywords can be explicit, but they can also be inferred from the code.
-Along with the keyword distinction, the \keyword{self} parameter is now typed.
-This represents a change to original Rust's syntax, although a required one.
-The alternative would be to specify the state parameter inside brackets,
-which in comparison with the typed-\keyword{self} approach is less natural.
+% Along with the keyword distinction, the \keyword{self} parameter is now typed.
+% This represents a change to original Rust's syntax, although a required one.
+% The alternative would be to specify the state parameter inside brackets,
+% which in comparison with the typed-\keyword{self} approach is less natural.
 
 \paragraph{Initial and final states} are special cases as they are defined with both structures and functions.
 The syntax to declare initial and final states is presented in lines 16-17 of \autoref{lst:dsl-typestate-spec}.

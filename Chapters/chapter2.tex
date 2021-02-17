@@ -557,7 +557,7 @@ its programs were written using Sing\#, a language derived from C\# which suppor
 specifically contracts in a similar capacity to typestates.
 
 \paragraph{Why use typestates?}
-By leveraging the state to the typesystem, the compiler is able to aid the programmer during development,
+By leveraging the state to the type system, the compiler is able to aid the programmer during development,
 a given set of transitions will be impossible by default, since the types do not implement them. % TODO maybe add an example
 By reducing the need for developers to check for a certain set of conditions through the use of typestates,
 it becomes possible to reduce the number of runtime assertions and
@@ -622,7 +622,7 @@ its methods and behavior change during runtime as state changes,
 in contrast with other languages (e.g. Java) where public methods and fields are always available.
 In \autoref{lst:plaid-file-use}, the \keyword{File} passes through states as it is open, read and closed in \texttt{readClosedFile}.
 
-This property allows the typesystem to enforce certain properties at compile time,
+This property allows the type system to enforce certain properties at compile time,
 such as certain methods will never be called in a given state since it is not possible by design
 (i.e. they are not available in the interface).
 
