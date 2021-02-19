@@ -21,7 +21,7 @@ when put besides assembly, it also fits the description of a low-level level pro
 It was originally designed by Dennis Ritchie for the PDP-11 and has been around since 1972 \autocite{Kernighan1988},
 C is by no means modern, being older than myself and most likely to outlive me.
 
-Designed in a different time, its mental model is also different, the language is simple and straight forward,
+Designed in a different time, C's mental model is also different, the language is simple and straight forward,
 the designers had goals to achieve and designed the language with them in mind.
 Such mentality is noticeable when using the language,
 it is simple as the hardware was and the level of control C provides is unparalleled,
@@ -29,12 +29,12 @@ being both a major benefit and a hindrance.
 An expert programmer is able to take advantage of the language to produce highly-efficient software,
 but a novice programmer will often find himself battling memory and pointer management bugs.
 
-Its influence echoes in the modern languages,
+The language influence echoes in the modern languages,
 whether in the form of syntax (i.e. the famous C-style syntax) or in the problems it tries to solve.
 Languages such as Java take from C their syntax as well as one problem to solve, memory management;
-other languages like Julia \autocite{Bezanson2017} aim to mimic its performance.
+other languages like Julia \autocite{Bezanson2017} aim to achieve similar performance.
 
-While not as popular as other languages, C was able to keep its relevance in the modern development landscape,
+While not as popular as other languages, C was able to stay relevant in the modern development landscape,
 some of the most used software in the world is either written or powered by C.
 The Linux kernel, which powers servers, the world's most powerful computers
 and serves as a base for Android and other mobile devices,
@@ -42,7 +42,7 @@ git, Redis and nginx are also software examples which reached the top of their r
 
 \subsection{C++}
 
-Introduced in 1985 as an extension to C; its author, Bjarne Stroustrup writes:
+Introduced in 1985 as an extension to C; the author, Bjarne Stroustrup writes:
 
 \begin{displayquote}[{\autocite[Section 1.2]{Stroustrup1986}}]
     C++  is  based  on  the idea of providing both:
@@ -57,7 +57,7 @@ Currently, companies such as Google, Amazon and Microsoft have widespread adopti
 Industries requiring the best performance as possible of the host, such as scientific computing,
 financial software, AAA games and visual effects will most likely be running C++.
 
-Just like C, C++ has its problems.
+Just like C, C++ is far from perfect.
 The language is enormous, with very complicated parts (e.g. templates) and compilation for big projects is very slow,
 the author acknowledges this in \autocite{Torre2014}.
 Furthermore, as the language provides a high level of control over the system, it has manual memory management,
@@ -70,10 +70,10 @@ as they introduce overhead in the most demanding applications.
 
 Ada was developed in 1980, during a standardization effort in the USA's Department of Defense,
 with the goal of unifying projects spanning over 450 programming languages \autocite{Ada2021}.
-Its main focus was the development of embedded applications,
-currently the Ada language is mostly used in the critical domain due to its strong emphasis on safety,
+Ada's main focus was the development of embedded applications,
+currently the Ada language is mostly used in the critical domain due to the strong emphasis on safety,
 some Ada success stories are the London Metro Victoria Line and the Paris Metro Line \autocite{SIGAda2021}.
-Ada is also used in several other domains, such as aviation, space vehicles, financial systems and more \autocite{Feldman2014}.
+The language is also used in several other domains, such as aviation, space vehicles, financial systems and more \autocite{Feldman2014}.
 
 In comparison with the other languages in this section, Ada is eclipsed, barely showing in the GitHub rankings \autocite{Palmer2021}.
 However, given that Ada's compiler is mostly a product, it makes sense that most Ada code is not open-source.
@@ -89,19 +89,19 @@ and this cycle ends up limiting Ada's reach in the market.
 \subsection{Go}
 
 The Go programming language (or \texttt{golang}) is a Google project,
-according to its tale, it was designed by the authors while they waited for their C++ code to compile.
+according the language folklore, it was designed by the authors while they waited for their C++ code to compile.
 Go tried to address several of the criticisms to C, namely memory management,
 which it solved by using a garbage collector.
 While it has made a name for itself in the network and distributed systems sector,
 being the main language behind projects like Docker \autocite{Docker2021} and Kubernetes \autocite{Kubernetes2021},
-its position as a systems programming language can be discussed.
+Go's categorization as a systems programming language can be discussed.
 
 Sometimes, however, the performance might not be enough,
 as was the case for Discord, the popular internet voice server company, as demand increased,
 Go was not able to meet the expected performance requirements and the company replaced it with Rust \autocite{Howarth2020}.
 In \autocite{Torre2014}, one of Go's authors, Rob Pike, says that he regrets categorizing Go as a systems programming language,
 being rather a server programming language that evolved into a cloud infrastructure language.
-Regardless of discussion, Go has proven to be a viable alternative to its counterparts,
+Regardless of discussion, Go has proven to be a viable alternative to existing counterparts,
 compromising extreme performance in name of safety and simplicity.
 
 \subsection{Summary}
@@ -117,8 +117,7 @@ being the only one which does not suffer from the “\emph{billion dollar mistak
 \section{The Rust Language}\label{sec:rust-lang}
 
 Rust is a fairly recent systems programming language,
-it started as a side project of the author Graydon Hoare,
-its public history dates back to 2010 \autocite{Hoare2010}.
+it started as a side project of the author Graydon Hoare and the language public history dates back to 2010 \autocite{Hoare2010}.
 In 2012 Mozilla picked up Rust to help develop the Servo browser engine, the successor to the previous Gecko engine;
 as a way to test Rust's capabilities \autocite{Klabnik2016}.
 
@@ -128,10 +127,10 @@ In comparison with other languages, one of the first things someone new to Rust 
 Being a competitor to C++ and achieving memory safety while still providing C++-level performance is quite an accomplishment.
 Rust, however, also aims to allow users to be productive without sacrificing safety or performance.
 
-The key to all the promises Rust makes lies in its ownership system and the borrow checker.
+The key to all the promises Rust makes is the ownership system and borrow checker.
 The borrow checker is a completely new mechanism when compared with other mainstream languages.
 However, it is a product of years of research both in academia and the industry.
-This mechanism merits most of Rust's accomplishments and also its biggest problem, the learning experience.
+This mechanism merits most of Rust's accomplishments and also the biggest problem, the learning curve.
 While Rust has become more accessible over the years,
 ownership and the borrow checker still require some effort on the part of the developer to learn.
 I provide a small overview of ownership, the borrow checker and their part in Rust's promise of “\emph{fearless concurrency}”.
@@ -146,7 +145,7 @@ Behind ownership, there are three rules:
 
 \begin{displayquote}[{\autocite[Section 4.1]{RustBook2021}}]
     \begin{compactitem}
-        \item Each value in Rust has a variable that’s called its owner.
+        \item Each value in Rust has a variable that’s called the owner.
         \item There can only be one owner at a time.
         \item When the owner goes out of scope, the value will be dropped.
     \end{compactitem}
@@ -452,11 +451,9 @@ $\&$ the \emph{choice offering} and $\oplus$ the \emph{choice selection}.
 Using session types effectively offloads complexity to the type system,
 resulting in more complex types, but simpler implementations,
 since protocol compliance can be checked during compilation and boilerplate can be added by the compiler.
-
 No message is matching required, the compiler does it for the developer.
-Using session types it is possible to write it in a simpler form,
-where each endpoint has its type.
-Notice how the server provides more than one operation after login but the user does not call it.
+Using session types it is possible to write it in a simpler form, where a type is assigned to each endpoint.
+Notice how the server provides more than one operation, but the user does not call them all.
 
 \subsection{Typestates}\label{sec:typestates}
 
@@ -552,13 +549,13 @@ through tools such as Mungo~\autocite{Voinea2020},
 by contract-style assertions as in Ada2012, Eiffel or pre-0.4 Rust,
 or finally by leveraging the existing type system to write typestate enabled code as it is possible in
 Rust~\autocite{Duarte2020}.
-Typestate-related concepts were also used in Singularity OS \autocite[Section 6]{Ancona2016}, a reliable operating system prototype,
-its programs were written using Sing\#, a language derived from C\# which supports behavioral typing,
+Typestate-related concepts were also used in Singularity OS \autocite[Section 6]{Ancona2016},
+a reliable operating system prototype where programs were written using Sing\# --- a language derived from C\# which supports behavioral typing,
 specifically contracts in a similar capacity to typestates.
 
 \paragraph{Why use typestates?}
 By leveraging the state to the type system, the compiler is able to aid the programmer during development,
-a given set of transitions will be impossible by default, since the types do not implement them. % TODO maybe add an example
+a given set of transitions will be impossible by default, since the types do not implement them.
 By reducing the need for developers to check for a certain set of conditions through the use of typestates,
 it becomes possible to reduce the number of runtime assertions and
 completely eliminate the need for illegal state exceptions since illegal transitions are checked at compile time.
@@ -594,8 +591,8 @@ the type system will provide the programmer with better tools to express state,
 furthermore, the compiler will then catch errors regarding state,
 such as the previous \emph{use-after-close}.
 
-\autoref{lst:java-mult-typestate} shows the \texttt{Mult} program written in a typestated fashion,
-notice that the \texttt{Scanner} type is now augmented with its state and
+\autoref{lst:java-mult-typestate} shows the \texttt{Mult} program written in a \emph{typestated} fashion,
+notice that the \texttt{Scanner} type is now augmented with state and
 the compiler is able to catch the misuse of the \texttt{Scanner[Closed]} interface.
 
 
@@ -611,14 +608,14 @@ public class Mult {
     }
 }
     \end{minted}
-    \caption{The \texttt{Mult} program, written in a Java-like typestated fashion.}
+    \caption{The \texttt{Mult} program, written in a Java-like \emph{typestated} fashion.}
     \label{lst:java-mult-typestate}
 \end{listing}
 
 \paragraph{Plaid} is a typestate-oriented programming language \autocite{Aldrich2009},
 instead of \keyword{class}es users write \keyword{typestate}s.
-Each typestate represents a class in its possible states,
-its methods and behavior change during runtime as state changes,
+Each typestate represents a class and possible states,
+the class methods and behavior change during runtime as state changes,
 in contrast with other languages (e.g. Java) where public methods and fields are always available.
 In \autoref{lst:plaid-file-use}, the \keyword{File} passes through states as it is open, read and closed in \texttt{readClosedFile}.
 
@@ -653,10 +650,10 @@ method readClosedFile(f) {
 \end{listing}
 
 \paragraph{Rust.}
-As discussed in \autoref{sec:rust-lang}, Rust takes its commitment with safety with seriousness,
+As discussed in \autoref{sec:rust-lang}, Rust takes the commitment with safety with seriousness,
 providing the necessary tools to users.
 While Rust does not support first-class typestates,
-it is possible to emulate them using its type system (as demonstrated in \autocite{Duarte2020}),
+it is possible to emulate them using the type system (as demonstrated in \autocite{Duarte2020}),
 this is discussed in further sections of this document.
 
 While the file example does not apply in Rust, since files and other objects are closed as they leave the scopes,
@@ -688,7 +685,7 @@ However, such utilization requires complex (and possibly hard to read) types.
 Since it is not “\emph{part}” of the language, most users will neither use it nor be aware of it.
 
 \paragraph{Embedded Rust.} As any systems programming language, Rust penetrated the embedded development space.
-Its features are most adequate and the community has put great effort into making Rust a viable language for embedded systems.
+Providing features in line with the area's requirements, along with community efforts to make Rust viable in embedded systems.
 
 \emph{The Embedded Rust Book}'s~\autocite{Rust2021} Chapter 4 is dedicated to static guarantees,
 introducing programmers to the concepts of typestate in Section 4.1, and their usage in embedded systems.

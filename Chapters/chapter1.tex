@@ -18,8 +18,8 @@ In 2018, a bug in Coinbase (a popular cryptocurrency exchange)
 allowed for account balance manipulation~\autocite{Vicompany2018}.
 In 2019 and 2020, after several crashes~\autocite{Campbell2019},
 the Boeing 737 Max was grounded to fix existing problems.
-While grounded, more software-related issues were found~\autocite{Okane2019,Okane2020}, delaying its re-certification.
-In 2020, as the number of COVID-19 grew,
+While grounded, more software-related issues were found~\autocite{Okane2019,Okane2020}, delaying re-certification.
+In 2020, as the number of COVID-19 cases grew,
 contact tracing apps were deployed as a mitigation strategy ---
 due to a bug the UK's National Health Service app failed to ask users to self-isolate ~\autocite{Mageit2020}.
 
@@ -40,7 +40,7 @@ To address such problem, several tools and languages have been and continue to b
 so far, Rust has been the only one to achieve \emph{mainstream} status.
 Rust aims to provide memory safety without affecting performance or productivity.
 To achieve such ambitious goal, Rust validates code with the borrow checker, which then enforces memory safety rules,
-targeting the problem at its root.
+targeting the problem at the root.
 
 Addressing memory safety is not enough though.
 Languages which side-step the problem of having manual management
@@ -83,7 +83,7 @@ as debugging errors like these is neither an effective time use nor pleasant.
 
 \subsection{API Misuse}
 
-Consider Java's \keyword{Scanner}, its API allows the developer to write code like \autoref{lst:java-scanner}.
+Consider Java's \keyword{Scanner}, the API allows the developer to write code like \autoref{lst:java-scanner}.
 Such code will compile without issuing any errors or warnings (even with the \texttt{-Xlint:all} flag),
 however, it will also crash during runtime.
 Since it is not possible to read from a closed source, the thrown exception is an \texttt{IllegalStateException},
@@ -129,7 +129,7 @@ s.nextLine();                               // compile-time error
 Behavioral types are types which capture aspects of computation, they are further discussed in \autoref{sec:behavioral-types}.
 The current landscape of behavioral types in mainstream languages is bare.
 While projects exist, most are academic and of little impact in the way programmers write their code.
-I focus on two subsets of behavioral types --- session types and typestates.
+In this document I focus on two approached to behavioral types --- session types and typestates.
 
 \paragraph{Session types} will often refer to endpoints and their messages, capturing aspects of communication between them.
 Languages like ATS provide session type features and further enable the generation of source code in other languages
@@ -175,7 +175,7 @@ The crate, however, revolves around futures, requiring an asynchronous runtime a
 Other crates exist, they focus on finite state machines but are unable to provide static guarantees.
 
 Like other mainstream programming languages, Rust does not have first class support for session types.
-Its implementations are rare and rooted in the meta-programming system.
+Implementations are rare and rooted in the meta-programming system.
 The work done by \autocite{Jespersen2015, Munksgaard2015} introduces bi-directional session types to Rust,
 since then, this line of work has been expanded by \autocite{Lagaillardie2020}, extending it to multiparty session types.
 While Rust dropped typestate support during early development (Rust 0.4), that does not mean Rust is not able to provide them.

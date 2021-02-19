@@ -1,4 +1,4 @@
-%!TEX root = ../template.tex
+%!TEX root = ../../template.tex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% abstrac-en.tex
 %% NOVA thesis document file
@@ -6,22 +6,29 @@
 %% Abstract in English
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\typeout{NT LOADING FILE abstrac-en.tex}
+As software becomes more prevalent in our lives, bugs are able to cause significant disruption.
+Thus, preventing them becomes a priority when trying to develop dependable systems.
+While reducing their occurrence possibility to zero is infeasible,
+existing approaches are able to eliminate certain subsets of bugs.
 
-The dissertation must contain two versions of the abstract, one in the same language as the main text, another in a different language.  The package assumes that the two languages under consideration are always Portuguese and English.
+Rust is a systems programming language that addresses memory-related bugs by design,
+eliminating bugs like \emph{use-after-free}.
+To achieve this, Rust leverages the type system with information about object lifetimes,
+allowing the compiler to keep track of objects throughout the program and checking for memory misusage.
+While preventing memory-related bugs goes a long way in software security, other categories of bugs remain in Rust.
+One of which would be API misusage, where the developer does not respect constraints put in place by an API,
+thus resulting in the program crashing.
 
-The package will sort the abstracts in the appropriate order. This means that the first abstract will be in the same language as the main text, followed by the abstract in the other language, and then followed by the main text. For example, if the dissertation is written in Portuguese, first will come the summary in Portuguese and then in English, followed by the main text in Portuguese. If the dissertation is written in English, first will come the summary in English and then in Portuguese, followed by the main text in English.
+Typestates elevate state to the type level, allowing for the enforcement of API constraints at compile-time.
+Relieving the developer from the burden that is keeping track of the possible computation states at runtime,
+preventing possible API misusage during development.
+While Rust does not support typestates by design,
+the type system is powerful enough to express and validate typestates.
 
-The abstract shoul not exceed one page and should answer the following questions:
+This thesis' goal is to bridge the gap between typestates and production Rust.
+Developing a practical tool enabling developers to take advantage of typestates in their Rust code.
+The tool also provides extra correctness properties, by checking the typestate specification for common pitfalls.
 
-\begin{itemize}
-	\item What's the problem?
-	\item Why is it interesting?
-	\item What's the solution?
-	\item What follows from the solution?
-\end{itemize}
-
-% Palavras-chave do resumo em Inglês
 \begin{keywords}
-Keyword 1, Keyword 2, Keyword 3, …
-\end{keywords} 
+Behavioral types, typestates, meta-programming, macros, Rust
+\end{keywords}

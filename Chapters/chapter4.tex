@@ -11,7 +11,8 @@
 As previously discussed, the present work proposes the design of a new DSL embedded in Rust.
 The core goal of the DSL is to provide typestates without getting in the way of the developer.
 This means providing a syntax that stays close to Rust, only introducing new constructs when required.
-Errors should be helpful and point to the original DSL code (see \autoref{lst:dsl-typestate-error}), avoiding scenarios like the “\emph{infamous}” C++ template errors.
+Errors should be helpful and point to the original DSL code (see \autoref{lst:dsl-typestate-error})
+, avoiding scenarios like the “\emph{infamous}” C++ template errors.
 Features should be well documented allowing anyone to get up and running quickly,
 along this idea, the language itself should be a simple dependency and avoid any complicated build process.
 
@@ -40,24 +41,28 @@ or transitions (i.e. making the transition between states).
 The specification is then transformed into the necessary Rust structures and traits.
 In the end, the developer should only be required to write the \keyword{impl}s for each state.
 
-\subsection{Why function-like macros?}
+\subsection{Selecting the correct macro}
 
-In short, function-like macros allow true DSLs in Rust. However, the answer is not that simple.
+In short, there are two valid candidates, function-like macros and attribute macros.
+From the two I selected attribute macros,
+not only they are easier to parse (since I can leverage existing libraries),
+they are also close to Fugue \autocite{DeLine2004}.
+The latter provides validation over the overall approach, as Fugue constitutes a tool developed in an industrial environment, for real world software.
 
 \paragraph{Derive macros} seem to be a great candidate for our purpose.
 We can add them to an enumeration (just like \autocite{Fitzgerald2019}) and derive the necessary states from there.
 The main limitation of this approach is the lack of transparency —
 the derived methods are fixed by the macro and the developer does not have control over them.
 
-\paragraph{Attribute macros} would be an ideal candidate if we were able to tie multiple of them together.
-In other words, if it was possible to relate several macro calls with each other, they could work.
-This idea would be close to what Fugue \autocite{DeLine2004} does.
-However, each attribute macro's scope is limited to the item it is attached to,
-furthermore there is no way to store state during macro expansion in Rust.
+\paragraph{Attribute macros} Initially, I thought that leveraging attribute macros would not work.
+Macro expansion does not keep state hence I could not relate several attributes together.
+However, attribute macros are attachable to modules and inside them, one can write any kind of Rust code.
+This approach allows full control over the module token stream, thus enabling processing and analysis over user code.
 
-\paragraph{Function-like macros} are the only candidate left, their capabilities enable an expressive DSL.
-In comparison to the \emph{derive} approach, function-like macros provide more control and transparency to the developer.
-Allowing the developer to easily control states, transitions and others.
+\paragraph{Function-like macros} enable expressive DSLs.
+Their input can be \emph{almost} arbitrary and as previously discussed it is even possible to sketch a full language inside them.
+In comparison with attribute macros they allow for more flexibility, however this may come at the cost of requiring the user to learn a new language, even if small.
+
 
 \subsection{How does it work?}
 
@@ -131,8 +136,8 @@ After this process, all that is left to do is the implementation of the \keyword
     \end{tikzpicture}
     \caption{
         From DSL specification to Rust code.
-        First the DSL is parsed, then converted to a state machine and its properties checked
-        (in the some property is not respected, an error is issued).
+        First the DSL is parsed, then converted to a state machine and the properties checked
+        (in the case some property is not respected, an error is issued).
         Once the properties are validated, the Rust code is generated.
     }
     \label{fig:dsl-processing}
@@ -141,16 +146,19 @@ After this process, all that is left to do is the implementation of the \keyword
 \subsection{Syntax}\label{sec:arch:syntax}
 
 % One of the DSL's syntax goals is to stay as close to Rust as possible.
-The macro is invoked through a \keyword{typestate!} call, inside it, lives the DSL.
-I go through some important aspects, such as state and function declaration syntax.
-\autoref{lst:dsl-typestate-spec} is an example of the full syntax.
+The macro is invoked by attaching the \keyword{\#[typestate]} attribute to a module declaration.
+This section reviews some important aspects, such as state usage and possible enhancements to function declarations.
+The syntax itself is the same as Rust and can be seen in \autoref{lst:dsl-typestate-spec}.
 
-\paragraph{The top-level declaration} names the typestated output structure (line 1 of \autoref{lst:dsl-typestate-spec}).
-It starts with a name, the structure identifier, and a pair of curly brackets containing the specification.
-While this syntax would allow for multiple declarations to be written,
-the macro call can be become unnecessarily complex if several declarations are allowed inside.
+\paragraph{The module declaration} is attached with \keyword{\#[typestate]}, this is the macro entrypoint (line 1 of \autoref{lst:dsl-typestate-spec}).
+This syntax separates different typestates into individual modules.
+The restriction can be lifted by adding a macro parameter that does not include \keyword{mod} in the final expansion.
 
-\paragraph{A state declaration} uses the \keyword{struct} keyword (lines 2-7 of \autoref{lst:dsl-typestate-spec}).
+\paragraph{The main structure} is declared inline with all others, the key difference being the lack of attributes (lines 2-4 of \autoref{lst:dsl-typestate-spec}).
+The structure could be omitted in the case that no variables are required in all states,
+the name could then be assumed to be the one in the module, or also given as parameter to the macro.
+
+\paragraph{A state declaration} uses the \keyword{struct} keyword (lines 5-13 of \autoref{lst:dsl-typestate-spec}).
 The choice of \keyword{struct} over \keyword{state} is based on the following reasons:
 \begin{compactitem}
     \item Keeping the syntax close to Rust by avoiding a new keyword.
@@ -159,24 +167,20 @@ The choice of \keyword{struct} over \keyword{state} is based on the following re
     This follows the previous point idea.
 \end{compactitem}
 
-\paragraph{A function declaration} shares the syntax with their Rust counterparts (lines 12-18 of \autoref{lst:dsl-typestate-spec}).
+\paragraph{A function declaration} in regular Rust, without attributes (lines 14-20 of \autoref{lst:dsl-typestate-spec}).
 They can be one of three possible categories:
 \begin{compactitem}
-    \item \keyword{pure} functions, which do not mutate state (e.g. line 12 of \autoref{lst:dsl-typestate-spec}).
+    \item \keyword{pure} functions, which do not mutate state (e.g. line 14 of \autoref{lst:dsl-typestate-spec}).
     Their signature takes an immutable reference to \keyword{self} as an argument,
     disabling mutation.
-    \item \keyword{impure} functions, which can mutate state but not transition between states (e.g. line 13 of \autoref{lst:dsl-typestate-spec}).
+    \item \keyword{impure} functions, which can mutate state but not transition between states (e.g. line 15 of \autoref{lst:dsl-typestate-spec}).
     Their signature takes a mutable reference to \keyword{self} as an argument.
     This allows for mutation of the current state, but not transition.
-    \item \keyword{transition} functions, which transition between states (lines 14-18 of \autoref{lst:dsl-typestate-spec}).
+    \item \keyword{transition} functions, which transition between states (lines 16-20 of \autoref{lst:dsl-typestate-spec}).
     Their signature takes ownership of \keyword{self},
     forcing the consumption of the current state disabling possible aliasing.
 \end{compactitem}
-These keywords can be explicit, but they can also be inferred from the code.
-% Along with the keyword distinction, the \keyword{self} parameter is now typed.
-% This represents a change to original Rust's syntax, although a required one.
-% The alternative would be to specify the state parameter inside brackets,
-% which in comparison with the typed-\keyword{self} approach is less natural.
+These attributes can be explicit, but they can also be inferred from the code.
 The reader may have noticed two details in \autoref{lst:dsl-typestate-spec} ---
 the \texttt{Flying} state is not used,
 the \texttt{fly\_to} function returns the same state as \keyword{self}.
@@ -186,9 +190,9 @@ Thus requiring \keyword{self} to be consumed.
 
 
 \paragraph{Initial and final states} are special cases as they are defined with both structures and functions.
-The syntax to declare initial and final states is presented in lines 16-17 of \autoref{lst:dsl-typestate-spec}.
+The syntax to declare initial and final states is presented in lines 17-18 of \autoref{lst:dsl-typestate-spec}.
 As the reader can observe, the syntax uses functions to declare with states are initial and final.
-Both can also be inferred using the following rules:
+They can be declared explicitly or be inferred using the following rules:
 \begin{compactitem}
     \item \textbf{Initial states} are declared with functions that do not take \keyword{self} as a parameter and return a state.
     The \keyword{self} keyword is omitted since the state is yet to be built.
@@ -207,25 +211,25 @@ or through determinization of the automata.
 \begin{listing}
     \centering
     \begin{minted}{rust}
-typestate! { Drone {
-    struct Grounded { location: Coordinates }
-    struct Hovering { location: Coordinates }
-    struct Flying {
-        location:    Coordinates,
-        destination: Coordinates,
+#[typestate] mod M {
+    struct Drone { location: Coordinates } // available in every state structure
+    #[state] struct Grounded;
+    #[state] struct Hovering;
+    #[state] struct Flying {
+        destination: Coordinates
     }
-    enum Landed {
-        Success(Grounded),  // houston, touchdown!!
-        Error,              // crashed
+    #[state] enum Landed {
+        Success(Grounded),  // touchdown!!
+        Error               // crashed
     }
-    fn get_location(&self: Grounded) -> &Coordinates;
-    fn correct_coordinates(&mut self: Grounded);
+    fn get_location(self: &Grounded) -> &Coordinates;
+    fn correct_coordinates(self: &mut Grounded);
     fn take_off(self: Grounded) -> Hovering;
     fn fly_to(self: Hovering, dst: Coordinates) -> Hovering;
     fn land(self: Hovering) -> Landed;
     fn new() -> Grounded;   // defines the start state
     fn end(self: Grounded); // defines the final state
-} }
+}
     \end{minted}
     \caption{
         Example specification of the \texttt{Drone} typestate using the proposed DSL.
@@ -236,10 +240,8 @@ typestate! { Drone {
 \begin{listing}
     \centering
     \begin{minted}{text}
-typestate! { Drone {
-    struct State;
-           ^^^^^ : error `State` is not a useful state
-} }
+#[state] struct State;
+                ^^^^^ : error `State` is not a useful state
     \end{minted}
     \caption{
         Example error issued by the DSL.
@@ -261,7 +263,7 @@ trait GroundedOps {
     \end{minted}
     \caption{
         Example generated Rust code for the \texttt{Grounded} state.
-        Notice the \texttt{DroneState} trait, its purpose is to bound valid drone states.
+        Notice the \texttt{DroneState} trait, which bounds valid drone states.
         The trait should follow the sealed trait pattern, but it was simplified in this example.
     }
     \label{lst:dsl-typestate-generated}
@@ -293,7 +295,7 @@ After extraction the state-machine is subject to verification,
 this process is done using existing algorithms \autocite{Hopcroft2013}, to check the following properties:
 \begin{compactitem}
     \item \textbf{Minimality.} The state machine should be minimal in the sense that there should be no redundancy in states and transitions.
-    \item \textbf{Non-empty language.} Ensuring the presence of final states.
+    \item \textbf{Non-empty language.} The language of the state machine should not be empty; thus we need to ensure the presence of final states.
     \item \textbf{Usefulness.} As discussed, all states should be reachable from the start state and be able to reach the end state.
 \end{compactitem}
 In this case, the user should get feedback over any infraction,
@@ -320,7 +322,7 @@ The final user workflow should be as follows:
 
 Currently, I have developed a really simple proof-of-concept macro for Rust typestates.
 The macro is based on declarative macros and has several limitations,
-its syntax is also distant from the current proposal.
+the syntax is also distant from the current proposal.
 The macro takes a simple typestate specification and expands into several traits and structures.
 This project can be found on GitHub \autocite{Duarte2020a}.
 

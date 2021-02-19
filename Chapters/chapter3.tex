@@ -9,11 +9,11 @@ some languages will apply the preprocessor during different compilation stages w
 
 \subsection{OCaml}\label{sec:lang-preprocessors:ocaml}
 
-The OCaml ecosystem currently uses OCaml \gls{PPX},
-previous to version 4.02, OCaml made use of \gls{p4}.
+The OCaml ecosystem currently uses OCaml PPX (PreProcessor eXtensions),
+previous to version 4.02, OCaml made use of p4 (Pre-Processor-Pretty-Printer), also known as Camlp4.
 
 Camlp4 is a parsing library which provides extensible grammars,
-its main goal is to allow users to extend OCaml syntax,
+allowing users to extend OCaml syntax,
 Camlp4 is also able to redefine the core syntax,
 OCaml even introduced a revised syntax~\autocite{Rauglaudre2003} to enable Camlp4.
 
@@ -27,8 +27,8 @@ These criticisms are found throughout documents which discuss Camlp4~\autocite{W
 \subsubsection*{PPX}\label{sec:lang-preprocessors:ocaml:ppx}
 
 In OCaml version 4.02 syntax extensions were introduced, to enable preprocessor extensions.
-This meta programming mechanism come to replace \gls{p4}, which was not well liked by the community due to its complexity.
-The resources on \gls{PPX} are not as widespread as the resources for similar mechanisms in other languages (i.e. Rust and its macros).
+This meta programming mechanism came to replace \gls{p4}, which was not well liked by the community given it was too complex.
+The resources on \gls{PPX} are not as widespread as the resources for similar mechanisms in other languages (i.e. Rust macros).
 There are two main entry points to the PPX system, attribute and extension nodes \autocite[Sections 8.12 \& 8.13]{Leroy2020}.
 
 \paragraph{Attribute Nodes} are attached to the existing AST nodes,
@@ -135,62 +135,62 @@ This helps avoid potentially harmful code from being executed (e.g. malicious SQ
     \end{minted}
     \caption{
         Example code for Java's annotation declaration.
-        Possible values for \texttt{@Retention} and \texttt{@Target} are summed up in \autoref{fig:java-annotation-class-dia}.
+        % Possible values for \texttt{@Retention} and \texttt{@Target} are summed up in \autoref{fig:java-annotation-class-dia}.
     }
     \label{lst:java-annotation-declaration}
 \end{listing}
 
-\begin{figure}
-    \centering
-    \begin{tikzpicture}
-        % \draw[draw=black!20] (0, -0.5) grid (10, 10);
-        \draw (0, 9) -- (0, 9.6) -- (4, 9.6) -- (4.5, 9);
-        \draw (0, -0.5) rectangle (10.5, 9);
-        \node[draw=none, above right] (package-name) at (0, 9) {\texttt{java.lang.annotation}};
+% \begin{figure}
+%     \centering
+%     \begin{tikzpicture}
+%         % \draw[draw=black!20] (0, -0.5) grid (10, 10);
+%         \draw (0, 9) -- (0, 9.6) -- (4, 9.6) -- (4.5, 9);
+%         \draw (0, -0.5) rectangle (10.5, 9);
+%         \node[draw=none, above right] (package-name) at (0, 9) {\texttt{java.lang.annotation}};
 
-        \node[circle, draw] (annotation-id) at (1.5, 8) {\texttt{@}};
-        \node[draw=none, right=3mm] (annotation-label) at (1.5, 8) {\texttt{Retention}};
-        \draw (1, 7.5) rectangle (4, 8.5);
+%         \node[circle, draw] (annotation-id) at (1.5, 8) {\texttt{@}};
+%         \node[draw=none, right=3mm] (annotation-label) at (1.5, 8) {\texttt{Retention}};
+%         \draw (1, 7.5) rectangle (4, 8.5);
 
-        \node[circle, draw] (annotation-id) at (7, 8) {\texttt{@}};
-        \node[draw=none, right=3mm] (annotation-label) at (7, 8) {\texttt{Target}};
-        \draw (6.5, 7.5) rectangle (9, 8.5);
+%         \node[circle, draw] (annotation-id) at (7, 8) {\texttt{@}};
+%         \node[draw=none, right=3mm] (annotation-label) at (7, 8) {\texttt{Target}};
+%         \draw (6.5, 7.5) rectangle (9, 8.5);
 
-        \node[circle, draw] (annotation-id) at (1, 4) {\texttt{E}};
-        \node[draw=none, right=3mm] (annotation-label) at (1, 4) {\texttt{RetentionPolicy}};
-        \draw (0.5, 3.5) rectangle (4.5, 4.5);
-        \draw (0.5, 3.5) -- (0.5, 2) -- (4.5, 2) -- (4.5, 3.5);
-        \node[align=left, below right] (members) at (1, 3.5) {
-            $\bullet$~\texttt{CLASS}\\
-            $\bullet$~\texttt{SOURCE}\\
-            $\bullet$~\texttt{RUNTIME}\\
-        };
+%         \node[circle, draw] (annotation-id) at (1, 4) {\texttt{E}};
+%         \node[draw=none, right=3mm] (annotation-label) at (1, 4) {\texttt{RetentionPolicy}};
+%         \draw (0.5, 3.5) rectangle (4.5, 4.5);
+%         \draw (0.5, 3.5) -- (0.5, 2) -- (4.5, 2) -- (4.5, 3.5);
+%         \node[align=left, below right] (members) at (1, 3.5) {
+%             $\bullet$~\texttt{CLASS}\\
+%             $\bullet$~\texttt{SOURCE}\\
+%             $\bullet$~\texttt{RUNTIME}\\
+%         };
 
-        \node[circle, draw] (annotation-id) at (6, 6) {\texttt{E}};
-        \node[draw=none, right=3mm] (annotation-label) at (6, 6) {\texttt{ElementType}};
-        \draw (5.5, 5.5) rectangle (10, 6.5);
-        \draw (5.5, 5.5) -- (5.5, 0) -- (10, 0) -- (10, 5.5);
-        \node[align=left, below right] (members) at (6, 5.5) {
-            $\bullet$~\texttt{TYPE}\\
-            $\bullet$~\texttt{FIELD}\\
-            $\bullet$~\texttt{METHOD}\\
-            $\bullet$~\texttt{PARAMETER}\\
-            $\bullet$~\texttt{CONSTRUCTOR}\\
-            $\bullet$~\texttt{LOCAL\_VARIABLE}\\
-            $\bullet$~\texttt{ANNOTATION\_TYPE}\\
-            $\bullet$~\texttt{PACKAGE}\\
-            $\bullet$~\texttt{TYPE\_PARAMETER}\\
-            $\bullet$~\texttt{TYPE\_USE}\\
-            $\bullet$~\texttt{MODULE}\\
-        };
+%         \node[circle, draw] (annotation-id) at (6, 6) {\texttt{E}};
+%         \node[draw=none, right=3mm] (annotation-label) at (6, 6) {\texttt{ElementType}};
+%         \draw (5.5, 5.5) rectangle (10, 6.5);
+%         \draw (5.5, 5.5) -- (5.5, 0) -- (10, 0) -- (10, 5.5);
+%         \node[align=left, below right] (members) at (6, 5.5) {
+%             $\bullet$~\texttt{TYPE}\\
+%             $\bullet$~\texttt{FIELD}\\
+%             $\bullet$~\texttt{METHOD}\\
+%             $\bullet$~\texttt{PARAMETER}\\
+%             $\bullet$~\texttt{CONSTRUCTOR}\\
+%             $\bullet$~\texttt{LOCAL\_VARIABLE}\\
+%             $\bullet$~\texttt{ANNOTATION\_TYPE}\\
+%             $\bullet$~\texttt{PACKAGE}\\
+%             $\bullet$~\texttt{TYPE\_PARAMETER}\\
+%             $\bullet$~\texttt{TYPE\_USE}\\
+%             $\bullet$~\texttt{MODULE}\\
+%         };
 
-        \draw[->] (2.5, 7.5) -- node[left] {\texttt{value}} (2.5, 4.5) node[above right] {\texttt{1}};
-        \draw[->] (7.75, 7.5) -- node[left] {\texttt{value}} (7.75, 6.5) node[above right] {\texttt{*}};
+%         \draw[->] (2.5, 7.5) -- node[left] {\texttt{value}} (2.5, 4.5) node[above right] {\texttt{1}};
+%         \draw[->] (7.75, 7.5) -- node[left] {\texttt{value}} (7.75, 6.5) node[above right] {\texttt{*}};
 
-    \end{tikzpicture}
-    \caption{\texttt{java.lang.annotation} class diagram.}
-    \label{fig:java-annotation-class-dia}
-\end{figure}
+%     \end{tikzpicture}
+%     \caption{\texttt{java.lang.annotation} class diagram.}
+%     \label{fig:java-annotation-class-dia}
+% \end{figure}
 
 \paragraph{Implementing an Annotation.}
 To implement an annotation, start by declaring it as in \autoref{lst:java-annotation-declaration}.
@@ -309,7 +309,7 @@ from the class level to the code generation.
 
 \paragraph{Ecosystem Presence.}
 Just like the previous languages, the Kotlin compiler plugins suffer from the same discoverability problem.
-While depending on it are widely used (e.g. Kotlin serialization \autocite{Kotlin2020}),
+While depending on it are widely used (e.g. Kotlin serialization \autocite{Kotlin2021}),
 the resources to learn how to develop such tools are rare.
 
 \begin{figure}
@@ -343,7 +343,7 @@ the resources to learn how to develop such tools are rare.
 
 \section{Rust Macros}\label{sec:rust-macros}
 
-Just like its predecessors, C \& C++, Rust offers macros as part of the language.
+Just like C and C++, Rust offers macros as part of the language.
 In essence, Rust macros are just like other languages macro's, running during compile-time to generate code.
 In Rust, macros refer to a family of features (see \autoref{fig:rust-macro-family}),
 \emph{declarative} macros and \emph{procedural} macros.
@@ -594,7 +594,7 @@ They can be attached to items (see \autocite[Section 6]{RustRef2021}),
 including items in \keyword{extern} blocks, inherent and trait implementations, and trait definitions.
 
 \paragraph{Definition.}
-Like its counterparts, attribute macros are also declared by a public function with the \texttt{proc\_macro\_attribute},
+Like the other macros, attribute macros are also declared by a public function with the \texttt{proc\_macro\_attribute},
 however, their function signature takes two parameters instead of one, being \texttt{(TokenStream, TokenStream) -> TokenStream}.
 
 The first parameter is the token tree following the attribute name, for example, in \autoref{lst:rust-rocket-attr}
@@ -718,7 +718,7 @@ When the adopter is freed, all adopted references recover their linear type.
 
 The focusing mechanism provides a temporarily linear view on a nonlinear object.
 The focused object is required to be live and of the same type in the end of the focus usage.
-Access to the parent of the focused object is temporarily revoked, disabling its aliases to be accessed.
+Access to the parent of the focused object is temporarily revoked, disabling alias access.
 
 \paragraph{Fugue} is a software checker that enables interface protocols (i.e. typestates) to be specified as annotations \autocite{DeLine2004}.
 It provides two main protocol checking functions, \emph{resource protocols} and \emph{state-machine protocols}.
