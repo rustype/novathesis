@@ -44,7 +44,7 @@ One of the main kinds of PPXs are \emph{derivers} (see \autoref{sec:rust-macros:
 Deriveres are mostly used to generate error-prone code where the implementation pattern is common to a series of sittuations.
 Examples include but are not limited to: comparison functions, pretty printers and serializers \autocite{Rebours2019}.
 
-\input{Chapters/Listings/C3/ocaml-attribute-bindings.tex}
+% \input{Chapters/Listings/C3/ocaml-attribute-bindings.tex}
 
 \paragraph{Extension Nodes} are similar in syntax to the attribute nodes (instead of \texttt{@} they use \texttt{\%}).
 Extension nodes are meant to be placeholders in the syntax tree.
@@ -88,9 +88,9 @@ An example would be the \texttt{@Tainted}/\texttt{@Untainted} annotations,
 which serve the purpose of annotating data to indicate whether it can be trusted.
 This helps avoid potentially harmful code from being executed (e.g. malicious SQL queries).
 
-\input{Chapters/Figures/C3/java-annotation-processor.tex}
+% \input{Chapters/Figures/C3/java-annotation-processor.tex}
 
-\input{Chapters/Listings/C3/java-annotation-declaration.tex}
+% \input{Chapters/Listings/C3/java-annotation-declaration.tex}
 
 % \input{Chapters/Figures/C3/java-annotation-class-diagram.tex}
 
@@ -154,50 +154,50 @@ Their usage is generally confined to academia being unsuited for industrial usag
 Documentation on getting up and running is also limited,
 being mostly based on papers and examples rather than entry-level explanations.
 
-\input{Chapters/Listings/C3/jastadd-annotation-declaration.tex}
+% \input{Chapters/Listings/C3/jastadd-annotation-declaration.tex}
 
-\subsection{Kotlin}\label{sec:lang-preprocessors:kotlin}
+% \subsection{Kotlin}\label{sec:lang-preprocessors:kotlin}
 
-While Kotlin also allows and makes use of Java annotations, it is also possible to write plugins for the Kotlin compiler.
-Compiler plugins are much more complex pieces of software in comparison with annotations,
-due to the amount of detail required to take into account.
-An example of such detail is the amount of Kotlin backends available, not all targeting the Java Virtual Machine.
-This is also a motivation to write a compiler plugin, as annotations may not be compatible with all backends.
+% While Kotlin also allows and makes use of Java annotations, it is also possible to write plugins for the Kotlin compiler.
+% Compiler plugins are much more complex pieces of software in comparison with annotations,
+% due to the amount of detail required to take into account.
+% An example of such detail is the amount of Kotlin backends available, not all targeting the Java Virtual Machine.
+% This is also a motivation to write a compiler plugin, as annotations may not be compatible with all backends.
 
-\subsubsection*{Kotlin Compiler Plugins}\label{sec:lang-preprocessors:kotlin:annotation}
-The Kotlin compiler plugin stack is illustrated in \autoref{fig:kotlin-compiler-plugin-arch}.
-From top to bottom, the first two parts are related to Gradle, the main build system for Kotlin.
-These parts to not work on the plugin itself, but rather help the plugin coexist with the rest of the Kotlin ecosystem.
+% \subsubsection*{Kotlin Compiler Plugins}\label{sec:lang-preprocessors:kotlin:annotation}
+% The Kotlin compiler plugin stack is illustrated in \autoref{fig:kotlin-compiler-plugin-arch}.
+% From top to bottom, the first two parts are related to Gradle, the main build system for Kotlin.
+% These parts to not work on the plugin itself, but rather help the plugin coexist with the rest of the Kotlin ecosystem.
 
-\paragraph{\texttt{Plugin}.}
-The plugin interacts only in the Gradle segment,
-it provides an entrypoint from a \texttt{build.gradle} plugin and allows plugin configuration.
+% \paragraph{\texttt{Plugin}.}
+% The plugin interacts only in the Gradle segment,
+% it provides an entrypoint from a \texttt{build.gradle} plugin and allows plugin configuration.
 
-\paragraph{\texttt{Subplugin}.}
-The subplugin acts as the glue between Gradle and Kotlin.
-It sets up a series on options for the layer below from the configuration provided in the first layer.
-It also defines a plugin ID to avoid name clashing with other plugins and Maven coordinates, which allow the plugin to be downloaded.
+% \paragraph{\texttt{Subplugin}.}
+% The subplugin acts as the glue between Gradle and Kotlin.
+% It sets up a series on options for the layer below from the configuration provided in the first layer.
+% It also defines a plugin ID to avoid name clashing with other plugins and Maven coordinates, which allow the plugin to be downloaded.
 
-\paragraph{\texttt{CommandLineProcessor}.}
-This layer reads the arguments for \texttt{kotlinc -Xplugin}.
-The options from the previous layer are passed through here.
-Finally, it writes \texttt{CompilerConfigurationKeys} which will be passed to the layer bellow.
+% \paragraph{\texttt{CommandLineProcessor}.}
+% This layer reads the arguments for \texttt{kotlinc -Xplugin}.
+% The options from the previous layer are passed through here.
+% Finally, it writes \texttt{CompilerConfigurationKeys} which will be passed to the layer bellow.
 
-\paragraph{\texttt{ComponentRegistar}.}
-This component just reads the passed keys and registers extensions to be used by the compiler.
-It is possible to register several extensions at a time.
+% \paragraph{\texttt{ComponentRegistar}.}
+% This component just reads the passed keys and registers extensions to be used by the compiler.
+% It is possible to register several extensions at a time.
 
-\paragraph{\texttt{Extension}.}
-The extension is the main part of the plugin.
-There are multiple types of extensions able to deal with the input at different levels,
-from the class level to the code generation.
+% \paragraph{\texttt{Extension}.}
+% The extension is the main part of the plugin.
+% There are multiple types of extensions able to deal with the input at different levels,
+% from the class level to the code generation.
 
-\paragraph{Ecosystem Presence.}
-Just like the previous languages, the Kotlin compiler plugins suffer from the same discoverability problem.
-While depending on it are widely used (e.g. Kotlin serialization \autocite{Kotlin2021}),
-the resources to learn how to develop such tools are rare.
+% \paragraph{Ecosystem Presence.}
+% Just like the previous languages, the Kotlin compiler plugins suffer from the same discoverability problem.
+% While depending on it are widely used (e.g. Kotlin serialization \autocite{Kotlin2021}),
+% the resources to learn how to develop such tools are rare.
 
-\input{Chapters/Figures/C3/kotlin-compiler-plugin-architecture.tex}
+% \input{Chapters/Figures/C3/kotlin-compiler-plugin-architecture.tex}
 
 \section{Rust Macros}\label{sec:rust-macros}
 
@@ -206,7 +206,7 @@ In essence, Rust macros are just like other languages macro's, running during co
 In Rust, macros refer to a family of features (see \autoref{fig:rust-macro-family}),
 \emph{declarative} macros and \emph{procedural} macros.
 
-\input{Chapters/Figures/C3/rust-macro-family-tree.tex}
+% \input{Chapters/Figures/C3/rust-macro-family-tree.tex}
 
 \subsection{Declarative Macros}\label{sec:rust-macros:decl}
 
@@ -298,7 +298,7 @@ The Rust ecosystem developers have developed HTML DSLs \autocite{Wong2021, Stokk
 (see the example in \autoref{lst:rust-html-dsl}) and
 the possibility to run Python inside Rust\autocite{Fusion2021}.
 
-\input{Chapters/Listings/C3/rust-html-dsl.tex}
+% \input{Chapters/Listings/C3/rust-html-dsl.tex}
 
 \subsubsection*{Derive Macros}\label{sec:rust-macros:proc:derive}
 Derive macros likely are the most common kind of procedural macro in Rust,
@@ -319,9 +319,9 @@ Derive macros are also able to add additional attributes to the scope of the cur
 Such attributes are called \emph{derive macro helper attributes} and they are \emph{inert},
 that is, they are not processed by themselves but rather serve as annotations (see \autoref{lst:rust-derive-error}).
 
-\input{Chapters/Listings/C3/rust-derive-debug.tex}
+% \input{Chapters/Listings/C3/rust-derive-debug.tex}
 
-\input{Chapters/Listings/C3/rust-derive-error.tex}
+% \input{Chapters/Listings/C3/rust-derive-error.tex}
 
 \subsubsection*{Attribute Macros}\label{sec:rust-macros:proc:attr}
 Attribute macros define new outer attributes,
@@ -345,7 +345,7 @@ the function output will \emph{replace} such item with the return item or items.
 While attribute macros are able to replace the input stream,
 they can also leave the stream unchanged and check for code properties (e.g. if all variables start with a given prefix).
 
-\input{Chapters/Listings/C3/rust-rocket-attr.tex}
+% \input{Chapters/Listings/C3/rust-rocket-attr.tex}
 
 \begin{table}
     \centering
@@ -427,21 +427,21 @@ While most approaches create a new language,
 approaches like Fugue \autocite{DeLine2004} simply build on top of existing languages.
 This kind of approach is extremely valuable as it bridges the gap between existing programming languages and the theoretical field.
 
-\paragraph{Vault} is a programming language with the aim of researching lifetime tracking and the symbolic state of objects \autocite{Fahndrich2002}.
-Vault introduces two new concepts — \emph{adoption} and \emph{focus}, which serve to relax constrains imposed by a linear type system.
-Since aliasing can be controlled through the linear type system, Vault is able to check for states, hence supporting typestate.
-Vault bridges the best of both worlds by splitting programs into two groups:
-the ones able to be checked for protocols (i.e. \emph{typestated}) and
-the ones free of aliasing restrictions and thus unable to verify protocol rules.
+% \paragraph{Vault} is a programming language with the aim of researching lifetime tracking and the symbolic state of objects \autocite{Fahndrich2002}.
+% Vault introduces two new concepts — \emph{adoption} and \emph{focus}, which serve to relax constrains imposed by a linear type system.
+% Since aliasing can be controlled through the linear type system, Vault is able to check for states, hence supporting typestate.
+% Vault bridges the best of both worlds by splitting programs into two groups:
+% the ones able to be checked for protocols (i.e. \emph{typestated}) and
+% the ones free of aliasing restrictions and thus unable to verify protocol rules.
 
-The adoption mechanism works by means of an \emph{adopter} (i.e. which adopts a linear reference) and an \emph{adoptee} (i.e. the adopted reference).
-Through adoption, the adopted linear reference is consumed, and thus cannot be directly accessed.
-Furthermore, the lifetime of each reference alias is tied to the lifetime of the adopter.
-When the adopter is freed, all adopted references recover their linear type.
+% The adoption mechanism works by means of an \emph{adopter} (i.e. which adopts a linear reference) and an \emph{adoptee} (i.e. the adopted reference).
+% Through adoption, the adopted linear reference is consumed, and thus cannot be directly accessed.
+% Furthermore, the lifetime of each reference alias is tied to the lifetime of the adopter.
+% When the adopter is freed, all adopted references recover their linear type.
 
-The focusing mechanism provides a temporarily linear view on a nonlinear object.
-The focused object is required to be live and of the same type in the end of the focus usage.
-Access to the parent of the focused object is temporarily revoked, disabling alias access.
+% The focusing mechanism provides a temporarily linear view on a nonlinear object.
+% The focused object is required to be live and of the same type in the end of the focus usage.
+% Access to the parent of the focused object is temporarily revoked, disabling alias access.
 
 \paragraph{Fugue} is a software checker that enables interface protocols (i.e. typestates) to be specified as annotations \autocite{DeLine2004}.
 It provides two main protocol checking functions, \emph{resource protocols} and \emph{state-machine protocols}.
@@ -455,7 +455,7 @@ Fugue also allows for states to relate to one another.
 Consider the example in \autoref{lst:csharp-fugue-states}; by relating the states in the \texttt{OuterSocket} class
 with the \texttt{innerSocket} field states Fugue can ensure that \texttt{OuterSocket} is a well-behaved client of the field's class.
 
-\input{Chapters/Listings/C3/csharp-fugue-states.tex}
+% \input{Chapters/Listings/C3/csharp-fugue-states.tex}
 
 \paragraph{Plaid} is a typestate-oriented language.
 The idea, proposed in \autocite{Aldrich2009}, is based on support for first-class typestates in an object-oriented setting.
@@ -482,7 +482,7 @@ If a class has a typestate specification, the Mungo typechecker analyses each ob
 the object’s life. Finally, it checks the extracted information against the sequences of method calls allowed by the typestate specification.
 \end{displayquote}
 
-\input{Chapters/Listings/C3/java-mungo-typestates.tex}
+% \input{Chapters/Listings/C3/java-mungo-typestates.tex}
 
 \subsection{Summary}
 

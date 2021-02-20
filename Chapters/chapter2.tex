@@ -309,7 +309,7 @@ the code should not compile, raising an error.
 
 Session types are a subset of behavioral types, focused on communication,
 from entities in a distributed system to threads in a computer.
-Session types are based on process calculi and can be thought as “\emph{types for protocols}” \autoref{Honda1993, Honda1998}.
+Session types are based on process calculi and can be thought as “\emph{types for protocols}” \autocite{Honda1993, Honda1998}.
 They elevate communication to the type level, allowing expressing them as types in a program,
 in turn this enables the compiler to reason about the protocol during compile-time \autocite{Vasconcelos2006, Gay2015}.
 
@@ -318,7 +318,7 @@ where \texttt{SenderT} and \texttt{ReceiverT} are the types sent and received by
 Channels are well-typed, meaning that if \mintinline{Rust}{SenderT = String},
 sending another type over the channel will result in a type error.
 
-\input{Chapters/Listings/C2/rust-login-chan.tex}
+% \input{Chapters/Listings/C2/rust-login-chan.tex}
 
 Session types extend on this notion, not only allowing for a single type to be sent or received,
 but also model the protocol.
@@ -337,18 +337,7 @@ And now using session types (\autoref{eq:session-types}
 with syntax adapted from \autocite{Vasconcelos2006},
 where the first four assignments ($:=$) are simple aliases, to simplify reading):
 
-\begin{figure}
-    \begin{align*}
-        \mathbf{Login}   & := \{user: \keyword{String},~password: \keyword{String}\}                                                                                                 \\
-        \mathbf{Message} & := \{user: \keyword{String},~message: \keyword{String}\}                                                                                                  \\
-        \mathbf{Status}  & := \{user: \keyword{String}\}                                                                                                                             \\
-        \mathbf{SReply}  & := \{status: \keyword{String}\}                                                                                                                           \\
-        Server           & = ~?\mathbf{Login}.\oplus\langle !Ok.?\mathbf{Message}.\oplus\langle Ok.End, Err.End \rangle, !Err.End\rangle                                             \\
-        Client           & = ~!\mathbf{Login}.\&\langle ?Ok.\&\langle ?\mathbf{Status}.!\mathbf{SReply}, !\mathbf{Message}.\&\langle Ok.End, Err.End \rangle\rangle, ?Err.End\rangle
-    \end{align*}
-    \caption{Session type example, equivalent to \autoref{lst:rust-login-chan}.}
-    \label{eq:session-types}
-\end{figure}
+% \input{Chapters/Figures/C2/session-types.tex}
 
 Consider $!$ to be \emph{sends}, $?$ to be \emph{receives}, $.$ the \emph{sequence} operator finally,
 $\&$ the \emph{choice offering} and $\oplus$ the \emph{choice selection}.
@@ -449,7 +438,7 @@ In this example, the error is simple to catch,
 the program is short and the \texttt{Scanner} can either be open or closed,
 however, real-world applications are not that simple.
 
-\input{Chapters/Listings/C2/java-read.tex}
+% \input{Chapters/Listings/C2/java-read.tex}
 
 In the case of \emph{typestated} programming,
 the type system will provide the programmer with better tools to express state,
@@ -460,7 +449,7 @@ such as the previous \emph{use-after-close}.
 notice that the \texttt{Scanner} type is now augmented with state and
 the compiler is able to catch the misuse of the \texttt{Scanner[Closed]} interface.
 
-\input{Chapters/Listings/C2/java-read-typestate.tex}
+% \input{Chapters/Listings/C2/java-read-typestate.tex}
 
 \paragraph{Plaid} is a typestate-oriented programming language \autocite{Aldrich2009},
 instead of \keyword{class}es users write \keyword{typestate}s.
@@ -473,7 +462,7 @@ This property allows the type system to enforce certain properties at compile ti
 such as certain methods will never be called in a given state since it is not possible by design
 (i.e. they are not available in the interface).
 
-\input{Chapters/Listings/C2/plaid-file-use.tex}
+% \input{Chapters/Listings/C2/plaid-file-use.tex}
 
 \paragraph{Rust.}
 As discussed in \autoref{sec:rust-lang}, Rust takes the commitment with safety with seriousness,
@@ -523,8 +512,8 @@ However, the user is unable to call \texttt{turnOff} in \autoref{lst:obsidian-tr
 since the switch is already set to the \texttt{Off} state.
 The Obsidian compiler is able to notice such invalid transitions and provide an error during compile time.
 
-\input{Chapters/Listings/C2/obsidian-state.tex}
+% \input{Chapters/Listings/C2/obsidian-state.tex}
 
-\input{Chapters/Listings/C2/obsidian-transaction-ok.tex}
+% \input{Chapters/Listings/C2/obsidian-transaction-ok.tex}
 
-\input{Chapters/Listings/C2/obsidian-transaction-error.tex}
+% \input{Chapters/Listings/C2/obsidian-transaction-error.tex}

@@ -1,0 +1,12 @@
+\begin{figure}
+    \begin{align*}
+        \mathbf{Login}   & := \{user: \keyword{String},~password: \keyword{String}\}                                                                                                 \\
+        \mathbf{Message} & := \{user: \keyword{String},~message: \keyword{String}\}                                                                                                  \\
+        \mathbf{Status}  & := \{user: \keyword{String}\}                                                                                                                             \\
+        \mathbf{SReply}  & := \{status: \keyword{String}\}                                                                                                                           \\
+        Server           & = ~?\mathbf{Login}.\oplus\langle !Ok.?\mathbf{Message}.\oplus\langle Ok.End, Err.End \rangle, !Err.End\rangle                                             \\
+        Client           & = ~!\mathbf{Login}.\&\langle ?Ok.\&\langle ?\mathbf{Status}.!\mathbf{SReply}, !\mathbf{Message}.\&\langle Ok.End, Err.End \rangle\rangle, ?Err.End\rangle
+    \end{align*}
+    \caption{Session type example, equivalent to \autoref{lst:rust-login-chan}.}
+    \label{eq:session-types}
+\end{figure}
