@@ -1,0 +1,14 @@
+\begin{listing}
+    \begin{minted}{Rust}
+html! {
+    h1 { "Hello, world!" }
+    p.intro {
+        "This is an example of the "
+        a href="https://github.com/lambda-fairy/maud" { "Maud" }
+        " template language."
+    }
+}
+    \end{minted}
+    \caption{HTML DSL embedded in Rust. Example taken from \autocite{Wong2021}.}
+    \label{lst:rust-html-dsl}
+\end{listing}

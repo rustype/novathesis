@@ -1,0 +1,18 @@
+\begin{listing}
+    \centering
+    \begin{minted}{csharp}
+[WithProtocol("open", "closed")]
+class OuterSocket {
+    [InState(”connected”, WhenEnclosingState=”open”),
+        NotAliased(WhenEnclosingState=”open”)]
+    [Unavailable(WhenEnclosingState=”closed”)]
+    private Socket innerSocket;
+}
+    \end{minted}
+    \caption{
+        Relating a class's states with the \texttt{innerSocket} states.
+        In this example, the \texttt{OuterSocket}'s \texttt{open} state is related with the \texttt{connected} state of the socket.
+        This ensures that the \texttt{OuterSocket} is a well-behaved client of \texttt{innerSocket}.
+    }
+    \label{lst:csharp-fugue-states}
+\end{listing}

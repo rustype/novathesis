@@ -1,0 +1,9 @@
+\begin{listing}
+    \begin{minted}{Rust}
+let mut s = String::from("hello");
+let r1 = &mut s; // ok: first mutable borrow
+let r2 = &mut s; // error: `s` was mutably borrowed in the previous line
+    \end{minted}
+    \caption{Example error while using multiple mutable borrows over the same variable.}
+    \label{lst:rust-borrow-n-mut}
+\end{listing}

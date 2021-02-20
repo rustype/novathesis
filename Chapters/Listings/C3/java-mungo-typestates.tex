@@ -1,0 +1,13 @@
+\begin{listing}
+    \centering
+    \begin{minted}{csharp}
+@Typestate("StateIteratorProtocol")
+class StateIterator { /* ... */ }
+    \end{minted}
+    \caption{
+        Mungo's \texttt{Typestate} annotation. Normal Java code ends up ignoring the annotation.
+        However, Mungo is able to process it and check the class calls against the specification to ensure typestate compliance.
+        In this case the class specification is \texttt{StateIteratorProtocol}.
+    }
+    \label{lst:java-mungo-typestate}
+\end{listing}

@@ -1,0 +1,14 @@
+\begin{listing}
+    \begin{minted}{Rust}
+let a = 12 [@attr pl]
+let b = "some string" [@@attr pl]
+[@@@attr pl]
+    \end{minted}
+    \caption{
+        Example of the three kinds of attributes, taken from \autocite{Rebours2019}.
+        The first line attaches to the \texttt{12} expression.
+        The second attaches to the whole \texttt{let} binding (i.e \texttt{let b = "some string"}).
+        Finally, the third line, does not attach to a particular member of the AST.
+    }
+    \label{lst:ocaml-attr-bindings}
+\end{listing}

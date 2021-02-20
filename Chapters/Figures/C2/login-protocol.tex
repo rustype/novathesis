@@ -1,0 +1,34 @@
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \tikzstyle{entity}=[rectangle, rounded corners, thick, draw=black, minimum width=15mm, minimum height=7mm]
+        \tikzstyle{timeline}=[-Square, thick]
+        \tikzstyle{message}=[->, thick]
+        \node[entity] (client) at (0, 1) {Client};
+        \node[entity] (server) at (0, -1) {Server};
+
+        \draw[message] (1.5, 1) -- node[rotate=90, above] {\small{\texttt{LOGIN}}} ++(0, -2);
+        \draw[message] (2.5, 1) -- node[rotate=90, above] {\small{username}} node[rotate=90, below] {\small{\keyword{String}}} ++(0, -2);
+        \draw[message] (3.75, 1) -- node[rotate=90, above] {\small{password}} node[rotate=90, below] {\small{\keyword{String}}} ++(0, -2);
+
+        \draw[message] (5.25, -1) -- node[rotate=90, above] {\small{\texttt{ACCEPTED}}} ++ (0, 2);
+
+        \draw[message] (6.5, -1) -- node[rotate=90, above] {\small{\texttt{REJECTED}}} ++ (0, 2);
+
+        \draw[thick] (client) to ++(5.5, 0);
+        \draw[thick] (server) to ++(5.5, 0);
+
+        \draw[timeline] (6, -1) to ++(1.5, 0);
+        \draw[timeline] (6, 1) to ++(1.5, 0);
+
+        \draw[dashed, semithick] (4.5, -1.25) rectangle (7, 1.25);
+        \path (4.5, 1.25) -- node[above] {\emph{Choice}} (7, 1.25);
+    \end{tikzpicture}
+    \caption{
+        Communication protocol example. The communication establishment step is omitted for simplicity.
+        In this protocol the client tries to login to a service by sending a message
+        \texttt{LOGIN} followed by the username and password, both of type \keyword{String}.
+        The server then replies with either an \texttt{ACCEPTED} or \texttt{REJECTED}, if the login was successful or not, respectively.
+    }
+    \label{fig:login-protocol}
+\end{figure}

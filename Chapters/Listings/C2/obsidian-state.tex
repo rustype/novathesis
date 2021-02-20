@@ -1,0 +1,14 @@
+\begin{listing}
+    \centering
+    \begin{minted}{java}
+contract LightSwitch {
+    state On {
+      int brightness;
+    }
+    state Off;
+    int switchLocation available in On, Off;
+}
+    \end{minted}
+    \caption{Obsidian state declaration example.}
+    \label{lst:obsidian-state}
+\end{listing}

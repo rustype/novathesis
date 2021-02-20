@@ -1,0 +1,11 @@
+\begin{listing}
+    \centering
+    \begin{minted}{java}
+transaction OffToOff() {
+   LightSwitch s = new LightSwitch(); // LightSwitch is in Off upon instantiation
+   s.turnOff(); // error: turnOff() requires that s is On, but here s is Off
+}
+    \end{minted}
+    \caption{Invalid state transition example in Obsidian. Since \texttt{LightSwitch} is instantiated as \texttt{Off}, calling \texttt{turnOff} is not valid.}
+    \label{lst:obsidian-transaction-err}
+\end{listing}

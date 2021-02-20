@@ -1,0 +1,15 @@
+\begin{listing}
+    \centering
+    \begin{minted}{Rust}
+#[derive(Error)]
+enum CoordinateError {
+    #[error("Invalid coordinates {0}")]
+    InvalidCoordinates(Coordinates),
+}
+    \end{minted}
+    \caption{
+        Example usage of a derive macro with helper attributes,
+        in this case the \texttt{error(...)} defines an error message with a \texttt{Coordinates} parameter.
+    }
+    \label{lst:rust-derive-error}
+\end{listing}

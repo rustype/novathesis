@@ -1,0 +1,24 @@
+\begin{listing}
+    \centering
+    \begin{minted}{java}
+state File {
+    val filename;
+}
+state OpenFile case of File = {
+    val filePtr;
+    method read() { ... }
+    method close() { this <- ClosedFile; }
+}
+state ClosedFile case of File {
+    method open() { this <- OpenFile; }
+}
+method readClosedFile(f) {
+    f.open();
+    val x = f.read();
+    f.close();
+    x;
+}
+    \end{minted}
+    \caption{The \keyword{File} declaration and usage in Plaid (taken from \autocite{Mota2020}).}
+    \label{lst:plaid-file-use}
+\end{listing}

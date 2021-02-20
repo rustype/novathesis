@@ -1,0 +1,30 @@
+\begin{listing}
+    \centering
+    \begin{minted}{Rust}
+enum Request {
+    Login(String, String),       // login with: {username, password}
+    SendMessage(String, String), // send message to a user: {user, message}
+    CheckStatus(String),         // check the status of a given user: {user}
+}
+enum Reply {
+    AuthOk,             // successful login
+    AuthErr,            // failed login
+    MessageOk,          // successful message
+    UserStatus(String), // user status
+}
+fn communicate() {
+    let (tx, rx) = channel<Request, Reply>();
+    tx.send(Request::Login("foo", "bar"));
+    match tx.recv() {
+        // ...
+    }
+}
+    \end{minted}
+    \caption{
+        Application login example, modelled using Rust's \keyword{enum}s
+        (some channel details were omitted for simplicity).
+        Reusing channels requires the developer to clump all states in a single \keyword{enum}.
+        Better state management requires the use of more channels, neither approaches are ideal.
+    }
+    \label{lst:rust-login-chan}
+\end{listing}

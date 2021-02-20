@@ -1,0 +1,17 @@
+\begin{listing}
+    \centering
+    \begin{minted}{Rust}
+#[derive(Debug)]
+struct Coordinate {
+    x: f32,
+    y: f32,
+    x: f32,
+}
+    \end{minted}
+    \caption{
+    Example usage of \keyword{\#[derive(...)]},
+    in this case deriving \keyword{Debug} enables the structure to be printed with
+    “\mintinline{Rust}{println!("{:?}", coord)}”.
+    }
+    \label{lst:rust-derive-debug}
+\end{listing}

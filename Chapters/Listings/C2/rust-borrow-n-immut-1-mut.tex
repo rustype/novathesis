@@ -1,0 +1,10 @@
+\begin{listing}
+    \begin{minted}{Rust}
+let mut s = String::from("hello");
+let r1 = &s;     // ok: first immutable borrow
+let r2 = &s;     // ok: second immutable borrow
+let r3 = &mut s; // error: `s` was immutably borrowed in the previous lines
+    \end{minted}
+    \caption{Example error while using a mutable borrow in conjunction with immutable ones.}
+    \label{lst:rust-borrow-n-immut-1-mut}
+\end{listing}

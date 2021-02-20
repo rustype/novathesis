@@ -1,0 +1,14 @@
+\begin{listing}
+    \begin{minted}{text}
+error[E0425]: cannot find value `a` in this scope
+  --> src/main.rs:13:21
+   |
+ 9 | let four = using_a!(a / 10);
+   |                     ^ not found in this scope
+    \end{minted}
+    \caption{
+        The expansion in \autoref{lst:rust-macro-hygiene:expansion} will result in an error during compile time
+        since the \texttt{a}s in line 2 and 3 are considered to belong to different contexts.
+    }
+    \label{lst:rust-macro-hygiene:error}
+\end{listing}

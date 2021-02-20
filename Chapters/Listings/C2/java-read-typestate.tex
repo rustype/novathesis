@@ -1,0 +1,15 @@
+\begin{listing}
+    \centering
+    \begin{minted}{java}
+public class Read {
+    public static void main(String[] args) {
+        Scanner[Open] s = new Scanner(System.in);
+        s.nextLine();
+        Scanner[Closed] s = s.close();
+        s.nextLine(); // compiler error
+    }
+}
+    \end{minted}
+    \caption{The \texttt{Read} program, written in a Java-like \emph{typestated} fashion.}
+    \label{lst:java-read-typestate}
+\end{listing}

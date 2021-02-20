@@ -1,0 +1,9 @@
+\begin{listing}
+    \begin{minted}{Rust}
+let x = String::from("Hello");  // ok: `x` is assigned "Hello"
+let y = &x;                     // ok: `x` is borrowed to `y`
+println!("{}", x);              // ok: `x` can be printed since it is still valid
+    \end{minted}
+    \caption{Example using borrowing to allow for more than one reader on the same variable.}
+    \label{lst:rust-borrow}
+\end{listing}

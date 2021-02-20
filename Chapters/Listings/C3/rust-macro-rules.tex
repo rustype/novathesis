@@ -1,0 +1,12 @@
+\begin{listing}
+    \centering
+    \begin{minted}{Rust}
+macro_rules! say_hello {
+    ($n:literal) => { for 0..$n { println!("Hello, world!"); } }
+}
+fn main() { say_hello!(5); }
+    \end{minted}
+    \caption{Example \texttt{macro\_rules!} usage.
+        When executed, the code above will print “\texttt{Hello, world!}” five times.}
+    \label{lst:rust-macro-rules}
+\end{listing}

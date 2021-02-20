@@ -1,0 +1,14 @@
+\begin{listing}
+    \begin{minted}[highlightlines=2,highlightcolor=blue!10]{Rust}
+let four = {
+    let a = 42;
+    a / 10
+};
+    \end{minted}
+    \caption{
+        \autoref{lst:rust-macro-hygiene:declaration} line 9's macro expansion.
+        Declarations with a blue background will be placed in a different \emph{scope} than the others,
+        thus the \texttt{a} for lines 2 and 3 will not be considered the same.
+    }
+    \label{lst:rust-macro-hygiene:expansion}
+\end{listing}

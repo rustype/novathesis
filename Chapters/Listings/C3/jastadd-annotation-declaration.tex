@@ -1,0 +1,18 @@
+\begin{listing}
+    \centering
+    \begin{minted}{Java}
+@any Person people;
+people += new Person("Bob");
+people += new Person("Gene");
+people += new Person("Tina");
+for (Person person : people) {
+    System.out.println(person.getName());
+}
+    \end{minted}
+    \caption{
+        The \texttt{@any} annotation allows an object to carry several instances of itself.
+        In the example, \texttt{@any Person} is rather a collection of \texttt{Person}.
+        This extension is enabled by the ExtendJ compiler.
+    }
+    \label{lst:jastadd-annotation-declaration}
+\end{listing}

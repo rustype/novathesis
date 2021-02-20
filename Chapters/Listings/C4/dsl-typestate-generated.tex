@@ -1,0 +1,20 @@
+
+\begin{listing}
+    \centering
+    \begin{minted}{rust}
+trait DroneState {}
+struct Grounded { location: Coordinates }
+impl DroneState for Grounded {}
+struct Drone<State: DroneState> { state: State }
+trait GroundedOps {
+    fn get_location(&self) -> &Coordinates;
+    fn take_off(self) -> Drone<Hovering>;
+}
+    \end{minted}
+    \caption{
+        Example generated Rust code for the \texttt{Grounded} state.
+        Notice the \texttt{DroneState} trait, which bounds valid drone states.
+        The trait should follow the sealed trait pattern, but it was simplified in this example.
+    }
+    \label{lst:dsl-typestate-generated}
+\end{listing}

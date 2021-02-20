@@ -162,15 +162,7 @@ Notice how \texttt{String::from} is used instead of another type,
 since \keyword{String} type does not implement \keyword{Copy} it can only be moved.
 If the used type implemented \keyword{Copy}, the value would have been copied instead of moved.
 
-\begin{listing}
-    \begin{minted}{Rust}
-let x = String::from("Hello");  // ok: `x` is assigned "Hello"
-let y = x;                      // ok: `x` is moved into `y`
-println!("{}", x);              // error: `x` was moved in the previous line
-    \end{minted}
-    \caption{Example of the move-by-default mechanism to enforce ownership.}
-    \label{lst:rust-move}
-\end{listing}
+\input{Chapters/Listings/C2/rust-move.tex}
 
 So far this illustrates the first two rules. The last rule can be considered invisible,
 as it happens during compilation and the user would not notice it usually.
@@ -196,15 +188,7 @@ The variable containing them has ownership \emph{over the reference}; it still i
 (if \mintinline{Rust}{let z = y;} was to be added, the reference would be copied instead of moved);
 and finally, when the owner goes out of scope \emph{the reference is dropped}, but not the original value.
 
-\begin{listing}
-    \begin{minted}{Rust}
-let x = String::from("Hello");  // ok: `x` is assigned "Hello"
-let y = &x;                     // ok: `x` is borrowed to `y`
-println!("{}", x);              // ok: `x` can be printed since it is still valid
-    \end{minted}
-    \caption{Example using borrowing to allow for more than one reader on the same variable.}
-    \label{lst:rust-borrow}
-\end{listing}
+\input{Chapters/Listings/C2/rust-borrow.tex}
 
 \subsubsection*{Mutable Borrows}
 
@@ -224,27 +208,9 @@ the first two (\texttt{r1} and \texttt{r2}) are only read and the third (\texttt
 While there will be no conflicts between writers, it is possible for the readers to read an inconsistent value,
 since it can happen during the write operation.
 
-\begin{listing}
-    \begin{minted}{Rust}
-let mut s = String::from("hello");
-let r1 = &mut s; // ok: first mutable borrow
-let r2 = &mut s; // error: `s` was mutably borrowed in the previous line
-    \end{minted}
-    \caption{Example error while using multiple mutable borrows over the same variable.}
-    \label{lst:rust-borrow-n-mut}
-\end{listing}
+\input{Chapters/Listings/C2/rust-borrow-n-mut.tex}
 
-\begin{listing}
-    \begin{minted}{Rust}
-let mut s = String::from("hello");
-let r1 = &s;     // ok: first immutable borrow
-let r2 = &s;     // ok: second immutable borrow
-let r3 = &mut s; // error: `s` was immutably borrowed in the previous lines
-    \end{minted}
-    \caption{Example error while using a mutable borrow in conjunction with immutable ones.}
-    \label{lst:rust-borrow-n-immut-1-mut}
-\end{listing}
-
+\input{Chapters/Listings/C2/rust-borrow-n-immut-1-mut.tex}
 
 \subsection{Concurrency}\label{sec:rust-lang:concurrency}
 
@@ -337,40 +303,7 @@ Furthermore, consider the constraint that \emph{all interactions end with a mess
 If the specification has an interaction that is not compliant with such rule,
 the code should not compile, raising an error.
 
-\begin{figure}
-    \centering
-    \begin{tikzpicture}
-        \tikzstyle{entity}=[rectangle, rounded corners, thick, draw=black, minimum width=15mm, minimum height=7mm]
-        \tikzstyle{timeline}=[-Square, thick]
-        \tikzstyle{message}=[->, thick]
-        \node[entity] (client) at (0, 1) {Client};
-        \node[entity] (server) at (0, -1) {Server};
-
-        \draw[message] (1.5, 1) -- node[rotate=90, above] {\small{\texttt{LOGIN}}} ++(0, -2);
-        \draw[message] (2.5, 1) -- node[rotate=90, above] {\small{username}} node[rotate=90, below] {\small{\keyword{String}}} ++(0, -2);
-        \draw[message] (3.75, 1) -- node[rotate=90, above] {\small{password}} node[rotate=90, below] {\small{\keyword{String}}} ++(0, -2);
-
-        \draw[message] (5.25, -1) -- node[rotate=90, above] {\small{\texttt{ACCEPTED}}} ++ (0, 2);
-
-        \draw[message] (6.5, -1) -- node[rotate=90, above] {\small{\texttt{REJECTED}}} ++ (0, 2);
-
-        \draw[thick] (client) to ++(5.5, 0);
-        \draw[thick] (server) to ++(5.5, 0);
-
-        \draw[timeline] (6, -1) to ++(1.5, 0);
-        \draw[timeline] (6, 1) to ++(1.5, 0);
-
-        \draw[dashed, semithick] (4.5, -1.25) rectangle (7, 1.25);
-        \path (4.5, 1.25) -- node[above] {\emph{Choice}} (7, 1.25);
-    \end{tikzpicture}
-    \caption{
-        Communication protocol example. The communication establishment step is omitted for simplicity.
-        In this protocol the client tries to login to a service by sending a message
-        \texttt{LOGIN} followed by the username and password, both of type \keyword{String}.
-        The server then replies with either an \texttt{ACCEPTED} or \texttt{REJECTED}, if the login was successful or not, respectively.
-    }
-    \label{fig:login-protocol}
-\end{figure}
+\input{Chapters/Figures/C2/login-protocol.tex}
 
 \subsection{Session Types}
 
@@ -385,36 +318,7 @@ where \texttt{SenderT} and \texttt{ReceiverT} are the types sent and received by
 Channels are well-typed, meaning that if \mintinline{Rust}{SenderT = String},
 sending another type over the channel will result in a type error.
 
-\begin{listing}
-    \centering
-    \begin{minted}{Rust}
-enum Request {
-    Login(String, String),       // login with: {username, password}
-    SendMessage(String, String), // send message to a user: {user, message}
-    CheckStatus(String),         // check the status of a given user: {user}
-}
-enum Reply {
-    AuthOk,             // successful login
-    AuthErr,            // failed login
-    MessageOk,          // successful message
-    UserStatus(String), // user status
-}
-fn communicate() {
-    let (tx, rx) = channel<Request, Reply>();
-    tx.send(Request::Login("foo", "bar"));
-    match tx.recv() {
-        // ...
-    }
-}
-    \end{minted}
-    \caption{
-        Application login example, modelled using Rust's \keyword{enum}s
-        (some channel details were omitted for simplicity).
-        Reusing channels requires the developer to clump all states in a single \keyword{enum}.
-        Better state management requires the use of more channels, neither approaches are ideal.
-    }
-    \label{lst:rust-login-chan}
-\end{listing}
+\input{Chapters/Listings/C2/rust-login-chan.tex}
 
 Session types extend on this notion, not only allowing for a single type to be sent or received,
 but also model the protocol.
@@ -476,32 +380,7 @@ Each state is a possible state the object can be in, transitions are done throug
 Methods can either mutate the object state, such as \texttt{open} and \texttt{close},
 or leave it unchanged, such as \texttt{nextLine}.
 
-\begin{figure}
-    \centering
-    \begin{tikzpicture}
-        \tikzstyle{open-file}=[circle, thick, draw=blue!75, fill=blue!20, minimum size=10mm]
-        \tikzstyle{closed-file}=[circle, thick, draw=red!75, fill=red!20, minimum size=10mm]
-        \tikzstyle{transition} = [->, thick];
-
-        % \draw (0, 0) grid (\textwidth, 2);
-        \node[open-file, label=above:\texttt{Scanner[Open]}] (open-file) at (0.25\textwidth, 1) {};
-        \node[closed-file, label=above:\texttt{Scanner[Closed]}] (closed-file) at (0.75\textwidth, 1) {};
-        \draw[transition]
-        (open-file)
-        edge[out=10, in=170] node[above] {\texttt{close()}}
-        (closed-file) ;
-        \draw[transition]
-        (closed-file)
-        edge[out=-170, in=-10] node[below] {\texttt{open()}}
-        (open-file);
-        \draw[transition]
-        (open-file)
-        edge[loop left] node {\texttt{nextLine()}}
-        (open-file);
-    \end{tikzpicture}
-    \caption{The \keyword{Scanner} typestate automata, based on \autoref{lst:java-scanner-typestate}.}
-    \label{fig:file-automata}
-\end{figure}
+\input{Chapters/Figures/C2/file-automata.tex}
 
 \paragraph{Real-world scenario.}
 In production applications, the API is not this simple.
@@ -563,54 +442,25 @@ completely eliminate the need for illegal state exceptions since illegal transit
 
 \subsubsection*{Typestates in action}
 
-As a simple example, consider the Java application in \autoref{lst:java-mult} which simply takes two numbers and multiples them together.
+As a simple example, consider the Java application in \autoref{lst:java-read} which simply which reads two lines from \texttt{stdin}.
 The application will throw an exception on line 6,
 since the programmer closed the \texttt{Scanner} in line 5.
 In this example, the error is simple to catch,
 the program is short and the \texttt{Scanner} can either be open or closed,
 however, real-world applications are not that simple.
 
-\begin{listing}
-    \centering
-    \begin{minted}{java}
-public class Mult {
-    public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
-        s.nextLine();
-        s.close();
-        s.nextLine();
-    }
-}
-    \end{minted}
-    \caption{The \texttt{Mult} Java program, which reads two integer and multiplies them together.}
-    \label{lst:java-mult}
-\end{listing}
+\input{Chapters/Listings/C2/java-read.tex}
 
 In the case of \emph{typestated} programming,
 the type system will provide the programmer with better tools to express state,
 furthermore, the compiler will then catch errors regarding state,
 such as the previous \emph{use-after-close}.
 
-\autoref{lst:java-mult-typestate} shows the \texttt{Mult} program written in a \emph{typestated} fashion,
+\autoref{lst:java-read-typestate} shows the \texttt{Read} program written in a \emph{typestated} fashion,
 notice that the \texttt{Scanner} type is now augmented with state and
 the compiler is able to catch the misuse of the \texttt{Scanner[Closed]} interface.
 
-
-\begin{listing}
-    \centering
-    \begin{minted}{java}
-public class Mult {
-    public static void main(String[] args) {
-        Scanner[Open] s = new Scanner(System.in);
-        s.nextLine();
-        Scanner[Closed] s = s.close();
-        s.nextLine(); // compiler error
-    }
-}
-    \end{minted}
-    \caption{The \texttt{Mult} program, written in a Java-like \emph{typestated} fashion.}
-    \label{lst:java-mult-typestate}
-\end{listing}
+\input{Chapters/Listings/C2/java-read-typestate.tex}
 
 \paragraph{Plaid} is a typestate-oriented programming language \autocite{Aldrich2009},
 instead of \keyword{class}es users write \keyword{typestate}s.
@@ -623,31 +473,7 @@ This property allows the type system to enforce certain properties at compile ti
 such as certain methods will never be called in a given state since it is not possible by design
 (i.e. they are not available in the interface).
 
-
-\begin{listing}
-    \centering
-    \begin{minted}{java}
-state File {
-    val filename;
-}
-state OpenFile case of File = {
-    val filePtr;
-    method read() { ... }
-    method close() { this <- ClosedFile; }
-}
-state ClosedFile case of File {
-    method open() { this <- OpenFile; }
-}
-method readClosedFile(f) {
-    f.open();
-    val x = f.read();
-    f.close();
-    x;
-}
-    \end{minted}
-    \caption{The \keyword{File} declaration and usage in Plaid (taken from \autocite{Mota2020}).}
-    \label{lst:plaid-file-use}
-\end{listing}
+\input{Chapters/Listings/C2/plaid-file-use.tex}
 
 \paragraph{Rust.}
 As discussed in \autoref{sec:rust-lang}, Rust takes the commitment with safety with seriousness,
@@ -661,24 +487,7 @@ enforcing protocols is important and an aspect not covered by the language.
 Consider \autoref{lst:rust-protocol}, the example is expected to call first \texttt{F1}, followed by \texttt{F2} and finally \texttt{F3},
 however such does not happen and the error may only be caught during runtime.
 
-\begin{listing}
-    \centering
-    \begin{minted}{rust}
-fn main() {
-    let protocol = Protocol::new();
-    protocol.F1();
-    protocol.F3(); // possible crash during runtime
-    protocol.F2();
-}
-    \end{minted}
-    \caption{
-        Rust example of an unchecked failure protocol compliance.
-        The protocol expected operation order is \texttt{F1}, \texttt{F2}, \texttt{F3},
-        however, the developer placed the operations in the wrong order.
-        This mistake is only caught during runtime.
-    }
-    \label{lst:rust-protocol}
-\end{listing}
+\input{Chapters/Listings/C2/rust-protocol.tex}
 
 As the next paragraph discusses, this behavior can be prevented using the language's type system.
 However, such utilization requires complex (and possibly hard to read) types.
@@ -714,42 +523,8 @@ However, the user is unable to call \texttt{turnOff} in \autoref{lst:obsidian-tr
 since the switch is already set to the \texttt{Off} state.
 The Obsidian compiler is able to notice such invalid transitions and provide an error during compile time.
 
-\begin{listing}
-    \centering
-    \begin{minted}{java}
-contract LightSwitch {
-    state On {
-      int brightness;
-    }
-    state Off;
-    int switchLocation available in On, Off;
-}
-    \end{minted}
-    \caption{Obsidian state declaration example.}
-    \label{lst:obsidian-state}
-\end{listing}
+\input{Chapters/Listings/C2/obsidian-state.tex}
 
-\begin{listing}
-    \centering
-    \begin{minted}{java}
-transaction OffToOn() {
-   LightSwitch s = new LightSwitch(); // LightSwitch is in Off upon instantiation
-   s.turnOn();
-}
-    \end{minted}
-    \caption{Correct state usage example in Obsidian.}
-    \label{lst:obsidian-transaction-ok}
-\end{listing}
+\input{Chapters/Listings/C2/obsidian-transaction-ok.tex}
 
-\begin{listing}
-    \centering
-    \begin{minted}{java}
-transaction OffToOff() {
-   LightSwitch s = new LightSwitch(); // LightSwitch is in Off upon instantiation
-   s.turnOff(); // error: turnOff() requires that s is On, but here s is Off
-}
-    \end{minted}
-    \caption{Invalid state transition example in Obsidian. Since \texttt{LightSwitch} is instantiated as \texttt{Off}, calling \texttt{turnOff} is not valid.}
-    \label{lst:obsidian-transaction-err}
-\end{listing}
-
+\input{Chapters/Listings/C2/obsidian-transaction-error.tex}

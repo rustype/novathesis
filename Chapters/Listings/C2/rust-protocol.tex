@@ -1,0 +1,18 @@
+\begin{listing}
+    \centering
+    \begin{minted}{rust}
+fn main() {
+    let protocol = Protocol::new();
+    protocol.F1();
+    protocol.F3(); // possible crash during runtime
+    protocol.F2();
+}
+    \end{minted}
+    \caption{
+        Rust example of an unchecked failure protocol compliance.
+        The protocol expected operation order is \texttt{F1}, \texttt{F2}, \texttt{F3},
+        however, the developer placed the operations in the wrong order.
+        This mistake is only caught during runtime.
+    }
+    \label{lst:rust-protocol}
+\end{listing}

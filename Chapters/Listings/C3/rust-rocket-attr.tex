@@ -1,0 +1,15 @@
+\begin{listing}
+    \centering
+    \begin{minted}{Rust}
+#[get("/hello/<name>/<age>")]
+fn hello(name: String, age: u8) -> String {
+    format!("Hello, {} year old named {}!", age, name)
+}
+    \end{minted}
+    \caption{
+        Attribute macros are commonly used in web frameworks to provide an easy way to declare an endpoint.
+        In this example (taken from \autocite{Rocket2021}) the user declares that \texttt{GET} requests to \texttt{hello/}
+        have two path parameters (\texttt{name} and \texttt{age}) and should be handled by the \texttt{hello} function.
+    }
+    \label{lst:rust-rocket-attr}
+\end{listing}

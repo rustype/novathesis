@@ -1,0 +1,9 @@
+\begin{listing}
+    \begin{minted}{Rust}
+let x = String::from("Hello");  // ok: `x` is assigned "Hello"
+let y = x;                      // ok: `x` is moved into `y`
+println!("{}", x);              // error: `x` was moved in the previous line
+    \end{minted}
+    \caption{Example of the move-by-default mechanism to enforce ownership.}
+    \label{lst:rust-move}
+\end{listing}

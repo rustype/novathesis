@@ -1,0 +1,13 @@
+\begin{listing}
+    \centering
+    \begin{minted}{rust}
+impl GroundedOps for Drone<Grounded> {
+    fn take_off(self) -> Drone<Hovering> { /* ... */ }
+}
+    \end{minted}
+    \caption{
+        To make the drone usable, the developer must implement the generated traits.
+        In this case, only the \texttt{Grounded} state is considered.
+    }
+    \label{lst:dsl-typestate-impl}
+\end{listing}

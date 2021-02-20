@@ -1,0 +1,28 @@
+\begin{listing}
+    \centering
+    \begin{minted}{rust}
+#[typestate] mod M {
+    struct Drone { location: Coordinates } // available in every state structure
+    #[state] struct Grounded;
+    #[state] struct Hovering;
+    #[state] struct Flying {
+        destination: Coordinates
+    }
+    #[state] enum Landed {
+        Success(Grounded),  // touchdown!!
+        Error               // crashed
+    }
+    fn get_location(self: &Grounded) -> &Coordinates;
+    fn correct_coordinates(self: &mut Grounded);
+    fn take_off(self: Grounded) -> Hovering;
+    fn fly_to(self: Hovering, dst: Coordinates) -> Hovering;
+    fn land(self: Hovering) -> Landed;
+    fn new() -> Grounded;   // defines the start state
+    fn end(self: Grounded); // defines the final state
+}
+    \end{minted}
+    \caption{
+        Example specification of the \texttt{Drone} typestate using the proposed DSL.
+    }
+    \label{lst:dsl-typestate-spec}
+\end{listing}
