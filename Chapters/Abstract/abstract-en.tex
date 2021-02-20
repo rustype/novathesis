@@ -13,7 +13,7 @@ existing approaches are able to eliminate certain subsets of bugs.
 
 Rust is a systems programming language that addresses memory-related bugs by design,
 eliminating bugs like \emph{use-after-free}.
-To achieve this, Rust leverages the type system with information about object lifetimes,
+To achieve this, Rust leverages the type system along with information about object lifetimes,
 allowing the compiler to keep track of objects throughout the program and checking for memory misusage.
 While preventing memory-related bugs goes a long way in software security, other categories of bugs remain in Rust.
 One of which would be API misusage, where the developer does not respect constraints put in place by an API,

@@ -1,4 +1,4 @@
-%!TEX root = ../template.tex
+%!TEX root = ../../template.tex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% abstrac-pt.tex
 %% NOVA thesis document file
@@ -6,32 +6,31 @@
 %% Abstract in Portuguese
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\typeout{NT LOADING FILE abstrac-pt.tex}
+Conforme as nossas vidas são cada vez mais dependentes de software,
+erros do mesmo têm o potencial de causar problemas significativos.
+Prevenir estes erros torna-se uma tarefa prioritária durante o desenvolvimento de sistemas confiáveis.
+Erradicar erros por completo é impossível, no entanto é possível eliminar certos conjuntos.
 
-Independentemente da língua em que está escrita a dissertação, é necessário um resumo na língua do texto principal e um resumo noutra língua.  Assume-se que as duas línguas em questão serão sempre o Português e o Inglês.
+Rust é uma linguagem de programação de sistemas que, por desenho, endereça erros de gestão de memória.
+Para o conseguir, a linguagem inclui no sistema de tipos informação sobre o tempo de vida dos objetos,
+permitindo assim que o compilador consiga manter uma vista sobre a utilização dos mesmos e verificar por erros de utilização de memória.
+Apesar da prevenção de erros de memória ter um papel importante na segurança de software,
+existem ainda outras categorias de erros em Rust.
+Como o uso incorrecto de interfaces de programação, em que o programador não respeita as restrições impostas pela mesma, resultando numa falha do programa.
 
-O \emph{template} colocará automaticamente em primeiro lugar o resumo na língua do texto principal e depois o resumo na outra língua.  Por exemplo, se a dissertação está escrita em Português, primeiro aparecerá o resumo em Português, depois em Inglês, seguido do texto principal em Português. Se a dissertação está escrita em Inglês, primeiro aparecerá o resumo em Inglês, depois em Português, seguido do texto principal em Inglês.
+\emph{Typestates} elevam o conceito de estado para o sistema de tipos,
+permitindo a aplicação das restrições da interface durante a fase de compilação.
+Este conceito permite assim aliviar o programador da responsabilidade que é conceptualizar e manter o estado do programa em mente durante o desenvolvimento, prevenindo o mau uso das interfaces.
+Apesar de Rust não suportar \emph{typestates} de uma forma natural,
+o sistema de tipos permite expressar e validar \emph{typestates}.
 
-O resumo não deve exceder uma página e deve responder às seguintes questões:
-\begin{itemize}
-% What's the problem?
-	\item Qual é o problema?
-% Why is it interesting?
-	\item Porque é que ele é interessante?
-% What's the solution?
-	\item Qual é a solução?
-% What follows from the solution?
-	\item O que resulta (implicações) da solução?
-\end{itemize}
-
-E agora vamos fazer um teste com uma quebra de linha no hífen a ver se a \LaTeX\ duplica o hífen na linha seguinte…
-
-zzzz zzz zzzz zzz zzzz zzz zzzz zzz zzzz zzz zzzz zzz zzzz zzz zzzz zzz zzzz comentar"-lhe zzz zzzz zzz zzzz 
-
-Sim!  Funciona! :)
+O objetivo desta tese é aproximar os \emph{typestates} do Rust em produção,
+desenvolvendo uma ferramenta que permite aos programadores tirar partido dos \emph{typestates}.
+A mesma ferramenta é também capaz de garantir propriedades extra,
+verificando a especificação de \emph{typestates} por erros comuns.
 
 % Palavras-chave do resumo em Português
 \begin{keywords}
-Palavra-chave 1, Palavra-chave 2, Palavra-chave 3,  \ldots
+Tipos comportamentais, \emph{typestates}, meta-programação, macros, Rust
 \end{keywords}
 % to add an extra black line
