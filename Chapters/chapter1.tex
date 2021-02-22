@@ -11,7 +11,7 @@ resulting in some unsent messages or texture glitches.
 
 In systems programming, one of the most demanding domains in computer science,
 bugs and their respective consequences come at a high cost to both service providers and consumers.
-There are reports from several industries where bugs lead to huge monetary losses and even death.
+There are reports from several industries where bugs lead to huge monetary losses and in extreme cases, death.
 In 2014, the Heartbleed~\autocite{Heartbleed} bug, caused due to a missing bound check,
 compromised the security of any OpenSSL user, enabling the theft of critical information (e.g. cryptographic keys).
 In 2018, a bug in Coinbase (a popular cryptocurrency exchange)
@@ -71,8 +71,8 @@ a + 5; // NullPointerException: `a` is `null'
 \end{listing}
 
 Consider \autoref{lst:java-scanner-null}, the program compiles and will crash with a \texttt{NullPointerException}.
-While every one can see the explicit \keyword{null} attribution the compiler does not issue an error or warning.
-The original author of the \keyword{null}, Tony Hoare, considers this to be his "\emph{billion dollar mistake}".
+While everyone can see the explicit \keyword{null} attribution the compiler does not issue an error or warning.
+The original author of the \keyword{null}, Tony Hoare, considers this to be his “\emph{billion dollar mistake}”.
 Since in complex codebases, this error is hard to track down among all possible states and
 has supposedly caused more than a billion dollars in damages.
 
@@ -153,7 +153,7 @@ By itself, Mungo is a typechecker with support for typestates.
 
 
 \paragraph{Typestates} capture the state of the program,
-allowing the developer to express the state of objects during runtime, at compile-time.
+allowing the developer to express the state of objects during runtime, at compile-time. % TODO
 I discuss typestates further in \autoref{sec:typestates}.
 Fugue \autocite{DeLine2004} is a protocol checker that achieves similar functionality to typestates.
 The tool provides a series of annotations to be used in code which are then processed into protocols to be checked by Fugue.
