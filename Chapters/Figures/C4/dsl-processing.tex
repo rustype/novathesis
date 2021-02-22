@@ -10,7 +10,7 @@
         \def\xCode{12}
         \def\yLabel{-1.75}
 
-        \node[code] (code) at (\xSpec,0) {\mintinline{rust}{typestate!{ ... }}};
+        \node[code] (code) at (\xSpec,0) {\mintinline{rust}{#[typestate]}\\\mintinline{rust}{// ...}};
 
         \begin{scope}[shift={(\xAST, 0.75)}]
             \tikzstyle{n}=[circle, draw=blue!70, fill=blue!20]
