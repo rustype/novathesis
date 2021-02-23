@@ -6,17 +6,17 @@
 %% Abstract in Portuguese
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-Conforme as nossas vidas são cada vez mais dependentes de software,
-erros do mesmo têm o potencial de causar problemas significativos.
+À medida que as nossas vidas estão cada vez mais dependentes de software,
+os erros do mesmo têm o potencial de causar problemas significativos.
 Prevenir estes erros torna-se uma tarefa prioritária durante o desenvolvimento de sistemas confiáveis.
-Erradicar erros por completo é impossível, no entanto é possível eliminar certos conjuntos.
+Erradicar erros por completo é impossível, mas é possível eliminar certos conjuntos.
 
 Rust é uma linguagem de programação de sistemas que, por desenho, endereça erros de gestão de memória.
 Para o conseguir, a linguagem inclui no sistema de tipos informação sobre o tempo de vida dos objetos,
-permitindo assim que o compilador consiga manter uma vista sobre a utilização dos mesmos e verificar por erros de utilização de memória.
+permitindo assim que o compilador conheça a utilização dos mesmos e detecte erros de utilização de memória.
 Apesar da prevenção de erros de memória ter um papel importante na segurança de software,
-existem ainda outras categorias de erros em Rust.
-Como o uso incorrecto de interfaces de programação, em que o programador não respeita as restrições impostas pela mesma, resultando numa falha do programa.
+existem ainda outras categorias de erros em Rust,
+como o uso incorrecto de interfaces de programação, em que o programador não respeita as restrições impostas pela mesma, o que resulta numa falha do programa.
 
 \emph{Typestates} elevam o conceito de estado para o sistema de tipos,
 permitindo a aplicação das restrições da interface durante a fase de compilação.
@@ -27,7 +27,7 @@ o sistema de tipos permite expressar e validar \emph{typestates}.
 O objetivo desta tese é aproximar os \emph{typestates} do Rust em produção,
 desenvolvendo uma ferramenta que permite aos programadores tirar partido dos \emph{typestates}.
 A mesma ferramenta é também capaz de garantir propriedades extra,
-verificando a especificação de \emph{typestates} por erros comuns.
+verificando que especificação de \emph{typestates} por erros comuns.
 
 % Palavras-chave do resumo em Português
 \begin{keywords}
