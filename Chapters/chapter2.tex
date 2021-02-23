@@ -464,6 +464,31 @@ such as certain methods will never be called in a given state since it is not po
 
 % \input{Chapters/Listings/C2/plaid-file-use.tex}
 
+\paragraph{Obsidian} is a language targeting Hyperledger Fabric \autocite{Fabric2021},
+among other features it makes use of typestates to reduce the amount of bugs when dealing with assets.
+
+In \autocite{Coblenz2020} an empirical study tested and proved Obsidian claims,
+when compared with Solidity, the leading blockchain language,
+users inserted fewer bugs and were able to start developing safer code faster.
+
+Consider \autoref{lst:obsidian-state}, in which a light switch is modeled,
+the same can either be \texttt{On} or \texttt{Off}, but not both.
+The \texttt{brightness} field can only be accessed if \texttt{LightSwitch} is in the \texttt{On} state,
+however the \texttt{switchLocation} field can be accessed from both states.
+Furthermore, consider that upon instantiation, the \texttt{LightSwitch} is set to the \texttt{Off} state.
+Notice that in \autoref{lst:obsidian-transaction-ok} the user is able to call \texttt{turnOn},
+as the switch is in the \texttt{Off} state, as expected.
+However, the user is unable to call \texttt{turnOff} in \autoref{lst:obsidian-transaction-err},
+since the switch is already set to the \texttt{Off} state.
+The Obsidian compiler is able to notice such invalid transitions and provide an error during compile time.
+
+% \input{Chapters/Listings/C2/obsidian-state.tex}
+
+% \input{Chapters/Listings/C2/obsidian-transaction-ok.tex}
+
+% \input{Chapters/Listings/C2/obsidian-transaction-error.tex}
+
+
 \paragraph{Rust.}
 As discussed in \autoref{sec:rust-lang}, Rust takes the commitment with safety with seriousness,
 providing the necessary tools to users.
@@ -494,26 +519,3 @@ which implement typestates
 (e.g. \href{https://github.com/stm32-rs/stm32h7xx-hal/blob/master/src/gpio.rs#L51-L128}{\texttt{gpio.rs}}
 from \texttt{stm32h7xx-hal}).
 
-\paragraph{Obsidian} is a language targeting Hyperledger Fabric \autocite{Fabric2021},
-among other features it makes use of typestates to reduce the amount of bugs when dealing with assets.
-
-In \autocite{Coblenz2020} an empirical study tested and proved Obsidian claims,
-when compared with Solidity, the leading blockchain language,
-users inserted fewer bugs and were able to start developing safer code faster.
-
-Consider \autoref{lst:obsidian-state}, in which a light switch is modeled,
-the same can either be \texttt{On} or \texttt{Off}, but not both.
-The \texttt{brightness} field can only be accessed if \texttt{LightSwitch} is in the \texttt{On} state,
-however the \texttt{switchLocation} field can be accessed from both states.
-Furthermore, consider that upon instantiation, the \texttt{LightSwitch} is set to the \texttt{Off} state.
-Notice that in \autoref{lst:obsidian-transaction-ok} the user is able to call \texttt{turnOn},
-as the switch is in the \texttt{Off} state, as expected.
-However, the user is unable to call \texttt{turnOff} in \autoref{lst:obsidian-transaction-err},
-since the switch is already set to the \texttt{Off} state.
-The Obsidian compiler is able to notice such invalid transitions and provide an error during compile time.
-
-% \input{Chapters/Listings/C2/obsidian-state.tex}
-
-% \input{Chapters/Listings/C2/obsidian-transaction-ok.tex}
-
-% \input{Chapters/Listings/C2/obsidian-transaction-error.tex}

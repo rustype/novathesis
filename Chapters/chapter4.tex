@@ -67,7 +67,7 @@ The DSL processing is done as follows (illustrated in \autoref{fig:dsl-processin
 \begin{compactenum}
     \item The DSL is first parsed during macro expansion.
     \item The extracted structure is converted into a state-machine.
-    \item The state-machine is verified against our checks (see \autoref{sec:arch:fsm-verification}).
+    \item The state-machine is verified against our checks (see \autoref{sec:arch:fsm}).
     \item Extract all required \keyword{trait}s and \keyword{struct}s from the specification.
     \item Expand the macro into valid Rust code.
 \end{compactenum}
@@ -90,14 +90,8 @@ The restriction can be lifted by adding a macro parameter that does not include 
 The structure could be omitted in the case that no variables are required in all states,
 the name could then be assumed to be the one in the module, or also given as parameter to the macro.
 
-\paragraph{A state declaration} uses the \keyword{struct} keyword (lines 5-13 of \autoref{lst:dsl-typestate-spec}).
-The choice of \keyword{struct} over \keyword{state} is based on the following reasons:
-\begin{compactitem}
-    \item Keeping the syntax close to Rust by avoiding a new keyword.
-    \item Each state boils down to a structure, hence it is a natural mapping made explicit.
-    \item Since the code inside the DSL already implies typestates, each structure can easily be thought of as a state.
-    This follows the previous point idea.
-\end{compactitem}
+\paragraph{A state declaration} uses the \keyword{\#[state]} attribute (lines 3-11 of \autoref{lst:dsl-typestate-spec}).
+This makes it clear that each marked structure maps to a state in the state machine.
 
 \paragraph{A function declaration} in regular Rust, without attributes (lines 14-20 of \autoref{lst:dsl-typestate-spec}).
 They can be one of three possible categories:
@@ -145,15 +139,17 @@ or through determinization of the automata.
 \input{Chapters/Listings/C4/dsl-typestate-impl.tex}
 \input{Chapters/Listings/C4/dsl-typestate-error.tex}
 
-\subsection{State-Machine Conversion}
+\subsection{State-Machine Handling}\label{sec:arch:fsm}
+
+\paragraph{Conversion.}
 The reader might have noticed that the specification syntax cleanly maps to a state machine.
 As discussed in \autoref{sec:arch:syntax}, each \keyword{struct} is a state and each function is either a transition or a function which does not change state.
 From the code, we can establish states as nodes and functions as edges,
 effectively converting the specification into automata.
 
-\subsection{State-Machine Verification}\label{sec:arch:fsm-verification}
-After extraction the state-machine is subject to verification,
-this process is done using existing algorithms \autocite{Hopcroft2013}, to check the following properties:
+\paragraph{Verification.}
+After extraction the state-machine is subject to verification.
+This process is done using existing algorithms \autocite{Hopcroft2013}, to check the following properties:
 \begin{compactitem}
     \item \textbf{Minimality.} The state machine should be minimal in the sense that there should be no redundancy in states and transitions.
     \item \textbf{Non-empty language.} The language of the state machine should not be empty; thus we need to ensure the presence of final states.
@@ -170,7 +166,7 @@ The final user workflow should be as follows:
     In turn, the compiler will begin the process of expanding the macro.
     This process is illustrated in \autoref{fig:dsl-processing}.
     \begin{compactitem}
-        \item During expansion, if the state machine fails any of the verifications described in \autoref{sec:arch:fsm-verification},
+        \item During expansion, if the state machine fails any of the verifications described in \autoref{sec:arch:fsm},
         a compiler error is issued.
         \item If no errors are reported, the process continues as normal and generates all required boilerplate, like in \autoref{lst:dsl-typestate-generated}.
         This boilerplate does not appear for the user, hence it is required the generation process is as predictable as possible.
@@ -187,8 +183,7 @@ the syntax is also distant from the current proposal.
 The macro takes a simple typestate specification and expands into several traits and structures.
 This project can be found on GitHub \autocite{Duarte2020a}.
 
-\subsection{Improvement Points}
-
+\paragraph{Improvement Points.}
 As it stands, the project has several possible improvement points to be addressed during the development phase.
 Such points are as follows:
 \begin{compactitem}
@@ -202,6 +197,33 @@ Such points are as follows:
 \end{compactitem}
 
 \section{Timeline}
+
+\paragraph{Macro Development.}
+This phase consists of the development of the base macro, ensuring the most basic features.
+That is the correct transformation of the input source code to typestated Rust, not covering guarantee verification.
+\begin{compactitem}
+    \item \textbf{Macro Parsing.} Parsing the macro and inner attributes (3 weeks).
+    \item \textbf{Code Expansion.} Expanding the macro into new code, adding the actual typestates to the output (3 weeks).
+    \item \textbf{Testing.} Ensuring the developed macro is solid and takes care of most use cases, this task includes fixes for possible edge cases (2 weeks).
+\end{compactitem}
+\paragraph{State Machine Verification Development.}
+This phase builds on the previous one, extracting a state machine from the input source code and validating the state machine.
+The process between implementation and testing is done iteratively.
+\begin{compactitem}
+    \item \textbf{Implementation of the algorithms.} Implement the verification algorithms for the state machine, such as the minimality check (5 weeks).
+    \item \textbf{Testing.} As discussed, in this phase testing goes hand-in-hand with the implementation, ensuring each algorithm is correct before moving on to the next one (5 weeks).
+\end{compactitem}
+\paragraph{Usability Checking.}
+The final phase is checking the macro for usability, using the macro in a real-world scenario and gather feedback from users.
+Identified pain points and other feedback is to be implemented in the macro.
+\begin{compactitem}
+    \item \textbf{Use case implementation.} Implement a real-life use case, the use case is still to be defined (6 weeks).
+    \item \textbf{User survey.} Gather a group of developers to evaluate the macro in a series of tasks, gathering their feedback (3 weeks).
+    \item \textbf{User feedback review and integration.} Review the received feedback and address it (3 weeks).
+\end{compactitem}
+\paragraph{Thesis Writing} is mixed in the end of each phase to account for notes over the work done.
+Incrementally building the required body of work and easing the final writing process.
+
 \begin{figure}[h]
     \centering
     \includegraphics[width=\linewidth]{planning.png}
