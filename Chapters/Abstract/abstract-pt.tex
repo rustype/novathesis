@@ -26,8 +26,11 @@ o sistema de tipos permite expressar e validar \emph{typestates}.
 
 O objetivo desta tese é aproximar os \emph{typestates} do Rust em produção,
 desenvolvendo uma ferramenta que permite aos programadores tirar partido dos \emph{typestates}.
-A mesma ferramenta é também capaz de garantir propriedades extra,
-verificando que especificação de \emph{typestates} por erros comuns.
+A ferramenta toma a forma de uma DSL embebida em Rust, apoiada por macros,
+permitindo que a abordagem não se desvie da sintaxe de Rust e seja fácil de usar.
+O programador especifica \emph{typestates} pelo uso de anotações no código.
+Apartir da especificação, extrai-se uma máquina de estados que é depois verificada por erros comuns de \emph{typestates},
+garantindo propriedades extra em comparação com \emph{typestates} comuns.
 
 % Palavras-chave do resumo em Português
 \begin{keywords}

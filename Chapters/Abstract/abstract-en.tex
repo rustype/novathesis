@@ -27,7 +27,12 @@ the type system is powerful enough to express and validate typestates.
 
 This thesis' goal is to bridge the gap between typestates and production Rust.
 Developing a practical tool enabling developers to take advantage of typestates in their Rust code.
-The tool also provides extra correctness properties, by checking the typestate specification for common pitfalls.
+The tool takes the form of an embedded DSL backed by Rust macros,
+keeping the approach grounded in Rust syntax and easy to use.
+The developer specifies typestates through the use of special annotations in the code.
+From the specification, a state machine is extracted and checked for common typestate pitfalls,
+thus providing correctness properties beyond simple typestates.
+
 
 \begin{keywords}
 Behavioral types, typestates, meta-programming, macros, Rust
